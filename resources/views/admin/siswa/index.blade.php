@@ -13,14 +13,14 @@
 </div>
 
 <div class="content-card">
-    <form method="GET" action="{{ route('admin.siswa.index') }}">
-        <div class="table-toolbar">
+    <div class="table-toolbar">
+        <form method="GET" action="{{ route('admin.siswa.index') }}" style="display: flex; gap: 12px; width: 100%; flex-wrap: wrap;">
             <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" name="cari" value="{{ request('cari') }}" placeholder="Cari nama / NISN...">
+                <input type="text" name="cari" value="{{ request('cari') }}" placeholder="Cari nama / NISN..." class="form-control">
             </div>
-            <div class="filter-group">
-                <select class="form-select" name="kelas_id" onchange="this.form.submit()">
+            <div style="width: 220px;">
+                <select name="kelas_id" onchange="this.form.submit()" class="form-control">
                     <option value="">Semua Kelas</option>
                     @foreach($kelasList as $k)
                         <option value="{{ $k->id }}" {{ request('kelas_id') == $k->id ? 'selected' : '' }}>
@@ -29,19 +29,17 @@
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="btn btn-secondary">
-                <i class="fas fa-search"></i> Cari
-            </button>
-            @if(request('cari') || request('kelas_id'))
-                <a href="{{ route('admin.siswa.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Reset
-                </a>
-            @endif
-        </div>
-    </form>
+            <div style="display: flex; gap: 8px;">
+                <button type="submit" class="btn btn-primary">Cari</button>
+                @if(request('cari') || request('kelas_id'))
+                    <a href="{{ route('admin.siswa.index') }}" class="btn" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569;">Reset</a>
+                @endif
+            </div>
+        </form>
+    </div>
 
     <div class="table-responsive">
-        <table class="data-table" id="siswaTable">
+        <table class="data-table">
             <thead>
                 <tr>
                     <th>No</th>
@@ -60,22 +58,23 @@
                     <td>
                         <div class="user-cell">
                             <div class="avatar">{{ substr($s->nama_lengkap, 0, 1) }}</div>
-                            <span>{{ $s->nama_lengkap }}</span>
+                            <div style="font-weight: 600;">{{ $s->nama_lengkap }}</div>
                         </div>
                     </td>
                     <td>{{ $s->kelas->nama_kelas ?? '-' }}</td>
                     <td>
-                        <span class="badge {{ $s->jenis_kelamin === 'L' ? 'badge-blue' : 'badge-pink' }}">
-                            {{ $s->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}
-                        </span>
+                        @if($s->jenis_kelamin === 'L')
+                            <span class="badge badge-blue">Laki-laki</span>
+                        @else
+                            <span class="badge badge-pink">Perempuan</span>
+                        @endif
                     </td>
                     <td>
                         <div class="action-btns">
                             <a href="{{ route('admin.siswa.edit', $s) }}" class="btn-icon btn-edit" title="Edit">
-                                <i class="fas fa-edit"></i>
+                                <i class="fas fa-pen"></i>
                             </a>
-                            <form action="{{ route('admin.siswa.destroy', $s) }}" method="POST"
-                                  onsubmit="return confirm('Hapus data siswa ini?')">
+                            <form action="{{ route('admin.siswa.destroy', $s) }}" method="POST" onsubmit="return confirm('Hapus data siswa ini?')" style="margin: 0;">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn-icon btn-delete" title="Hapus">
                                     <i class="fas fa-trash"></i>
@@ -85,24 +84,21 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="6" class="empty-row">Tidak ada data siswa.</td></tr>
+                <tr>
+                    <td colspan="6" class="empty-row">Tidak ada data siswa.</td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 
-    <div class="pagination-wrapper">
-        {{ $siswa->links() }}
+    <div class="pagination-wrapper" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px;">
+        <div style="font-size: 13px; color: var(--text-secondary);">
+            Menampilkan {{ $siswa->firstItem() ?? 0 }} - {{ $siswa->lastItem() ?? 0 }} dari total {{ $siswa->total() }} data
+        </div>
+        <div>
+            {{ $siswa->appends(request()->query())->links('vendor.pagination.custom') }}
+        </div>
     </div>
 </div>
-
-<script>
-function filterTable() {
-    const input = document.getElementById('searchInput').value.toLowerCase();
-    const rows = document.querySelectorAll('#siswaTable tbody tr');
-    rows.forEach(row => {
-        row.style.display = row.textContent.toLowerCase().includes(input) ? '' : 'none';
-    });
-}
-</script>
 @endsection

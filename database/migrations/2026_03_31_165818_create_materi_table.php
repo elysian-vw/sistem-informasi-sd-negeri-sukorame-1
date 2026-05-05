@@ -14,10 +14,14 @@ return new class extends Migration {
             $table->string('link_video')->nullable();
             $table->foreignId('mata_pelajaran_id')->constrained('mata_pelajaran')->onDelete('cascade');
             $table->foreignId('guru_id')->constrained('guru')->onDelete('cascade');
+            $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade'); // Tambahkan ini!
             $table->enum('tipe', ['materi', 'tugas', 'uts', 'uas']);
             $table->datetime('deadline')->nullable();
             $table->timestamps();
         });
     }
-    public function down(): void { Schema::dropIfExists('materi'); }
+    public function down(): void
+    {
+        Schema::dropIfExists('materi');
+    }
 };
