@@ -22,12 +22,6 @@
     </div>
 </div>
 
-{{-- Tab --}}
-<div class="tab-nav">
-    <a href="{{ route('admin.siswa.index') }}" class="tab-btn">Data Siswa</a>
-    <a href="{{ route('admin.guru.index') }}" class="tab-btn active">Data Guru</a>
-</div>
-
 <div class="content-card">
     {{-- Toolbar --}}
     <div class="toolbar">

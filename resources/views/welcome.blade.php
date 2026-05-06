@@ -440,154 +440,115 @@
     </div>
 </section>
 
+<div class="section-divider"></div>
+
 {{-- ═══════════════════════════════════════════════════
-     MENGAPA MEMILIH
+     PRESTASI
 ═══════════════════════════════════════════════════ --}}
-<section id="keunggulan" class="py-20 bg-gray-50">
+<section class="py-16 bg-white" id="prestasi">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-14">
-            <div class="sec-label">Keunggulan Kami</div>
-            <h2 class="font-display text-3xl md:text-4xl font-black text-gray-900 mb-3">Mengapa Memilih SDN Sukorame 1?</h2>
-            <p class="text-gray-500 text-sm max-w-xl mx-auto leading-relaxed">
-                Sekolah kami hadir dengan komitmen penuh membangun generasi yang
-                <em class="text-blue-700 not-italic font-semibold">santun dalam berperilaku, hebat dalam prestasi</em>
-            </p>
+        <div class="text-center mb-10">
+            <div class="sec-label">Kebanggaan Kami</div>
+            <h2 class="font-display text-3xl md:text-4xl font-black text-gray-900 mb-2">Prestasi Sekolah</h2>
+            <p class="text-gray-500 text-sm max-w-lg mx-auto">Pencapaian membanggakan siswa dan sekolah di berbagai bidang</p>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             @php
-                $keungs = [
-                    ['icon'=>'fa-award',      'title'=>'Sekolah Unggulan',      'desc'=>'Terbaik di Kota Kediri',   'color'=>'blue'],
-                    ['icon'=>'fa-user-tie',   'title'=>'Pendidik Berkualitas',   'desc'=>'Guru berpengalaman & tersertifikasi', 'color'=>'indigo'],
-                    ['icon'=>'fa-shield-alt', 'title'=>'Berintegritas',          'desc'=>'Transparan & akuntabel',   'color'=>'purple'],
-                    ['icon'=>'fa-trophy',     'title'=>'Siswa Berprestasi',      'desc'=>'Juara lokal & nasional',   'color'=>'amber'],
-                    ['icon'=>'fa-heart',      'title'=>'Berkarakter',            'desc'=>'Berbudi pekerti luhur',    'color'=>'pink'],
-                    ['icon'=>'fa-building',   'title'=>'Fasilitas Lengkap',      'desc'=>'Sarana modern & nyaman',   'color'=>'teal'],
-                ];
-                $kc = [
-                    'blue'  =>['bg'=>'bg-blue-50',   'ico'=>'text-blue-600'],
-                    'indigo'=>['bg'=>'bg-indigo-50',  'ico'=>'text-indigo-600'],
-                    'purple'=>['bg'=>'bg-purple-50','ico'=>'text-purple-600'],
-                    'amber' =>['bg'=>'bg-amber-50', 'ico'=>'text-amber-600'],
-                    'pink'  =>['bg'=>'bg-pink-50',  'ico'=>'text-pink-600'],
-                    'teal'  =>['bg'=>'bg-teal-50',  'ico'=>'text-teal-600'],
+                $prestasi_list = [
+                    [
+                        'icon'    => 'fa-trophy',
+                        'warna'   => ['bg'=>'bg-amber-50', 'ico'=>'text-amber-500', 'border'=>'border-amber-200', 'badge'=>'bg-amber-500 text-white'],
+                        'juara'   => 'Juara 1',
+                        'tingkat' => 'Tingkat Kota',
+                        'title'   => 'Olimpiade Matematika',
+                        'tahun'   => '2024',
+                        'siswa'   => 'Ananda Reza P.',
+                        'foto'    => 'https://picsum.photos/seed/math2024/600/360',
+                    ],
+                    [
+                        'icon'    => 'fa-medal',
+                        'warna'   => ['bg'=>'bg-blue-50', 'ico'=>'text-blue-500', 'border'=>'border-blue-200', 'badge'=>'bg-blue-500 text-white'],
+                        'juara'   => 'Juara 2',
+                        'tingkat' => 'Tingkat Provinsi',
+                        'title'   => 'Lomba Sains Nasional',
+                        'tahun'   => '2024',
+                        'siswa'   => 'Siti Aisyah N.',
+                        'foto'    => 'https://picsum.photos/seed/science24/600/360',
+                    ],
+                    [
+                        'icon'    => 'fa-star',
+                        'warna'   => ['bg'=>'bg-green-50', 'ico'=>'text-green-500', 'border'=>'border-green-200', 'badge'=>'bg-green-500 text-white'],
+                        'juara'   => 'Juara 1',
+                        'tingkat' => 'Tingkat Kota',
+                        'title'   => 'Lomba Pidato Bahasa Indonesia',
+                        'tahun'   => '2023',
+                        'siswa'   => 'Muhammad Farhan',
+                        'foto'    => 'https://picsum.photos/seed/speech23/600/360',
+                    ],
+                    [
+                        'icon'    => 'fa-award',
+                        'warna'   => ['bg'=>'bg-purple-50', 'ico'=>'text-purple-500', 'border'=>'border-purple-200', 'badge'=>'bg-purple-500 text-white'],
+                        'juara'   => 'Juara 3',
+                        'tingkat' => 'Tingkat Nasional',
+                        'title'   => 'FLS2N Seni Lukis',
+                        'tahun'   => '2023',
+                        'siswa'   => 'Nadya Kusuma W.',
+                        'foto'    => 'https://picsum.photos/seed/art2023/600/360',
+                    ],
                 ];
             @endphp
-            @foreach ($keungs as $k)
-            @php $kcc = $kc[$k['color']]; @endphp
-            <div class="keung-card">
-                <div class="keung-icon-wrap {{ $kcc['bg'] }}">
-                    <i class="fa {{ $k['icon'] }} {{ $kcc['ico'] }}"></i>
+            @foreach ($prestasi_list as $p)
+            <div class="rounded-2xl border {{ $p['warna']['border'] }} bg-white overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
+
+                {{-- Foto --}}
+                <div class="relative h-44 overflow-hidden flex-shrink-0">
+                    <img src="{{ $p['foto'] }}"
+                         alt="{{ $p['title'] }}"
+                         loading="lazy"
+                         class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    {{-- Overlay gelap tipis --}}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent"></div>
+                    {{-- Badge juara di atas foto --}}
+                    <span class="absolute top-3 right-3 text-xs font-bold {{ $p['warna']['badge'] }} px-3 py-1 rounded-full shadow-md flex items-center gap-1">
+                        <i class="fa {{ $p['icon'] }} text-[10px]"></i> {{ $p['juara'] }}
+                    </span>
+                    {{-- Tingkat di bawah foto --}}
+                    <p class="absolute bottom-3 left-3 text-white/90 text-[10px] font-semibold uppercase tracking-wider">
+                        {{ $p['tingkat'] }} · {{ $p['tahun'] }}
+                    </p>
                 </div>
-                <p class="font-bold text-gray-800 text-sm mb-1">{{ $k['title'] }}</p>
-                <p class="text-gray-400 text-xs leading-snug">{{ $k['desc'] }}</p>
+
+                {{-- Konten --}}
+                <div class="p-4 flex flex-col gap-3 flex-1">
+                    <div class="flex items-start gap-3">
+                        <div class="w-9 h-9 {{ $p['warna']['bg'] }} rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fa {{ $p['icon'] }} {{ $p['warna']['ico'] }} text-base"></i>
+                        </div>
+                        <p class="font-bold text-gray-900 text-sm leading-snug">{{ $p['title'] }}</p>
+                    </div>
+
+                    {{-- Siswa --}}
+                    <div class="flex items-center gap-2 pt-2 border-t border-gray-100 mt-auto">
+                        <div class="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fa fa-user text-gray-400 text-xs"></i>
+                        </div>
+                        <p class="text-xs text-gray-500 font-medium">{{ $p['siswa'] }}</p>
+                    </div>
+                </div>
+
             </div>
             @endforeach
+        </div>
+        <div class="text-center mt-8">
+            <a href="{{ route('profil.prestasi') }}"
+               class="inline-flex items-center gap-2 text-blue-700 font-bold text-sm border-2 border-blue-200 px-5 py-2.5 rounded-xl hover:bg-blue-50 transition-colors">
+                Lihat Semua Prestasi <i class="fa fa-arrow-right text-xs"></i>
+            </a>
         </div>
     </div>
 </section>
 
 <div class="section-divider"></div>
-
-{{-- ═══════════════════════════════════════════════════
-     SAMBUTAN KEPALA SEKOLAH
-═══════════════════════════════════════════════════ --}}
-<section id="sambutan" class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="flex flex-col md:flex-row gap-16 items-start">
-
-            {{-- Foto --}}
-            <div class="flex-shrink-0 text-center mx-auto md:mx-0">
-                <div class="kepsek-photo mx-auto">
-                    <img src="https://picsum.photos/seed/principal42/400/480"
-                         alt="Foto Kepala Sekolah"
-                         loading="lazy">
-                </div>
-                <div class="mt-5 text-center">
-                    <p class="font-bold text-gray-900 text-base">{{ $sekolah?->kepala_sekolah ?? 'Nama Kepala Sekolah' }}</p>
-                    <p class="text-gray-500 text-xs mt-1">Kepala Sekolah SDN Sukorame 1</p>
-                    <span class="inline-block mt-3 bg-blue-50 text-blue-700 text-xs font-bold px-4 py-1.5 rounded-full border border-blue-200">
-                        NIP. {{ $sekolah?->nip_kepsek ?? '—' }}
-                    </span>
-                </div>
-            </div>
-
-            {{-- Teks --}}
-            <div class="flex-1 relative">
-                <div class="quote-mark">"</div>
-                <div class="sec-label">Sambutan</div>
-                <h2 class="font-display text-3xl md:text-4xl font-black text-gray-900 mb-6">Sambutan<br>Kepala Sekolah</h2>
-                <div class="space-y-4 text-gray-600 text-sm leading-relaxed">
-                    <p>
-                        <em class="font-semibold text-gray-800">Assalamu'alaikum Warahmatullahi Wabarakatuh.</em>
-                        Puji syukur kami panjatkan kehadirat Allah SWT atas segala limpahan rahmat dan karunia-Nya.
-                        Selamat datang di website resmi <strong class="text-blue-700">SD Negeri Sukorame 1 Kota Kediri</strong>.
-                    </p>
-                    <p>
-                        Sebagai sekolah dasar negeri yang telah berdiri puluhan tahun dan meraih akreditasi A, kami terus berkomitmen
-                        menghadirkan pendidikan berkualitas yang berakar pada nilai-nilai keislaman, keilmuan, dan teknologi modern.
-                    </p>
-                    <p>
-                        Platform <strong>SIMAS</strong> kami hadirkan sebagai jembatan komunikasi antara sekolah dan orang tua —
-                        memudahkan pemantauan nilai, absensi, materi pembelajaran, hingga raport digital secara real-time,
-                        kapanpun dan dimanapun Anda berada.
-                    </p>
-                    <p>
-                        Semoga website ini bermanfaat dan menjadi salah satu wujud nyata komitmen kami. Bersama, kita wujudkan
-                        generasi yang <em>cerdas, berkarakter, dan berprestasi.</em>
-                    </p>
-                    <p class="font-semibold text-gray-700 italic">Wassalamu'alaikum Warahmatullahi Wabarakatuh.</p>
-                </div>
-                <div class="flex flex-wrap gap-3 mt-8">
-                    <a href="#kontak" class="inline-flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm px-6 py-3 rounded-2xl transition-colors shadow-lg">
-                        <i class="fa fa-envelope text-xs"></i> Hubungi Kami
-                    </a>
-                    <a href="{{ route('profil.visi-misi') }}" class="inline-flex items-center gap-2 border-2 border-blue-200 text-blue-700 font-bold text-sm px-6 py-3 rounded-2xl hover:bg-blue-50 transition-colors">
-                        Profil Sekolah <i class="fa fa-arrow-right text-xs"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-{{-- ═══════════════════════════════════════════════════
-     INFORMASI SEKOLAH (band biru)
-═══════════════════════════════════════════════════ --}}
-<section class="info-band py-14">
-    <div class="max-w-7xl mx-auto px-4 relative z-10">
-        <div class="text-center mb-10">
-            <h3 class="font-display text-2xl font-black text-white mb-1">Identitas Sekolah</h3>
-            <p class="text-white/60 text-xs uppercase tracking-widest">Data Resmi SD Negeri Sukorame 1</p>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            @php
-                $infoItems = [
-                    ['icon'=>'fa-school',        'label'=>'Nama Sekolah',  'value'=> $sekolah?->nama ?? 'SD Negeri Sukorame 1'],
-                    ['icon'=>'fa-barcode',        'label'=>'NPSN',          'value'=> $sekolah?->npsn ?? '20534318'],
-                    ['icon'=>'fa-map-marker-alt', 'label'=>'Alamat',        'value'=> $sekolah?->alamat ?? 'Jl. Dr. Saharjo No. 1, Kediri'],
-                    ['icon'=>'fa-star',           'label'=>'Akreditasi',    'value'=> $sekolah?->akreditasi ?? 'B'],
-                    ['icon'=>'fa-book',           'label'=>'Kurikulum',     'value'=> $sekolah?->kurikulum ?? 'Kurikulum Merdeka'],
-                    ['icon'=>'fa-flag',           'label'=>'Status',        'value'=> $sekolah?->status ?? 'Negeri'],
-                    ['icon'=>'fa-phone',          'label'=>'Telepon',       'value'=> $sekolah?->telepon ?? '(0354) 123456'],
-                    ['icon'=>'fa-envelope',       'label'=>'Email',         'value'=> $sekolah?->email ?? 'sdn.sukorame1@kediri.go.id'],
-                ];
-            @endphp
-            @foreach ($infoItems as $info)
-            <div class="info-item">
-                <div class="flex items-start gap-3">
-                    <div class="w-9 h-9 bg-white/15 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <i class="fa {{ $info['icon'] }} text-amber-300 text-sm"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-white/55 text-xs mb-0.5 uppercase tracking-wider">{{ $info['label'] }}</p>
-                        <p class="text-white font-bold text-sm truncate" title="{{ $info['value'] }}">{{ $info['value'] }}</p>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-</section>
 
 {{-- ═══════════════════════════════════════════════════
      BERITA & PENGUMUMAN
@@ -613,7 +574,6 @@
                     ['badge'=>'bg-indigo-50 text-indigo-700','link'=>'text-indigo-700'],
                     ['badge'=>'bg-emerald-50 text-emerald-700', 'link'=>'text-emerald-700'],
                 ];
-                // Seeds buat gambar berita yang berbeda-beda
                 $newsSeeds = ['classroom10', 'students20', 'school30'];
             @endphp
             @foreach ($pengumuman as $idx => $p)
@@ -808,47 +768,113 @@
 <div class="section-divider"></div>
 
 {{-- ═══════════════════════════════════════════════════
-     LAYANAN SEKOLAH
+     SAMBUTAN KEPALA SEKOLAH
 ═══════════════════════════════════════════════════ --}}
-<section class="py-20 bg-white" id="layanan">
+<section id="sambutan" class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-12">
-            <div class="sec-label">Layanan Online</div>
-            <h2 class="font-display text-3xl font-black text-gray-900 mb-3">Layanan Sekolah</h2>
-            <p class="text-gray-500 text-sm max-w-lg mx-auto">Berbagai layanan administratif yang dapat diakses secara online dengan mudah</p>
+        <div class="flex flex-col md:flex-row gap-16 items-start">
+
+            {{-- Foto --}}
+            <div class="flex-shrink-0 text-center mx-auto md:mx-0">
+                <div class="kepsek-photo mx-auto">
+                    <img src="https://picsum.photos/seed/principal42/400/480"
+                         alt="Foto Kepala Sekolah"
+                         loading="lazy">
+                </div>
+                <div class="mt-5 text-center">
+                    <p class="font-bold text-gray-900 text-base">{{ $sekolah?->kepala_sekolah ?? 'Nama Kepala Sekolah' }}</p>
+                    <p class="text-gray-500 text-xs mt-1">Kepala Sekolah SDN Sukorame 1</p>
+                </div>
+            </div>
+
+            {{-- Teks --}}
+            <div class="flex-1 relative">
+                <div class="quote-mark">"</div>
+                <div class="sec-label">Sambutan</div>
+                <h2 class="font-display text-3xl md:text-4xl font-black text-gray-900 mb-6">Sambutan<br>Kepala Sekolah</h2>
+                <div class="space-y-4 text-gray-600 text-sm leading-relaxed">
+                    <p>
+                        <em class="font-semibold text-gray-800">Assalamu'alaikum Warahmatullahi Wabarakatuh.</em>
+                        Puji syukur kami panjatkan kehadirat Allah SWT atas segala limpahan rahmat dan karunia-Nya.
+                        Selamat datang di website resmi <strong class="text-blue-700">SD Negeri Sukorame 1 Kota Kediri</strong>.
+                    </p>
+                    <p>
+                        Sebagai sekolah dasar negeri yang telah berdiri puluhan tahun dan meraih akreditasi A, kami terus berkomitmen
+                        menghadirkan pendidikan berkualitas yang berakar pada nilai-nilai keislaman, keilmuan, dan teknologi modern.
+                    </p>
+                    <p>
+                        Platform <strong>SIMAS</strong> kami hadirkan sebagai jembatan komunikasi antara sekolah dan orang tua —
+                        memudahkan pemantauan nilai, absensi, materi pembelajaran, hingga raport digital secara real-time,
+                        kapanpun dan dimanapun Anda berada.
+                    </p>
+                    <p>
+                        Semoga website ini bermanfaat dan menjadi salah satu wujud nyata komitmen kami. Bersama, kita wujudkan
+                        generasi yang <em>cerdas, berkarakter, dan berprestasi.</em>
+                    </p>
+                    <p class="font-semibold text-gray-700 italic">Wassalamu'alaikum Warahmatullahi Wabarakatuh.</p>
+                </div>
+                <div class="flex flex-wrap gap-3 mt-8">
+                    <a href="#kontak" class="inline-flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm px-6 py-3 rounded-2xl transition-colors shadow-lg">
+                        <i class="fa fa-envelope text-xs"></i> Hubungi Kami
+                    </a>
+                    <a href="{{ route('profil.visi-misi') }}" class="inline-flex items-center gap-2 border-2 border-blue-200 text-blue-700 font-bold text-sm px-6 py-3 rounded-2xl hover:bg-blue-50 transition-colors">
+                        Profil Sekolah <i class="fa fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+{{-- ═══════════════════════════════════════════════════
+     MENGAPA MEMILIH
+═══════════════════════════════════════════════════ --}}
+<section id="keunggulan" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-14">
+            <div class="sec-label">Keunggulan Kami</div>
+            <h2 class="font-display text-3xl md:text-4xl font-black text-gray-900 mb-3">Mengapa Memilih SDN Sukorame 1?</h2>
+            <p class="text-gray-500 text-sm max-w-xl mx-auto leading-relaxed">
+                Sekolah kami hadir dengan komitmen penuh membangun generasi yang
+                <em class="text-blue-700 not-italic font-semibold">santun dalam berperilaku, hebat dalam prestasi</em>
+            </p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
             @php
-                $layanan = [
-                    ['icon'=>'fa-exchange-alt',  'label'=>'Mutasi Siswa',      'sub'=>'Pindah masuk/keluar', 'color'=>'blue',   'route'=>'layanan.mutasi'],
-                    ['icon'=>'fa-file-alt',       'label'=>'Surat Keterangan', 'sub'=>'Permohonan surat',    'color'=>'indigo', 'route'=>'layanan.surat'],
-                    ['icon'=>'fa-id-card',        'label'=>'Cek NISN',         'sub'=>'Verifikasi nomor induk','color'=>'green', 'route'=>'layanan.nisn'],
-                    ['icon'=>'fa-graduation-cap', 'label'=>'Beasiswa PIP',     'sub'=>'Cek status PIP',      'color'=>'amber',  'route'=>'layanan.pip'],
-                    ['icon'=>'fa-download',       'label'=>'Unduhan',          'sub'=>'Dokumen & formulir',  'color'=>'purple', 'route'=>'layanan.unduhan'],
-                    ['icon'=>'fa-users',          'label'=>'Alumni',           'sub'=>'Jaringan alumni',     'color'=>'teal',   'route'=>'layanan.alumni'],
+                $keungs = [
+                    ['icon'=>'fa-award',      'title'=>'Sekolah Unggulan',      'desc'=>'Terbaik di Kota Kediri',   'color'=>'blue'],
+                    ['icon'=>'fa-user-tie',   'title'=>'Pendidik Berkualitas',   'desc'=>'Guru berpengalaman & tersertifikasi', 'color'=>'indigo'],
+                    ['icon'=>'fa-shield-alt', 'title'=>'Berintegritas',          'desc'=>'Transparan & akuntabel',   'color'=>'purple'],
+                    ['icon'=>'fa-trophy',     'title'=>'Siswa Berprestasi',      'desc'=>'Juara lokal & nasional',   'color'=>'amber'],
+                    ['icon'=>'fa-heart',      'title'=>'Berkarakter',            'desc'=>'Berbudi pekerti luhur',    'color'=>'pink'],
+                    ['icon'=>'fa-building',   'title'=>'Fasilitas Lengkap',      'desc'=>'Sarana modern & nyaman',   'color'=>'teal'],
                 ];
-                $lcc = [
+                $kc = [
                     'blue'  =>['bg'=>'bg-blue-50',   'ico'=>'text-blue-600'],
                     'indigo'=>['bg'=>'bg-indigo-50',  'ico'=>'text-indigo-600'],
-                    'green' =>['bg'=>'bg-green-50',  'ico'=>'text-green-600'],
-                    'amber' =>['bg'=>'bg-amber-50',  'ico'=>'text-amber-600'],
-                    'purple'=>['bg'=>'bg-purple-50', 'ico'=>'text-purple-600'],
-                    'teal'  =>['bg'=>'bg-teal-50',   'ico'=>'text-teal-600'],
+                    'purple'=>['bg'=>'bg-purple-50','ico'=>'text-purple-600'],
+                    'amber' =>['bg'=>'bg-amber-50', 'ico'=>'text-amber-600'],
+                    'pink'  =>['bg'=>'bg-pink-50',  'ico'=>'text-pink-600'],
+                    'teal'  =>['bg'=>'bg-teal-50',  'ico'=>'text-teal-600'],
                 ];
             @endphp
-            @foreach ($layanan as $l)
-            @php $lc = $lcc[$l['color']]; @endphp
-            <a href="{{ route($l['route']) }}" class="layanan-card">
-                <div class="layanan-icon {{ $lc['bg'] }}">
-                    <i class="fa {{ $l['icon'] }} {{ $lc['ico'] }}"></i>
+            @foreach ($keungs as $k)
+            @php $kcc = $kc[$k['color']]; @endphp
+            <div class="keung-card">
+                <div class="keung-icon-wrap {{ $kcc['bg'] }}">
+                    <i class="fa {{ $k['icon'] }} {{ $kcc['ico'] }}"></i>
                 </div>
-                <p class="font-bold text-gray-900 text-xs mb-1">{{ $l['label'] }}</p>
-                <p class="text-gray-400 text-xs leading-snug">{{ $l['sub'] }}</p>
-            </a>
+                <p class="font-bold text-gray-800 text-sm mb-1">{{ $k['title'] }}</p>
+                <p class="text-gray-400 text-xs leading-snug">{{ $k['desc'] }}</p>
+            </div>
             @endforeach
         </div>
     </div>
 </section>
+
+<div class="section-divider"></div>
 
 {{-- ═══════════════════════════════════════════════════
      LOKASI SEKOLAH (MAPS)
