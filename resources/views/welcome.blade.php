@@ -954,20 +954,55 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-        // ── SLIDER ──
-        let cur = 0;
-        const total = 3;
+        // ── SLIDER (Infinite Loop) ──
         const track = document.getElementById('slidesTrack');
         const dots  = document.querySelectorAll('.sdot');
+        const realTotal = 3;
+        let pos = 1; // posisi di cloned track (1 = slide pertama asli)
         let autoSlide;
 
-        function goSlide(n) {
-            cur = (n + total) % total;
-            track.style.transform = `translateX(-${cur * 100}%)`;
-            dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+        // Duplikat slide pertama di akhir, slide terakhir di awal
+        const origSlides = [...track.children];
+        track.appendChild(origSlides[0].cloneNode(true));
+        track.insertBefore(origSlides[realTotal - 1].cloneNode(true), origSlides[0]);
+        // Sekarang urutan: [clone_last | slide0 | slide1 | slide2 | clone_first]
+
+        let isMoving = false; // Status buat nge-lock
+
+        function moveTo(p, animate = true) {
+            if (isMoving && animate) return; // Kalau lagi gerak, diem!
+            if (animate) isMoving = true; 
+
+            track.style.transition = animate
+                ? 'transform .65s cubic-bezier(.77,0,.175,1)'
+                : 'none';
+            track.style.transform = `translateX(-${p * 100}%)`;
+            pos = p;
+
+            const dotIdx = ((pos - 1) % realTotal + realTotal) % realTotal;
+            dots.forEach((d, i) => d.classList.toggle('active', i === dotIdx));
         }
 
-        function slideBy(d) { goSlide(cur + d); }
+        // Tambah ini di event listener transitionend biar lock kebuka lagi
+        track.addEventListener('transitionend', () => {
+            isMoving = false; // Sekarang boleh diklik lagi
+            if (pos === 0)           moveTo(realTotal, false);
+            if (pos === realTotal + 1) moveTo(1, false);
+        });
+
+        // Mulai di posisi 1 (slide pertama asli), tanpa animasi
+        moveTo(1, false);
+
+        // Setelah animasi selesai, kalau mendarat di clone → snap ke slide asli
+        track.addEventListener('transitionend', () => {
+            if (pos === 0)               moveTo(realTotal, false); // clone_last → slide2 asli
+            if (pos === realTotal + 1)   moveTo(1, false);         // clone_first → slide0 asli
+        });
+
+        function slideBy(d) { moveTo(pos + d, true); }
+
+        // goSlide dipanggil dari onclick di blade (0-based index)
+        function goSlide(n) { moveTo(n + 1, true); }
 
         window.goSlide = goSlide;
         window.slideBy = slideBy;
