@@ -15,11 +15,6 @@
         <div class="main-content">
             @include('layouts.navbar')
             <div class="page-content">
-                @if(session('success'))
-                    <div class="alert alert-success">
-                        <i class="fas fa-check-circle"></i> {{ session('success') }}
-                    </div>
-                @endif
                 @yield('content')
             </div>
         </div>

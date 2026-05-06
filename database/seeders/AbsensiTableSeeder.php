@@ -13,17 +13,18 @@ class AbsensiTableSeeder extends Seeder
         $status = ['hadir', 'sakit', 'izin', 'alpha'];
 
         foreach ($siswa as $s) {
-            // Buat absensi untuk 30 hari terakhir
             for ($i = 0; $i < 30; $i++) {
-                $tanggal = now()->subDays($i)->toDateString();
+                $dt = now()->subDays($i); 
+                $tanggal = $dt->toDateString();
+
                 DB::table('absensi')->insert([
                     'siswa_id'   => $s->id,
                     'kelas_id'   => $s->kelas_id,
                     'tanggal'    => $tanggal,
                     'status'     => $status[array_rand($status)],
                     'keterangan' => null,
-                    'created_at' => now(),
-                    'updated_at' => now(),
+                    'created_at' => $dt, 
+                    'updated_at' => $dt,
                 ]);
             }
         }

@@ -43,11 +43,35 @@
 <div class="dashboard-grid">
     <div class="content-card">
         <div class="card-header">
-            <h3>Grafik Absensi Siswa</h3>
-            <span class="card-subtitle">7 hari terakhir</span>
+            <div>
+                <h3>Grafik Absensi Siswa</h3>
+                <span class="card-subtitle">Data kehadiran harian</span>
+            </div>
+            <div class="filter-container" style="display: flex; gap: 8px;">
+                <select id="filterStatus" class="filter-select">
+                    <option value="hadir" selected>Hadir</option>
+                    <option value="sakit">Sakit</option>
+                    <option value="izin">Izin</option>
+                    <option value="alpha">Alpha</option>
+                </select>
+                <select id="filterPeriode" class="filter-select">
+                    <option value="hari">Hari Ini</option>
+                    <option value="minggu" selected>7 Hari Terakhir</option>
+                    <option value="bulan">30 Hari Terakhir</option>
+                    <option value="semester">6 Bulan Terakhir</option>
+                </select>
+                <select id="filterKelas" class="filter-select">
+                    <option value="">Semua Kelas</option>
+                    @foreach(range(1, 6) as $k)
+                        <option value="{{ $k }}">Kelas {{ $k }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
         <div class="card-body">
-            <canvas id="absensiChart" height="120"></canvas>
+            <div style="height: 300px;"> {{-- Kasih tinggi fixed biar nggak lari --}}
+                <canvas id="absensiChart"></canvas>
+            </div>
         </div>
     </div>
 
@@ -135,6 +159,16 @@
 </div>
 
 <style>
+.filter-select {
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+}
+.filter-select:focus { border-color: #2563eb; }
+
 .dashboard-grid {
     display: grid;
     grid-template-columns: 1fr 340px;
@@ -200,31 +234,65 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-const ctx = document.getElementById('absensiChart').getContext('2d');
-const labels = @json($data['absensi_labels']);
-const values = @json($data['absensi_data']);
+// Pake satu nama variabel aja yang konsisten!
+let absensiChart; 
 
-new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: labels,
-        datasets: [{
-            label: 'Hadir',
-            data: values,
-            backgroundColor: 'rgba(37, 99, 235, 0.15)',
-            borderColor: 'rgba(37, 99, 235, 0.7)',
-            borderWidth: 2,
-            borderRadius: 6,
-        }]
-    },
-    options: {
-        responsive: false,
-        plugins: { legend: { display: false } },
-        scales: {
-            y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
-            x: { grid: { display: false } }
+async function loadChart() {
+    const status = document.getElementById('filterStatus').value;
+    const periode = document.getElementById('filterPeriode').value;
+    const kelas = document.getElementById('filterKelas').value;
+    
+    // Kirim status ke Controller
+    const response = await fetch(`{{ route('admin.chart-data') }}?status=${status}&periode=${periode}&kelas_id=${kelas}`);
+    const data = await response.json();
+
+    const ctx = document.getElementById('absensiChart').getContext('2d');
+    
+    // Hancurkan chart lama biar nggak tumpang tindih
+    if (absensiChart) { absensiChart.destroy(); }
+
+    const colors = {
+        hadir: '#3b82f6',
+        sakit: '#fbbf24',
+        izin:  '#10b981',
+        alpha: '#ef4444'
+    };
+
+    absensiChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: `Jumlah Siswa ${status.charAt(0).toUpperCase() + status.slice(1)}`,
+                data: data.values,
+                backgroundColor: colors[status] || '#3b82f6',
+                borderRadius: 6,
+                maxBarThickness: 40
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    ticks: { stepSize: 1 },
+                    title: { display: true, text: 'Jumlah Siswa' } 
+                },
+                x: {
+                    title: { display: true, text: 'Tanggal' }
+                }
+            }
         }
-    }
-});
+    });
+}
+
+// Pastikan manggil fungsi yang ADA (loadChart)
+document.getElementById('filterStatus').addEventListener('change', loadChart);
+document.getElementById('filterPeriode').addEventListener('change', loadChart);
+document.getElementById('filterKelas').addEventListener('change', loadChart);
+
+// Jalankan pertama kali
+document.addEventListener('DOMContentLoaded', loadChart);
 </script>
 @endsection
