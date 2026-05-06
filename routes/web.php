@@ -12,7 +12,8 @@ use App\Http\Controllers\Admin\{
     KelasController,
     MataPelajaranController,
     PengumumanController,
-    SekolahController
+    SekolahController,
+    JadwalController
 };
 
 // ─── GURU ────────────────────────────────────────────────────────────────────
@@ -135,6 +136,7 @@ Route::post('/reset-password',        [LoginController::class, 'resetPassword'])
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/chart-data', [AdminDashboard::class, 'getChartData'])->name('chart-data');
 
     // Siswa
     Route::resource('siswa', SiswaController::class);
@@ -148,7 +150,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::post('/guru/import',   [GuruController::class, 'import'])->name('guru.import');
 
     // Kelas
-    Route::resource('kelas', KelasController::class);
+    Route::resource('kelas', KelasController::class)
+        ->only(['index', 'store', 'update', 'destroy']);
 
     // Mata Pelajaran
     Route::get('/mata-pelajaran',                     [MataPelajaranController::class, 'index'])->name('mata-pelajaran.index');
@@ -162,6 +165,19 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     // Pengaturan Sekolah
     Route::get('/sekolah', [SekolahController::class, 'index'])->name('sekolah');
     Route::put('/sekolah', [SekolahController::class, 'update'])->name('sekolah.update');
+
+    Route::resource('jadwal', JadwalController::class)->names([
+        'index' => 'jadwal.index',
+        'store' => 'jadwal.store',
+        'destroy' => 'jadwal.destroy',
+    ]);
+    Route::get('jadwal/export', [JadwalController::class, 'export'])->name('jadwal.export');
+    
+    // Route untuk Download Template CSV
+    Route::get('jadwal/template', [JadwalController::class, 'template'])->name('jadwal.template');
+    
+    // Route untuk Proses Import CSV
+    Route::post('jadwal/import', [JadwalController::class, 'import'])->name('jadwal.import');
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════

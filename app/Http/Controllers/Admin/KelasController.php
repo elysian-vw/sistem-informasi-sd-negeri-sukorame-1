@@ -60,7 +60,7 @@ class KelasController extends Controller
         return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil ditambahkan.');
     }
 
-    public function update(Request $request, Kelas $kelas)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'nama_kelas'    => 'required|string|max:20',
@@ -72,10 +72,8 @@ class KelasController extends Controller
             'status'        => 'required|in:aktif,tidak_aktif',
         ]);
 
-        $kelas->update($request->only([
-            'nama_kelas', 'tingkat', 'rombel',
-            'wali_kelas_id', 'kapasitas', 'ruang_kelas', 'status',
-        ]));
+        $kelas = Kelas::findOrFail($id); // Cari manual pakai ID
+        $kelas->update($request->all());
 
         return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil diperbarui.');
     }

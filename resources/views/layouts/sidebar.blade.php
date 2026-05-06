@@ -19,22 +19,25 @@
                 <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
             </a>
             <a href="{{ route('admin.sekolah') }}" class="nav-item {{ request()->routeIs('admin.sekolah*') ? 'active' : '' }}">
-                <i class="fas fa-building-columns"></i> <span>Data Sekolah</span>
+                <i class="fas fa-building-columns"></i> <span>Kelola Sekolah</span>
             </a>
             <a href="{{ route('admin.kelas.index') }}" class="nav-item {{ request()->routeIs('admin.kelas*') ? 'active' : '' }}">
-                <i class="fas fa-door-open"></i> <span>Kelas & Rombel</span>
+                <i class="fas fa-door-open"></i> <span>Kelola Kelas</span>
             </a>
             <a href="{{ route('admin.siswa.index') }}" class="nav-item {{ request()->routeIs('admin.siswa*') ? 'active' : '' }}">
-                <i class="fas fa-user-graduate"></i> <span>Data Siswa</span>
+                <i class="fas fa-user-graduate"></i> <span>Kelola Siswa</span>
             </a>
             <a href="{{ route('admin.guru.index') }}" class="nav-item {{ request()->routeIs('admin.guru*') ? 'active' : '' }}">
-                <i class="fas fa-chalkboard-teacher"></i> <span>Data Guru</span>
+                <i class="fas fa-chalkboard-teacher"></i> <span>Kelola Guru</span>
+            </a>
+            <a href="{{ route('admin.jadwal.index') }}" class="nav-item {{ request()->routeIs('admin.jadwal*') ? 'active' : '' }}">
+                <i class="fas fa-calendar-alt"></i> <span>Kelola Jadwal Pelajaran</span>
             </a>
             <a href="{{ route('admin.mata-pelajaran.index') }}" class="nav-item {{ request()->routeIs('admin.mata-pelajaran*') ? 'active' : '' }}">
-                <i class="fas fa-book-open"></i> <span>Mata Pelajaran</span>
+                <i class="fas fa-book-open"></i> <span>Kelola Mata Pelajaran</span>
             </a>
             <a href="{{ route('admin.pengumuman.index') }}" class="nav-item {{ request()->routeIs('admin.pengumuman*') ? 'active' : '' }}">
-                <i class="fas fa-bullhorn"></i> <span>Pengumuman</span>
+                <i class="fas fa-bullhorn"></i> <span>Kelola Pengumuman</span>
             </a>
 
         {{-- ══════════════════ GURU ══════════════════ --}}
