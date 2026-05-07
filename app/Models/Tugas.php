@@ -17,6 +17,7 @@ class Tugas extends Model
         'guru_id',
         'deadline',
         'status',
+        'tipe',          // ← tambahan: 'upload' | 'cbt'
     ];
 
     protected $casts = [
@@ -56,5 +57,11 @@ class Tugas extends Model
     public function pertanyaans()
     {
         return $this->hasMany(Pertanyaan::class);
+    }
+
+    // Helper: apakah ini tugas CBT?
+    public function isCbt(): bool
+    {
+        return $this->tipe === 'cbt';
     }
 }
