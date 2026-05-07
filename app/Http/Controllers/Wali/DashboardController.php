@@ -11,7 +11,10 @@ class DashboardController extends Controller
     {
         $user      = auth()->user();
         $anakList  = Siswa::where('wali_murid_id', $user->id)->with('kelas')->get();
-        $anakUtama = $anakList->first();
+        $selectedId = request('anak');
+        $anakUtama  = $selectedId
+            ? $anakList->firstWhere('id', $selectedId)
+            : $anakList->first();
 
         $absensiRekap  = [];
         $tugasRekap    = [];
