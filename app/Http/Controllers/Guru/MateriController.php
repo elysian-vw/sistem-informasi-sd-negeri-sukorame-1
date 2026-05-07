@@ -9,35 +9,40 @@ use Illuminate\Support\Facades\Storage;
 
 class MateriController extends Controller
 {
+    // Helper untuk proteksi akses materi
+    private function authorizeGuru(Materi $materi)
+    {
+        if ($materi->guru_id !== auth()->user()->guru->id) {
+            abort(403, 'Anda tidak memiliki akses ke materi ini.');
+        }
+    }
+
     public function index(Request $request)
     {
         $guru = auth()->user()->guru;
+        
+        // Hanya ambil mapel milik guru ini
         $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
         
-        // TAMBAHIN INI: Biar di view index bisa looping pilihan kelas buat filter
-        $kelas = Kelas::orderBy('nama_kelas')->get(); 
+        // Hanya ambil kelas yang diajar guru ini
+        $kelas = Kelas::where('id', $guru->kelas_id)->get(); 
 
         $query = Materi::with(['mataPelajaran', 'kelas'])
             ->where('guru_id', $guru->id);
 
-        // Filter Mapel
+        // Filter pencarian
         if ($request->filled('mata_pelajaran_id')) {
             $query->where('mata_pelajaran_id', $request->mata_pelajaran_id);
         }
-
-        // TAMBAHIN INI: Biar filter kelasnya fungsi beneran
         if ($request->filled('kelas_id')) {
             $query->where('kelas_id', $request->kelas_id);
         }
-
-        // Filter Tipe
         if ($request->filled('tipe')) {
             $query->where('tipe', $request->tipe);
         }
 
         $materi = $query->latest()->paginate(12)->withQueryString();
 
-        // Lempar variabel $kelas ke view
         return view('guru.materi.index', compact('materi', 'mapel', 'kelas'));
     }
 
@@ -45,18 +50,22 @@ class MateriController extends Controller
     {
         $guru  = auth()->user()->guru;
         $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
-        $kelas = Kelas::orderBy('nama_kelas')->get();
+        
+        // Kirim data kelas milik guru tersebut saja
+        $kelas = Kelas::where('id', $guru->kelas_id)->get();
 
         return view('guru.materi.create', compact('mapel', 'kelas'));
     }
 
     public function store(Request $request)
     {
+        $guru = auth()->user()->guru;
+
         $request->validate([
             'judul'             => 'required|string|max:255',
             'deskripsi'         => 'nullable|string',
             'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
-            'kelas_id'          => 'required|exists:kelas,id',
+            'kelas_id'          => 'required|in:' . $guru->kelas_id, // Validasi ketat kelas harus milik guru
             'tipe'              => 'required|in:file,link,video',
             'link_video'        => 'nullable|url|required_if:tipe,link|required_if:tipe,video',
             'file'              => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip|max:20480|required_if:tipe,file',
@@ -71,80 +80,71 @@ class MateriController extends Controller
             'judul'             => $request->judul,
             'deskripsi'         => $request->deskripsi,
             'mata_pelajaran_id' => $request->mata_pelajaran_id,
-            'kelas_id'          => $request->kelas_id,
-            'guru_id'           => auth()->user()->guru->id,
+            'kelas_id'          => $guru->kelas_id, // Gunakan ID kelas guru agar pasti benar
+            'guru_id'           => $guru->id,
             'tipe'              => $request->tipe,
             'link_video'        => $request->link_video,
             'file'              => $filePath,
         ]);
 
-        return redirect()->route('guru.materi.index')
-            ->with('success', 'Materi berhasil ditambahkan.');
+        return redirect()->route('guru.materi.index')->with('success', 'Materi berhasil ditambahkan.');
     }
 
     public function show(Materi $materi)
     {
+        $this->authorizeGuru($materi);
         $materi->load(['mataPelajaran', 'kelas']);
         return view('guru.materi.show', compact('materi'));
     }
 
     public function edit(Materi $materi)
     {
+        $this->authorizeGuru($materi);
+        
         $guru  = auth()->user()->guru;
         $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
-        $kelas = Kelas::orderBy('nama_kelas')->get();
+        $kelas = Kelas::where('id', $guru->kelas_id)->get();
 
         return view('guru.materi.edit', compact('materi', 'mapel', 'kelas'));
     }
 
     public function update(Request $request, Materi $materi)
     {
+        $this->authorizeGuru($materi);
+        $guru = auth()->user()->guru;
+
         $request->validate([
             'judul'             => 'required|string|max:255',
-            'deskripsi'         => 'nullable|string',
             'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
-            'kelas_id'          => 'required|exists:kelas,id',
+            'kelas_id'          => 'required|in:' . $guru->kelas_id,
             'tipe'              => 'required|in:file,link,video',
-            'link_video'        => 'nullable|url',
-            'file'              => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip|max:20480',
+            'file'              => 'nullable|file|max:20480',
         ]);
 
-        $data = $request->only([
-            'judul', 'deskripsi', 'mata_pelajaran_id', 'kelas_id', 'tipe', 'link_video',
-        ]);
+        $data = $request->only(['judul', 'deskripsi', 'mata_pelajaran_id', 'tipe', 'link_video']);
+        $data['kelas_id'] = $guru->kelas_id;
 
         if ($request->hasFile('file')) {
-            if ($materi->file) {
-                Storage::disk('public')->delete($materi->file);
-            }
+            if ($materi->file) Storage::disk('public')->delete($materi->file);
             $data['file'] = $request->file('file')->store('materi/file', 'public');
         }
 
-        // Jika tipe bukan file, kosongkan file lama
+        // Cleanup jika tipe berubah
         if ($request->tipe !== 'file' && $materi->file) {
             Storage::disk('public')->delete($materi->file);
             $data['file'] = null;
         }
-
-        // Jika tipe file, kosongkan link_video
-        if ($request->tipe === 'file') {
-            $data['link_video'] = null;
-        }
+        if ($request->tipe === 'file') $data['link_video'] = null;
 
         $materi->update($data);
-
-        return redirect()->route('guru.materi.index')
-            ->with('success', 'Materi berhasil diperbarui.');
+        return redirect()->route('guru.materi.index')->with('success', 'Materi diperbarui.');
     }
 
     public function destroy(Materi $materi)
     {
-        if ($materi->file) {
-            Storage::disk('public')->delete($materi->file);
-        }
+        $this->authorizeGuru($materi);
+        if ($materi->file) Storage::disk('public')->delete($materi->file);
         $materi->delete();
-
-        return redirect()->route('guru.materi.index')
-            ->with('success', 'Materi berhasil dihapus.');
+        return redirect()->route('guru.materi.index')->with('success', 'Materi dihapus.');
     }
 }

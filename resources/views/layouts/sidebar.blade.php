@@ -58,9 +58,6 @@
             <a href="{{ route('guru.absensi.index') }}" class="nav-item {{ request()->routeIs('guru.absensi*') ? 'active' : '' }}">
                 <i class="fas fa-clipboard-check"></i> <span>Absensi Siswa</span>
             </a>
-            <a href="{{ route('guru.forum.index') }}" class="nav-item {{ request()->routeIs('guru.forum*') ? 'active' : '' }}">
-                <i class="fas fa-comments"></i> <span>Forum Diskusi</span>
-            </a>
             <a href="{{ route('guru.mbg') }}" class="nav-item {{ request()->routeIs('guru.mbg') ? 'active' : '' }}">
                 <i class="fas fa-utensils"></i> <span>Program MBG</span>
             </a>

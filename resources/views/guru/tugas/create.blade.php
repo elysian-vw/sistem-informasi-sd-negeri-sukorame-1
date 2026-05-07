@@ -30,15 +30,19 @@
             </div>
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                {{-- BAGIAN KELAS YANG SUDAH DIKUNCI --}}
                 <div class="form-group">
                     <label>Kelas <span style="color:var(--danger);">*</span></label>
-                    <select name="kelas_id" class="form-control">
-                        <option value="">-- Pilih Kelas --</option>
+                    <select name="kelas_id" class="form-control" style="background-color: #f8f9fa; cursor: not-allowed; pointer-events: none;" readonly>
                         @foreach($kelas as $k)
-                            <option value="{{ $k->id }}" @selected(old('kelas_id')==$k->id)>{{ $k->nama_kelas }}</option>
+                            <option value="{{ $k->id }}" selected>Kelas {{ $k->nama_kelas }} (Kelas Anda)</option>
                         @endforeach
                     </select>
+                    <small style="color:var(--text-muted);font-size:11px;margin-top:4px;display:block;">
+                        * Terkunci pada kelas yang Anda ajar.
+                    </small>
                 </div>
+                
                 <div class="form-group">
                     <label>Mata Pelajaran <span style="color:var(--danger);">*</span></label>
                     <select name="mata_pelajaran_id" class="form-control">
@@ -72,7 +76,7 @@
             <div class="form-group">
                 <label>Lampiran File (opsional)</label>
                 <input type="file" name="file" class="form-control">
-                <small style="color:var(--text-muted);font-size:12px;">Maksimal 10 MB.</small>
+                <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block;">Maksimal 10 MB. (PDF, Word, Excel, PPT, dll)</small>
             </div>
 
             <div style="display:flex;gap:10px;margin-top:8px;">

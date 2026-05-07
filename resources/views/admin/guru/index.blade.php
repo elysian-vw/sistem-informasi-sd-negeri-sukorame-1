@@ -57,6 +57,7 @@
                 <tr>
                     <th>NIP</th>
                     <th>Nama</th>
+                    <th>Kelas Tugas</th>
                     <th>Mata Pelajaran</th>
                     <th>No HP</th>
                     <th>Status</th>
@@ -82,6 +83,15 @@
                                 </div>
                             </div>
                         </td>
+                        <td>
+                            @if($g->kelas_id)
+                                <span class="badge badge-success" style="background:#e0f2fe; color:#0284c7;">
+                                    Kelas {{ $g->kelas->nama_kelas ?? '-' }}
+                                </span>
+                            @else
+                                <span class="badge badge-danger">Belum diset</span>
+                            @endif
+                        </td>
                         <td>{{ $g->mata_pelajaran ?? '-' }}</td>
                         <td>{{ $g->user?->no_hp ?? '-' }}</td>
                         <td>
@@ -98,6 +108,7 @@
                                         'email'          => $g->user?->email,
                                         'no_hp'          => $g->user?->no_hp,
                                         'nip'            => $g->nip,
+                                        'kelas_id'       => $g->kelas_id,
                                         'mata_pelajaran' => $g->mata_pelajaran,
                                         'status'         => $g->status,
                                     ]) }})">
@@ -115,7 +126,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="empty-state">Belum ada data guru.</td>
+                        <td colspan="7" class="empty-state">Belum ada data guru.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -160,11 +171,32 @@
                     <small class="form-hint" id="pass-hint" style="display:none">Kosongkan jika tidak ingin mengubah password</small>
                 </div>
 
-                <div class="form-section-title" style="margin-top:16px">Data Kepegawaian</div>
+                <div class="form-section-title" style="margin-top:16px">Data Kepegawaian & Penugasan</div>
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">NIP</label>
                         <input type="text" name="nip" id="f-nip" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tugas Kelas <span class="required">*</span></label>
+                        <select name="kelas_id" id="f-kelas" class="form-control" required>
+                            <option value="">-- Pilih Kelas --</option>
+                            @foreach($kelasList as $k)
+                                <option value="{{ $k->id }}">Kelas {{ $k->nama_kelas }} ({{ $k->tingkat }})</option>
+                            @endforeach
+                        </select>
+                        <small class="form-hint">Agar guru bisa mengupload materi ke kelas ini.</small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Mata Pelajaran</label>
+                        <select name="mata_pelajaran" id="f-mapel" class="form-control">
+                            <option value="">-- Pilih --</option>
+                            @foreach($mapelList as $m)
+                                <option value="{{ $m }}">{{ $m }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Status <span class="required">*</span></label>
@@ -174,18 +206,14 @@
                         </select>
                     </div>
                 </div>
+                
+                {{-- Keterangan Upload Foto --}}
                 <div class="form-group">
-                    <label class="form-label">Mata Pelajaran</label>
-                    <select name="mata_pelajaran" id="f-mapel" class="form-control">
-                        <option value="">-- Pilih --</option>
-                        @foreach($mapelList as $m)
-                            <option value="{{ $m }}">{{ $m }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Foto</label>
-                    <input type="file" name="foto" class="form-control" accept="image/*">
+                    <label class="form-label">Upload Foto</label>
+                    <input type="file" name="foto" class="form-control" accept="image/png, image/jpeg, image/jpg">
+                    <small class="form-hint" style="color:#6b7280; margin-top:6px; display:block;">
+                        <i class="fas fa-info-circle"></i> Format yang diizinkan: JPG, JPEG, PNG. Maksimal ukuran 2MB.
+                    </small>
                 </div>
             </div>
 
@@ -207,18 +235,27 @@
         <form action="{{ route('admin.guru.import') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="modal-body">
-                <p style="font-size:13px;color:#6b7280;margin-bottom:12px">
-                    Upload file CSV dengan kolom: <strong>Nama, Email, NIP, Mata Pelajaran</strong><br>
-                    Password default: <code>12345678</code>
-                </p>
+                {{-- Keterangan Upload CSV --}}
+                <div style="background:#f3f4f6; padding:12px; border-radius:8px; margin-bottom:16px;">
+                    <p style="font-size:13px; color:#374151; margin-bottom:8px; font-weight:600;">
+                        <i class="fas fa-file-csv" style="color:#2563eb;"></i> Format File CSV:
+                    </p>
+                    <ul style="font-size:12.5px; color:#6b7280; padding-left:20px; margin-bottom:0;">
+                        <li>Kolom berurutan: <strong>Nama, Email, NIP, Mata Pelajaran</strong></li>
+                        <li>Pastikan email belum pernah terdaftar</li>
+                        <li>Password default setelah import adalah: <code>12345678</code></li>
+                        <li><span style="color:#dc2626;">Penting:</span> <strong>Tugas Kelas</strong> harus diset manual dengan mengedit profil guru setelah proses import berhasil.</li>
+                    </ul>
+                </div>
+
                 <div class="form-group">
-                    <label class="form-label">File CSV</label>
+                    <label class="form-label">Pilih File CSV</label>
                     <input type="file" name="file" class="form-control" accept=".csv" required>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="closeModal('modal-import')">Batal</button>
-                <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Import</button>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Import Data</button>
             </div>
         </form>
     </div>
@@ -227,23 +264,9 @@
 <style>
 /* Stat Row */
 .stat-row { display:flex; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
-.stat-mini {
-    background:#fff; border:1px solid #e5e7eb; border-radius:10px;
-    padding:16px 24px; min-width:160px;
-    display:flex; flex-direction:column; gap:4px;
-}
+.stat-mini { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px 24px; min-width:160px; display:flex; flex-direction:column; gap:4px; }
 .stat-mini-label { font-size:12.5px; color:#6b7280; font-weight:500; }
 .stat-mini-value { font-size:26px; font-weight:700; color:#111827; }
-
-/* Tab */
-.tab-nav { display:flex; gap:2px; margin-bottom:20px; }
-.tab-btn {
-    padding:10px 24px; border:1px solid #d1d5db;
-    border-radius:6px 6px 0 0; background:#f9fafb;
-    color:#6b7280; font-size:13.5px; font-weight:500;
-    text-decoration:none; transition:all .15s;
-}
-.tab-btn.active { background:#fff; color:#111827; border-bottom-color:#fff; font-weight:600; }
 
 /* Toolbar */
 .toolbar { display:flex; align-items:center; gap:10px; padding:16px 20px; border-bottom:1px solid #f3f4f6; flex-wrap:wrap; }
@@ -262,12 +285,7 @@
 
 .guru-info { display:flex; align-items:center; gap:10px; }
 .guru-avatar { width:36px; height:36px; border-radius:50%; object-fit:cover; }
-.guru-avatar-placeholder {
-    width:36px; height:36px; border-radius:50%;
-    background:#d1fae5; color:#065f46;
-    display:flex; align-items:center; justify-content:center;
-    font-size:14px; font-weight:700; flex-shrink:0;
-}
+.guru-avatar-placeholder { width:36px; height:36px; border-radius:50%; background:#d1fae5; color:#065f46; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0; }
 .guru-name { font-weight:500; color:#111827; font-size:13.5px; }
 .guru-email { font-size:12px; color:#9ca3af; }
 
@@ -306,7 +324,6 @@
 .required { color:#ef4444; }
 .form-control { width:100%; padding:9px 13px; border:1px solid #d1d5db; border-radius:8px; font-size:14px; color:#111827; background:#fff; box-sizing:border-box; transition:border-color .2s,box-shadow .2s; }
 .form-control:focus { outline:none; border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.1); }
-.form-hint { font-size:12px; color:#9ca3af; margin-top:4px; display:block; }
 .alert { padding:12px 16px; border-radius:8px; margin-bottom:20px; font-size:14px; display:flex; align-items:center; gap:8px; }
 .alert-success { background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; }
 </style>
@@ -320,6 +337,7 @@ function openModalTambah() {
     document.getElementById('pass-hint').style.display = 'none';
     document.getElementById('pass-req').style.display = 'inline';
     form.reset();
+    document.getElementById('f-kelas').value = ''; 
     document.getElementById('modal-guru').classList.add('show');
 }
 
@@ -335,6 +353,7 @@ function openModalEdit(guru) {
     document.getElementById('f-email').value   = guru.email ?? '';
     document.getElementById('f-nohp').value    = guru.no_hp ?? '';
     document.getElementById('f-nip').value     = guru.nip ?? '';
+    document.getElementById('f-kelas').value   = guru.kelas_id ?? ''; 
     document.getElementById('f-status').value  = guru.status ?? 'aktif';
     document.getElementById('f-mapel').value   = guru.mata_pelajaran ?? '';
     document.getElementById('f-password').value = '';

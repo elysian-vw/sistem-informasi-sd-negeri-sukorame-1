@@ -191,8 +191,11 @@ Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(f
     // Absensi
     Route::resource('absensi', AbsensiController::class);
 
-    // Nilai
-    Route::resource('nilai', NilaiController::class);
+    // ─── Nilai (Rapor) ───
+    // HAPUS Route::resource('nilai', NilaiController::class); dan ganti dengan ini:
+    Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
+    Route::get('/nilai/input/{mapel}', [NilaiController::class, 'input'])->name('nilai.input');
+    Route::post('/nilai/store/{mapel}', [NilaiController::class, 'store'])->name('nilai.store');
 
     // Materi
     Route::resource('materi', MateriController::class);
@@ -214,7 +217,6 @@ Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(f
     Route::delete('/forum/komentar/{komentar}', [GuruForum::class, 'hapusKomentar'])->name('forum.komentar.hapus');
     Route::patch('/forum/{forum}/pin',          [GuruForum::class, 'togglePin'])->name('forum.pin');
 });
-
 // ═══════════════════════════════════════════════════════════════════════════════
 // WALI MURID
 // ═══════════════════════════════════════════════════════════════════════════════
