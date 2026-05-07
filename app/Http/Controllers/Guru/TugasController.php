@@ -29,27 +29,30 @@ class TugasController extends Controller
 
         $guru = $user->guru;
 
-        // 2. Filter dropdown kelas: HANYA KELAS YANG DITUGASKAN KEPADA GURU INI
+        // Ambil data referensi untuk dropdown filter di view
+        // Cuma ambil kelas yang ditugaskan ke guru ini
         $kelas = Kelas::where('id', $guru->kelas_id)->get();
+        
+        // Cuma ambil mapel yang diampu oleh guru ini
+        $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
 
+        // QUERY UTAMA: Kunci berdasarkan guru_id DAN kelas_id si guru
         $query = Tugas::with(['kelas', 'mataPelajaran', 'pengumpulan'])
-            ->where('guru_id', $guru->id); // INI KUNCINYA
+            ->where('guru_id', $guru->id)
+            ->where('kelas_id', $guru->kelas_id);
 
-        if ($request->filled('kelas_id')) {
-            $query->where('kelas_id', $request->kelas_id);
+        // Filter tambahan kalau gurunya milih dari dropdown
+        if ($request->filled('mata_pelajaran_id')) {
+            $query->where('mata_pelajaran_id', $request->mata_pelajaran_id);
         }
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->filled('tipe')) {
-            $query->where('tipe', $request->tipe);
-        }
-
         $tugas = $query->latest()->paginate(10)->withQueryString();
 
-        return view('guru.tugas.index', compact('tugas', 'kelas'));
+        return view('guru.tugas.index', compact('tugas', 'kelas', 'mapel'));
     }
 
     // ── CREATE ────────────────────────────────────────────────────────────────
@@ -89,7 +92,7 @@ class TugasController extends Controller
             'deadline'          => 'required|date',
             'status'            => 'required|in:aktif,draft',
             'file'              => 'nullable|file|mimes:pdf,doc,docx,zip|max:5120',
-        ];
+        ]);
 
         // Validasi soal kalau tipe CBT
         if ($request->tipe === 'cbt') {

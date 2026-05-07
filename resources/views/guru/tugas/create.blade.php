@@ -107,12 +107,10 @@
                 </div>
             </div>
 
-<<<<<<< Updated upstream
             <div class="form-group">
                 <label>Lampiran File (opsional)</label>
                 <input type="file" name="file" class="form-control">
                 <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block;">Maksimal 10 MB. (PDF, Word, Excel, PPT, dll)</small>
-=======
             {{-- ── LAMPIRAN (hanya untuk tipe upload) ── --}}
             <div id="sectionUpload">
                 <div class="form-group">
@@ -120,7 +118,6 @@
                     <input type="file" name="file" class="form-control">
                     <small style="color:var(--text-muted);font-size:12px;">PDF, DOC, DOCX, ZIP. Maks 5 MB.</small>
                 </div>
->>>>>>> Stashed changes
             </div>
 
             {{-- ── SEKSI SOAL CBT ── --}}
@@ -165,8 +162,6 @@
     </div>
 </div>
 
-<<<<<<< Updated upstream
-=======
 {{-- ── TEMPLATE SOAL (hidden) ── --}}
 <template id="tmplSoal">
     <div class="soal-item" style="border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;position:relative;background:var(--bg);">
@@ -280,5 +275,4 @@ if (soalCount > 0) {
 </script>
 @endpush
 
->>>>>>> Stashed changes
 @endsection

@@ -62,7 +62,6 @@
                     
                     <div class="form-group">
                         <label class="form-label">Kelas <span class="required">*</span></label>
-                        {{-- DROPDOWN DIKUNCI AGAR TIDAK KONFLIK KELAS LAIN --}}
                         <select name="kelas_id"
                                 class="form-input @error('kelas_id') is-invalid @enderror" 
                                 style="background-color: #f8f9fa; cursor: not-allowed; pointer-events: none;" readonly>
@@ -93,11 +92,11 @@
                     </div>
                 </div>
 
-                {{-- Tipe Media (Desain Asli Kamu) --}}
+                {{-- Tipe Media (VIDEO DIHAPUS) --}}
                 <div class="form-group">
                     <label class="form-label">Format Media <span class="required">*</span></label>
                     <div class="tipe-selector">
-                        @foreach(['file' => ['label'=>'File Dokumen','icon'=>'fa-file-alt'], 'link' => ['label'=>'Tautan (Link)','icon'=>'fa-link'], 'video' => ['label'=>'Video','icon'=>'fa-play-circle']] as $val => $cfg)
+                        @foreach(['file' => ['label'=>'File Dokumen','icon'=>'fa-file-alt'], 'link' => ['label'=>'Tautan (Link)','icon'=>'fa-link']] as $val => $cfg)
                         <label class="tipe-option {{ old('format_media', 'file') == $val ? 'active' : '' }}" for="format_{{ $val }}">
                             <input type="radio" name="format_media" id="format_{{ $val }}" value="{{ $val }}"
                                    {{ old('format_media', 'file') == $val ? 'checked' : '' }}
@@ -109,7 +108,7 @@
                     </div>
                 </div>
 
-                {{-- Input File (Desain Asli Kamu) --}}
+                {{-- Input File --}}
                 <div id="input-file" class="form-group">
                     <label class="form-label">Upload File</label>
                     <div class="file-drop-area">
@@ -127,9 +126,9 @@
                     @error('file') <div class="form-error" style="color:red; font-size:12px; margin-top:4px;">{{ $message }}</div> @enderror
                 </div>
 
-                {{-- Input Link/Video (Desain Asli Kamu) --}}
+                {{-- Input Link --}}
                 <div id="input-link" class="form-group" style="display:none;">
-                    <label class="form-label" id="link-label">URL Tautan</label>
+                    <label class="form-label">URL Tautan</label>
                     <div style="position:relative;">
                         <i class="fas fa-link" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px;"></i>
                         <input type="url" name="link_video" value="{{ old('link_video') }}"
@@ -151,7 +150,7 @@
         </div>
     </form>
 
-    {{-- Panduan (Desain Asli Kamu) --}}
+    {{-- Panduan --}}
     <div class="content-card" style="position:sticky;top:20px;">
         <div class="card-header">
             <h3><i class="fas fa-info-circle" style="color:var(--primary);margin-right:8px;"></i>Panduan</h3>
@@ -167,21 +166,12 @@
                 </div>
             </div>
             <div class="guide-item">
-                <div class="guide-icon" style="background:#fce8e6;color:var(--danger,#d93025);">
+                <div class="guide-icon" style="background:#fce8e6;color:var(--danger);">
                     <i class="fas fa-link"></i>
                 </div>
                 <div>
                     <div style="font-weight:600;font-size:13px;margin-bottom:2px;">Tautan (Link)</div>
-                    <div style="font-size:12px;color:var(--text-muted);">Tautkan Google Drive, Docs, dll.</div>
-                </div>
-            </div>
-            <div class="guide-item">
-                <div class="guide-icon" style="background:#fef3e2;color:var(--orange);">
-                    <i class="fas fa-play-circle"></i>
-                </div>
-                <div>
-                    <div style="font-weight:600;font-size:13px;margin-bottom:2px;">Video</div>
-                    <div style="font-size:12px;color:var(--text-muted);">Tautkan YouTube atau platform lain.</div>
+                    <div style="font-size:12px;color:var(--text-muted);">Tautkan Google Drive, Docs, atau web lain.</div>
                 </div>
             </div>
         </div>
@@ -191,28 +181,23 @@
 
 @push('scripts')
 <script>
-// Fungsi Asli Kamu untuk Tipe Media
 function toggleTipeInput(radio) {
     const tipe = radio.value;
     const fileDiv = document.getElementById('input-file');
     const linkDiv = document.getElementById('input-link');
-    const linkLabel = document.getElementById('link-label');
 
     fileDiv.style.display = tipe === 'file' ? 'block' : 'none';
-    linkDiv.style.display = tipe !== 'file' ? 'block' : 'none';
-    linkLabel.textContent = tipe === 'video' ? 'URL Video (YouTube, dll)' : 'URL Tautan';
+    linkDiv.style.display = tipe === 'link' ? 'block' : 'none';
 
     document.querySelectorAll('.tipe-option').forEach(l => l.classList.remove('active'));
     radio.closest('.tipe-option').classList.add('active');
 }
 
-// Menampilkan Nama File
 function showFileName(input) {
     const display = document.getElementById('file-name');
     display.textContent = input.files[0] ? '📎 ' + input.files[0].name : '';
 }
 
-// Logika memunculkan Deadline jika memilih Tugas/Ujian
 document.getElementById('tipeKategori').addEventListener('change', function() {
     document.getElementById('deadlineBox').style.display = this.value === 'materi' ? 'none' : 'block';
 });

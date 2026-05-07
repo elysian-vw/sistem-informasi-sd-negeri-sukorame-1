@@ -95,26 +95,63 @@ class TugasController extends Controller
     
     public function simpanCBT(Request $request, Tugas $tugas)
     {
-        $siswa = $this->getSiswa();
+        $siswa       = $this->getSiswa();
         $pertanyaans = $tugas->pertanyaans;
-        
-        $benar = 0;
-        foreach ($pertanyaans as $p) {
-            $jawaban = $request->input('jawaban_' . $p->id);
-            if ($jawaban === $p->jawaban_benar) $benar++;
+    
+        // Cegah submit ulang
+        $sudahAda = \App\Models\PengumpulanTugas::where('tugas_id', $tugas->id)
+            ->where('siswa_id', $siswa->id)
+            ->exists();
+    
+        if ($sudahAda) {
+            return response()->json(['error' => 'Kamu sudah mengerjakan soal ini.'], 422);
         }
-        
-        $nilai = round($benar / $pertanyaans->count() * 100);
-        
-        PengumpulanTugas::updateOrCreate(
-            ['tugas_id' => $tugas->id, 'siswa_id' => $siswa->id],
-            [
-                'nilai'          => $nilai,
-                'dikumpulkan_at' => now(),
-                'status'         => $tugas->isTerlambat() ? 'terlambat' : 'tepat_waktu',
-            ]
-        );
-        
-        return response()->json(['nilai' => $nilai, 'benar' => $benar]);
+    
+        $benar = 0;
+    
+        \Illuminate\Support\Facades\DB::transaction(function () use (
+            $request, $tugas, $siswa, $pertanyaans, &$benar
+        ) {
+            foreach ($pertanyaans as $p) {
+                $jawaban  = strtoupper($request->input('jawaban_' . $p->id) ?? '');
+                $isBenar  = $jawaban === $p->jawaban_benar;
+                if ($isBenar) $benar++;
+    
+                // Simpan jawaban per soal (untuk rekap guru)
+                \App\Models\JawabanCbt::updateOrCreate(
+                    [
+                        'tugas_id'      => $tugas->id,
+                        'siswa_id'      => $siswa->id,
+                        'pertanyaan_id' => $p->id,
+                    ],
+                    [
+                        'jawaban'  => $jawaban ?: null,
+                        'is_benar' => $isBenar,
+                    ]
+                );
+            }
+    
+            $total = $pertanyaans->count();
+            $nilai = $total > 0 ? round($benar / $total * 100) : 0;
+    
+            \App\Models\PengumpulanTugas::updateOrCreate(
+                ['tugas_id' => $tugas->id, 'siswa_id' => $siswa->id],
+                [
+                    'nilai'          => $nilai,
+                    'dikumpulkan_at' => now(),
+                    'status'         => $tugas->isTerlambat() ? 'terlambat' : 'tepat_waktu',
+                ]
+            );
+        });
+    
+        $nilai = $pertanyaans->count() > 0
+            ? round($benar / $pertanyaans->count() * 100)
+            : 0;
+    
+        return response()->json([
+            'nilai' => $nilai,
+            'benar' => $benar,
+            'total' => $pertanyaans->count(),
+        ]);
     }
 }

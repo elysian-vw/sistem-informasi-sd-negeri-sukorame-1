@@ -46,6 +46,7 @@ use App\Http\Controllers\Siswa\{
     AbsensiController as SiswaAbsensi
 };
 
+
 // ─── PUBLIC CONTROLLERS ───────────────────────────────────────────────────────
 use App\Http\Controllers\Public\ProfilController;
 use App\Http\Controllers\Public\AkademikController;
@@ -254,9 +255,13 @@ Route::prefix('siswa')->name('siswa.')->middleware(['auth', 'role:siswa'])->grou
     Route::get('/materi/{materi}', [SiswaMateri::class, 'show'])->name('materi.show');
 
     // Tugas
-    Route::get('/tugas',                    [SiswaTugas::class, 'index'])->name('tugas.index');
-    Route::get('/tugas/{tugas}',            [SiswaTugas::class, 'show'])->name('tugas.show');
-    Route::post('/tugas/{tugas}/kumpulkan', [SiswaTugas::class, 'kumpulkan'])->name('tugas.kumpulkan');
+    Route::get('/tugas',                     [SiswaTugas::class, 'index'])->name('tugas.index');
+    Route::get('/tugas/{tugas}',             [SiswaTugas::class, 'show'])->name('tugas.show');
+    Route::post('/tugas/{tugas}/kumpulkan',  [SiswaTugas::class, 'kumpulkan'])->name('tugas.kumpulkan');
+    
+    // PERBAIKAN DI SINI: Pakai SiswaTugas, bukan TugasController!
+    Route::get('/tugas/{tugas}/kerjakan',    [SiswaTugas::class, 'kerjakan'])->name('tugas.kerjakan');
+    Route::post('/tugas/{tugas}/simpan-cbt', [SiswaTugas::class, 'simpanCBT'])->name('tugas.simpanCBT');
 
     // Absensi
     Route::get('/absensi', [SiswaAbsensi::class, 'index'])->name('absensi.index');
