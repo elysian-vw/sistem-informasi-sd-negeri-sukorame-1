@@ -1,38 +1,72 @@
 <?php
+
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
 use App\Models\{Absensi, Kelas, Siswa};
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class AbsensiController extends Controller
 {
-    public function index()
+    // Halaman utama absensi (menampilkan form input massal berdasarkan tanggal)
+    public function index(Request $request)
     {
         $guru = auth()->user()->guru;
-        $kelas = Kelas::where('wali_kelas_id', auth()->id())->with('siswa')->get();
-        $absensi = Absensi::whereHas('kelas', fn($q) =>
-            $q->where('wali_kelas_id', auth()->id())
-        )->latest()->paginate(20);
+        
+        if (!$guru->kelas_id) {
+            return back()->with('error', 'Anda belum ditugaskan ke kelas manapun. Hubungi Admin.');
+        }
 
-        return view('guru.absensi.index', compact('kelas', 'absensi'));
+        $kelas = Kelas::find($guru->kelas_id);
+        
+        // Ambil tanggal dari request, jika kosong gunakan hari ini
+        $tanggal = $request->input('tanggal', Carbon::today()->toDateString());
+        
+        // Ambil semua siswa di kelas ini
+        $siswaKelas = Siswa::where('kelas_id', $kelas->id)->orderBy('nama_lengkap')->get();
+
+        // Ambil data absensi yang sudah ada pada tanggal tersebut
+        $absensiHariIni = Absensi::where('kelas_id', $kelas->id)
+            ->where('tanggal', $tanggal)
+            ->get()
+            ->keyBy('siswa_id');
+
+        return view('guru.absensi.index', compact('kelas', 'siswaKelas', 'tanggal', 'absensiHariIni'));
     }
 
+    // Proses menyimpan data absensi seluruh siswa
     public function store(Request $request)
     {
+        $guru = auth()->user()->guru;
+
         $request->validate([
-            'kelas_id'  => 'required|exists:kelas,id',
-            'tanggal'   => 'required|date',
-            'absensi'   => 'required|array',
+            'tanggal'      => 'required|date',
+            'status'       => 'required|array',
+            'status.*'     => 'in:hadir,sakit,izin,alpha',
+            'keterangan'   => 'nullable|array',
+            'keterangan.*' => 'nullable|string|max:255',
         ]);
 
-        foreach ($request->absensi as $siswaId => $status) {
+        $tanggal = $request->tanggal;
+
+        foreach ($request->status as $siswaId => $status) {
+            // Gunakan updateOrCreate agar tidak ada data ganda pada hari yang sama
             Absensi::updateOrCreate(
-                ['siswa_id' => $siswaId, 'tanggal' => $request->tanggal, 'kelas_id' => $request->kelas_id],
-                ['status' => $status, 'keterangan' => $request->keterangan[$siswaId] ?? null]
+                [
+                    'siswa_id' => $siswaId,
+                    'kelas_id' => $guru->kelas_id,
+                    'tanggal'  => $tanggal,
+                ],
+                [
+                    'status'     => $status,
+                    'keterangan' => $request->keterangan[$siswaId] ?? null,
+                ]
             );
         }
 
-        return back()->with('success', 'Absensi berhasil disimpan.');
+        $tanggalFormat = Carbon::parse($tanggal)->translatedFormat('d F Y');
+        return redirect()->route('guru.absensi.index', ['tanggal' => $tanggal])
+                         ->with('success', "Absensi tanggal $tanggalFormat berhasil disimpan.");
     }
 }

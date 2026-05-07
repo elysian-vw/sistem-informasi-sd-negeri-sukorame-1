@@ -9,15 +9,15 @@ class Materi extends Model
     protected $table = 'materi';
 
     protected $fillable = [
-        'judul',
-        'deskripsi',
-        'file',
-        'link_video',
-        'kelas_id', // Tambahin ini!
-        'mata_pelajaran_id',
-        'guru_id',
-        'tipe',
-        'deadline',
+        'judul', 
+        'deskripsi', 
+        'file', 
+        'link_video', 
+        'mata_pelajaran_id', 
+        'guru_id', 
+        'kelas_id', 
+        'tipe', 
+        'deadline'
     ];
 
     protected $casts = [

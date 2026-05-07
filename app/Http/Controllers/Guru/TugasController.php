@@ -28,16 +28,14 @@ class TugasController extends Controller
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
 
-        $guruId = $user->guru->id;
+        $guru = $user->guru;
 
-        // 2. Filter dropdown kelas: Cuma kelas yang diajar guru ini
-        $kelas = Kelas::whereHas('mataPelajaran', function($query) use ($guruId) {
-            $query->where('guru_id', $guruId);
-        })->orderBy('nama_kelas')->get();
+        // 2. Filter dropdown kelas: HANYA KELAS YANG DITUGASKAN KEPADA GURU INI
+        $kelas = Kelas::where('id', $guru->kelas_id)->get();
 
         // 3. Ambil tugas: PAKSA filter berdasarkan guru_id
         $query = Tugas::with(['kelas', 'mataPelajaran', 'pengumpulan'])
-            ->where('guru_id', $guruId); // INI KUNCINYA
+            ->where('guru_id', $guru->id); // INI KUNCINYA
 
         // Filter tambahan dari form
         if ($request->filled('kelas_id')) {
@@ -56,20 +54,37 @@ class TugasController extends Controller
     public function create()
     {
         $guru  = auth()->user()->guru;
+
+        // PROTEKSI: Jika Admin belum menset kelas untuk guru ini
+        if (!$guru->kelas_id) {
+            return redirect()->route('guru.tugas.index')
+                ->with('error', 'Anda belum ditugaskan ke kelas manapun. Silakan hubungi Admin untuk mengatur Tugas Kelas Anda.');
+        }
+
         $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
-        $kelas = Kelas::orderBy('nama_kelas')->get();
+        
+        // Ambil kelas yang HANYA diajar oleh guru ini
+        $kelas = Kelas::where('id', $guru->kelas_id)->get();
 
         return view('guru.tugas.create', compact('mapel', 'kelas'));
     }
 
     public function store(Request $request)
     {
+        $guru = auth()->user()->guru;
+
+        // Proteksi ganda di bagian simpan
+        if (!$guru->kelas_id) {
+            return redirect()->back()->with('error', 'Tugas kelas Anda belum diatur.');
+        }
+
         $request->validate([
             'judul'             => 'required|string|max:255',
             'deskripsi'         => 'required',
             'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
-            'kelas_id'          => 'required|exists:kelas,id',
+            'kelas_id'          => 'required|in:' . $guru->kelas_id, // Kunci validasi harus sesuai kelas guru
             'deadline'          => 'required|date',
+            'status'            => 'required|in:aktif,draft',
             'file'              => 'nullable|file|mimes:pdf,doc,docx,zip|max:5120',
         ]);
 
@@ -82,16 +97,15 @@ class TugasController extends Controller
             'judul'             => $request->judul,
             'deskripsi'         => $request->deskripsi,
             'mata_pelajaran_id' => $request->mata_pelajaran_id,
-            'kelas_id'          => $request->kelas_id,
-            'guru_id'           => auth()->user()->guru->id,
+            'kelas_id'          => $guru->kelas_id, // Kunci otomatis pakai data dari profil Guru
+            'guru_id'           => $guru->id,
             'deadline'          => $request->deadline,
+            'status'            => $request->status,
             'file'              => $filePath,
         ]);
 
         return redirect()->route('guru.tugas.index')->with('success', 'Tugas berhasil dibuat.');
     }
-
-    
 
     public function show(Tugas $tugas)
     {
@@ -110,10 +124,8 @@ class TugasController extends Controller
         // Cuma ambil mapel yang emang diajar sama guru ini
         $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
 
-        // Cuma ambil kelas yang ada hubungannya sama mapel si guru ini
-        $kelas = Kelas::whereHas('mataPelajaran', function($query) use ($guru) {
-            $query->where('guru_id', $guru->id);
-        })->orderBy('nama_kelas')->get();
+        // Cuma ambil kelas yang ditugaskan ke guru ini
+        $kelas = Kelas::where('id', $guru->kelas_id)->get();
 
         return view('guru.tugas.edit', compact('tugas', 'mapel', 'kelas'));
     }
@@ -122,13 +134,16 @@ class TugasController extends Controller
     {
         // Pastiin lagi ini tugas dia
         $this->authorize_guru($tugas);
+        
+        $guru = auth()->user()->guru;
 
         $request->validate([
             'judul'             => 'required|string|max:255',
             'deskripsi'         => 'required',
             'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
-            'kelas_id'          => 'required|exists:kelas,id',
+            'kelas_id'          => 'required|in:' . $guru->kelas_id, // Kunci validasi
             'deadline'          => 'required|date',
+            'status'            => 'required|in:aktif,draft',
             'file'              => 'nullable|file|mimes:pdf,doc,docx,zip|max:5120',
         ]);
 
@@ -136,8 +151,9 @@ class TugasController extends Controller
             'judul'             => $request->judul,
             'deskripsi'         => $request->deskripsi,
             'mata_pelajaran_id' => $request->mata_pelajaran_id,
-            'kelas_id'          => $request->kelas_id,
+            'kelas_id'          => $guru->kelas_id, // Tetap dikunci saat update
             'deadline'          => $request->deadline,
+            'status'            => $request->status,
         ];
 
         // Urusan file, jangan sampe numpuk di storage

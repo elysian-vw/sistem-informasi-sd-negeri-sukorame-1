@@ -15,7 +15,7 @@ class GuruController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Guru::with('user');
+        $query = Guru::with(['user', 'kelas']); // Load relasi kelas
 
         if ($request->filled('cari')) {
             $query->whereHas('user', function ($q) use ($request) {
@@ -43,6 +43,7 @@ class GuruController extends Controller
             'email'          => 'required|email|unique:users,email',
             'password'       => 'nullable|string|min:6',
             'nip'            => 'nullable|string|max:30|unique:guru,nip',
+            'kelas_id'       => 'required|exists:kelas,id', // Validasi kelas wajib ada
             'mata_pelajaran' => 'nullable|string|max:255',
             'status'         => 'required|in:aktif,tidak_aktif',
             'no_hp'          => 'nullable|string|max:20',
@@ -66,13 +67,14 @@ class GuruController extends Controller
 
             Guru::create([
                 'user_id'        => $user->id,
+                'kelas_id'       => $request->kelas_id, // Simpan kelas_id
                 'nip'            => $request->nip,
                 'mata_pelajaran' => $request->mata_pelajaran,
                 'status'         => $request->status,
             ]);
         });
 
-        return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil ditambahkan.');
+        return redirect()->route('admin.guru.index')->with('success', 'Data guru dan kelas tugas berhasil ditambahkan.');
     }
 
     public function update(Request $request, Guru $guru)
@@ -81,6 +83,7 @@ class GuruController extends Controller
             'name'           => 'required|string|max:255',
             'email'          => 'required|email|unique:users,email,' . $guru->user_id,
             'nip'            => 'nullable|string|max:30|unique:guru,nip,' . $guru->id,
+            'kelas_id'       => 'required|exists:kelas,id', // Validasi kelas saat edit
             'mata_pelajaran' => 'nullable|string|max:255',
             'status'         => 'required|in:aktif,tidak_aktif',
             'no_hp'          => 'nullable|string|max:20',
@@ -107,6 +110,7 @@ class GuruController extends Controller
 
             $guru->update([
                 'nip'            => $request->nip,
+                'kelas_id'       => $request->kelas_id, // Update kelas_id
                 'mata_pelajaran' => $request->mata_pelajaran,
                 'status'         => $request->status,
             ]);
@@ -128,7 +132,7 @@ class GuruController extends Controller
 
     public function export()
     {
-        $guru = Guru::with('user')->orderByDesc('id')->get();
+        $guru = Guru::with(['user', 'kelas'])->orderByDesc('id')->get();
 
         $headers = [
             'Content-Type'        => 'text/csv',
@@ -137,13 +141,14 @@ class GuruController extends Controller
 
         $callback = function () use ($guru) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Nama', 'Email', 'No HP', 'NIP', 'Mata Pelajaran', 'Status']);
+            fputcsv($file, ['Nama', 'Email', 'No HP', 'NIP', 'Kelas Tugas', 'Mata Pelajaran', 'Status']);
             foreach ($guru as $g) {
                 fputcsv($file, [
                     $g->user?->name,
                     $g->user?->email,
                     $g->user?->no_hp,
                     $g->nip,
+                    $g->kelas?->nama_kelas ?? '-', // Tambahan pada export
                     $g->mata_pelajaran,
                     $g->status,
                 ]);
@@ -179,6 +184,7 @@ class GuruController extends Controller
                     ]);
                     Guru::create([
                         'user_id'        => $user->id,
+                        'kelas_id'       => null, // Diisi manual oleh admin setelah import
                         'nip'            => trim($nip),
                         'mata_pelajaran' => trim($mapel),
                         'status'         => 'aktif',
@@ -191,6 +197,6 @@ class GuruController extends Controller
         }
 
         return redirect()->route('admin.guru.index')
-            ->with('success', "Import selesai: {$berhasil} berhasil, {$gagal} gagal.");
+            ->with('success', "Import selesai: {$berhasil} berhasil, {$gagal} gagal. (Pastikan untuk mengedit kelas tugas pada guru yang diimport).");
     }
 }
