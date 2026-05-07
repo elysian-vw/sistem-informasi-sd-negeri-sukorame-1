@@ -52,4 +52,9 @@ class Tugas extends Model
     {
         return $this->deadline && now()->gt($this->deadline);
     }
+
+    public function pertanyaans()
+    {
+        return $this->hasMany(Pertanyaan::class);
+    }
 }

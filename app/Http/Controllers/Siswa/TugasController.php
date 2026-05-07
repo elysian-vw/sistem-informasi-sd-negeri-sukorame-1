@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Siswa;
 use App\Http\Controllers\Controller;
 use App\Models\{Tugas, PengumpulanTugas};
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class TugasController extends Controller
 {
@@ -14,31 +13,31 @@ class TugasController extends Controller
         return auth()->user()->siswa;
     }
 
-    // ── DAFTAR TUGAS SISWA ────────────────────────────────────────────────────
+    // ── DAFTAR TUGAS AKTIF (belum dikumpulkan & belum expired) ────────────────
     public function index(Request $request)
     {
         $siswa = $this->getSiswa();
 
-        $query = Tugas::with(['mataPelajaran', 'guru.user'])
+        // 1. Ambil ID tugas yang SUDAH dikumpulkan (biar bisa kita sembunyikan)
+        $sudahKumpul = PengumpulanTugas::where('siswa_id', $siswa->id)
+            ->pluck('tugas_id');
+
+        // 2. Query Tugas
+        $tugas = Tugas::with(['mataPelajaran', 'guru.user'])
             ->where('kelas_id', $siswa->kelas_id)
-            ->where('status', '!=', 'draft');
+            ->where('status', 'aktif') // Hanya yang statusnya aktif
+            ->whereNotIn('id', $sudahKumpul) // Sembunyikan yang sudah dikerjakan
+            ->where(function ($q) {
+                // Sembunyikan yang sudah lewat deadline
+                // (Hanya tampilkan jika deadline null ATAU deadline masih di masa depan)
+                $q->whereNull('deadline')
+                ->orWhere('deadline', '>', now()); 
+            })
+            ->latest()
+            ->paginate(12)
+            ->withQueryString();
 
-        if ($request->filled('status_kumpul')) {
-            $sudahKumpul = PengumpulanTugas::where('siswa_id', $siswa->id)->pluck('tugas_id');
-            if ($request->status_kumpul === 'sudah') {
-                $query->whereIn('id', $sudahKumpul);
-            } else {
-                $query->whereNotIn('id', $sudahKumpul);
-            }
-        }
-
-        $tugas = $query->latest()->paginate(10)->withQueryString();
-
-        // Tandai mana yang sudah dikumpulkan
-        $dikumpulkan = PengumpulanTugas::where('siswa_id', $siswa->id)
-            ->pluck('siswa_id', 'tugas_id');
-
-        return view('siswa.tugas.index', compact('tugas', 'dikumpulkan', 'siswa'));
+        return view('siswa.tugas.index', compact('tugas', 'siswa'));
     }
 
     // ── DETAIL & KUMPULKAN TUGAS ──────────────────────────────────────────────
@@ -75,20 +74,47 @@ class TugasController extends Controller
             $filePath = $request->file('file')->store('tugas/pengumpulan', 'public');
         }
 
-        $status = 'tepat_waktu';
-        if ($tugas->deadline && now()->gt($tugas->deadline)) {
-            $status = 'terlambat';
-        }
-
         PengumpulanTugas::create([
             'tugas_id'        => $tugas->id,
             'siswa_id'        => $siswa->id,
             'file'            => $filePath,
             'catatan'         => $request->catatan,
             'dikumpulkan_at'  => now(),
-            'status'          => $status,
+            'status'          => 'tepat_waktu',
         ]);
 
-        return back()->with('success', 'Tugas berhasil dikumpulkan.');
+        return back()->with('success', 'Yeay! Tugas berhasil dikumpulkan! 🎉');
+    }
+
+    public function kerjakan(Tugas $tugas) {
+    // Ambil soal secara acak biar anak-anak nggak nyontek (opsional)
+        $pertanyaan = $tugas->pertanyaans()->inRandomOrder()->get();
+        
+        return view('siswa.tugas.kerjakan_cbt', compact('tugas', 'pertanyaan'));
+    }
+    
+    public function simpanCBT(Request $request, Tugas $tugas)
+    {
+        $siswa = $this->getSiswa();
+        $pertanyaans = $tugas->pertanyaans;
+        
+        $benar = 0;
+        foreach ($pertanyaans as $p) {
+            $jawaban = $request->input('jawaban_' . $p->id);
+            if ($jawaban === $p->jawaban_benar) $benar++;
+        }
+        
+        $nilai = round($benar / $pertanyaans->count() * 100);
+        
+        PengumpulanTugas::updateOrCreate(
+            ['tugas_id' => $tugas->id, 'siswa_id' => $siswa->id],
+            [
+                'nilai'          => $nilai,
+                'dikumpulkan_at' => now(),
+                'status'         => $tugas->isTerlambat() ? 'terlambat' : 'tepat_waktu',
+            ]
+        );
+        
+        return response()->json(['nilai' => $nilai, 'benar' => $benar]);
     }
 }
