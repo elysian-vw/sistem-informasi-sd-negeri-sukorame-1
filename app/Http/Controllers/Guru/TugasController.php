@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Tugas, PengumpulanTugas, Kelas, MataPelajaran};
+use App\Models\{Tugas, Pertanyaan, PengumpulanTugas, Kelas, MataPelajaran};
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\{Storage, DB};
 
 class TugasController extends Controller
 {
-    // Cek kepemilikan tugas biar nggak diacak-acak orang lain
+    // ── Auth helper ───────────────────────────────────────────────────────────
     private function authorize_guru(Tugas $tugas)
     {
         $guruId = auth()->user()->guru->id;
@@ -18,28 +18,32 @@ class TugasController extends Controller
         }
     }
 
+    // ── INDEX ─────────────────────────────────────────────────────────────────
     public function index(Request $request)
     {
-        // 1. Ambil data guru dari user yang login
         $user = auth()->user();
-        
-        // Pastikan user ini punya relasi ke table guru
+
         if (!$user->guru) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
 
         $guru = $user->guru;
 
-        // 2. Filter dropdown kelas: HANYA KELAS YANG DITUGASKAN KEPADA GURU INI
+        // Ambil data referensi untuk dropdown filter di view
+        // Cuma ambil kelas yang ditugaskan ke guru ini
         $kelas = Kelas::where('id', $guru->kelas_id)->get();
+        
+        // Cuma ambil mapel yang diampu oleh guru ini
+        $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
 
-        // 3. Ambil tugas: PAKSA filter berdasarkan guru_id
+        // QUERY UTAMA: Kunci berdasarkan guru_id DAN kelas_id si guru
         $query = Tugas::with(['kelas', 'mataPelajaran', 'pengumpulan'])
-            ->where('guru_id', $guru->id); // INI KUNCINYA
+            ->where('guru_id', $guru->id)
+            ->where('kelas_id', $guru->kelas_id);
 
-        // Filter tambahan dari form
-        if ($request->filled('kelas_id')) {
-            $query->where('kelas_id', $request->kelas_id);
+        // Filter tambahan kalau gurunya milih dari dropdown
+        if ($request->filled('mata_pelajaran_id')) {
+            $query->where('mata_pelajaran_id', $request->mata_pelajaran_id);
         }
 
         if ($request->filled('status')) {
@@ -48,9 +52,10 @@ class TugasController extends Controller
 
         $tugas = $query->latest()->paginate(10)->withQueryString();
 
-        return view('guru.tugas.index', compact('tugas', 'kelas'));
+        return view('guru.tugas.index', compact('tugas', 'kelas', 'mapel'));
     }
-    
+
+    // ── CREATE ────────────────────────────────────────────────────────────────
     public function create()
     {
         $guru  = auth()->user()->guru;
@@ -69,6 +74,7 @@ class TugasController extends Controller
         return view('guru.tugas.create', compact('mapel', 'kelas'));
     }
 
+    // ── STORE ─────────────────────────────────────────────────────────────────
     public function store(Request $request)
     {
         $guru = auth()->user()->guru;
@@ -87,6 +93,20 @@ class TugasController extends Controller
             'status'            => 'required|in:aktif,draft',
             'file'              => 'nullable|file|mimes:pdf,doc,docx,zip|max:5120',
         ]);
+
+        // Validasi soal kalau tipe CBT
+        if ($request->tipe === 'cbt') {
+            $rules['soal']                 = 'required|array|min:1';
+            $rules['soal.*.soal']          = 'required|string';
+            $rules['soal.*.pilihan_a']     = 'required|string|max:255';
+            $rules['soal.*.pilihan_b']     = 'required|string|max:255';
+            $rules['soal.*.pilihan_c']     = 'required|string|max:255';
+            $rules['soal.*.pilihan_d']     = 'required|string|max:255';
+            $rules['soal.*.jawaban_benar'] = 'required|in:A,B,C,D';
+            $rules['soal.*.gambar_soal']   = 'nullable|image|max:2048';
+        }
+
+        $request->validate($rules);
 
         $filePath = null;
         if ($request->hasFile('file')) {
@@ -114,30 +134,31 @@ class TugasController extends Controller
         return view('guru.tugas.show', compact('tugas'));
     }
 
+    // ── EDIT ──────────────────────────────────────────────────────────────────
     public function edit(Tugas $tugas)
     {
-        // Cek dulu, jangan asal masuk!
         $this->authorize_guru($tugas);
-        
-        $guru  = auth()->user()->guru;
 
-        // Cuma ambil mapel yang emang diajar sama guru ini
+        $guru  = auth()->user()->guru;
         $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
 
         // Cuma ambil kelas yang ditugaskan ke guru ini
         $kelas = Kelas::where('id', $guru->kelas_id)->get();
 
+        // Load soal kalau CBT
+        $tugas->load('pertanyaans');
+
         return view('guru.tugas.edit', compact('tugas', 'mapel', 'kelas'));
     }
 
+    // ── UPDATE ────────────────────────────────────────────────────────────────
     public function update(Request $request, Tugas $tugas)
     {
-        // Pastiin lagi ini tugas dia
         $this->authorize_guru($tugas);
         
         $guru = auth()->user()->guru;
 
-        $request->validate([
+        $rules = [
             'judul'             => 'required|string|max:255',
             'deskripsi'         => 'required',
             'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
@@ -145,7 +166,9 @@ class TugasController extends Controller
             'deadline'          => 'required|date',
             'status'            => 'required|in:aktif,draft',
             'file'              => 'nullable|file|mimes:pdf,doc,docx,zip|max:5120',
-        ]);
+        ];
+
+        $request->validate($rules);
 
         $data = [
             'judul'             => $request->judul,
@@ -156,9 +179,7 @@ class TugasController extends Controller
             'status'            => $request->status,
         ];
 
-        // Urusan file, jangan sampe numpuk di storage
         if ($request->hasFile('file')) {
-            // Kalau ada file lama, hapus aja, menuh-menuhin disk doang
             if ($tugas->file) {
                 Storage::disk('public')->delete($tugas->file);
             }
@@ -170,7 +191,116 @@ class TugasController extends Controller
         return redirect()->route('guru.tugas.index')->with('success', 'Tugas berhasil diupdate.');
     }
 
-    // ── HALAMAN PENILAIAN TUGAS ───────────────────────────────────────────────
+    // ── MANAJEMEN SOAL CBT ────────────────────────────────────────────────────
+
+    /**
+     * Halaman daftar & kelola soal CBT
+     */
+    public function soal(Tugas $tugas)
+    {
+        $this->authorize_guru($tugas);
+
+        if (!$tugas->isCbt()) {
+            return redirect()->route('guru.tugas.index')
+                ->with('error', 'Tugas ini bukan tipe CBT.');
+        }
+
+        $pertanyaans = $tugas->pertanyaans()->orderBy('id')->get();
+
+        return view('guru.tugas.soal', compact('tugas', 'pertanyaans'));
+    }
+
+    /**
+     * Simpan soal baru ke tugas CBT yang sudah ada
+     */
+    public function storeSoal(Request $request, Tugas $tugas)
+    {
+        $this->authorize_guru($tugas);
+
+        $request->validate([
+            'soal'          => 'required|string',
+            'pilihan_a'     => 'required|string|max:255',
+            'pilihan_b'     => 'required|string|max:255',
+            'pilihan_c'     => 'required|string|max:255',
+            'pilihan_d'     => 'required|string|max:255',
+            'jawaban_benar' => 'required|in:A,B,C,D',
+            'gambar_soal'   => 'nullable|image|max:2048',
+        ]);
+
+        $gambarPath = null;
+        if ($request->hasFile('gambar_soal')) {
+            $gambarPath = $request->file('gambar_soal')->store('tugas/gambar-soal', 'public');
+        }
+
+        Pertanyaan::create([
+            'tugas_id'      => $tugas->id,
+            'soal'          => $request->soal,
+            'gambar_soal'   => $gambarPath,
+            'pilihan_a'     => $request->pilihan_a,
+            'pilihan_b'     => $request->pilihan_b,
+            'pilihan_c'     => $request->pilihan_c,
+            'pilihan_d'     => $request->pilihan_d,
+            'jawaban_benar' => strtoupper($request->jawaban_benar),
+        ]);
+
+        return back()->with('success', 'Soal berhasil ditambahkan.');
+    }
+
+    /**
+     * Update soal CBT
+     */
+    public function updateSoal(Request $request, Tugas $tugas, Pertanyaan $pertanyaan)
+    {
+        $this->authorize_guru($tugas);
+
+        $request->validate([
+            'soal'          => 'required|string',
+            'pilihan_a'     => 'required|string|max:255',
+            'pilihan_b'     => 'required|string|max:255',
+            'pilihan_c'     => 'required|string|max:255',
+            'pilihan_d'     => 'required|string|max:255',
+            'jawaban_benar' => 'required|in:A,B,C,D',
+            'gambar_soal'   => 'nullable|image|max:2048',
+        ]);
+
+        $data = [
+            'soal'          => $request->soal,
+            'pilihan_a'     => $request->pilihan_a,
+            'pilihan_b'     => $request->pilihan_b,
+            'pilihan_c'     => $request->pilihan_c,
+            'pilihan_d'     => $request->pilihan_d,
+            'jawaban_benar' => strtoupper($request->jawaban_benar),
+        ];
+
+        if ($request->hasFile('gambar_soal')) {
+            if ($pertanyaan->gambar_soal) {
+                Storage::disk('public')->delete($pertanyaan->gambar_soal);
+            }
+            $data['gambar_soal'] = $request->file('gambar_soal')->store('tugas/gambar-soal', 'public');
+        }
+
+        $pertanyaan->update($data);
+
+        return back()->with('success', 'Soal berhasil diperbarui.');
+    }
+
+    /**
+     * Hapus soal CBT
+     */
+    public function destroySoal(Tugas $tugas, Pertanyaan $pertanyaan)
+    {
+        $this->authorize_guru($tugas);
+
+        if ($pertanyaan->gambar_soal) {
+            Storage::disk('public')->delete($pertanyaan->gambar_soal);
+        }
+
+        $pertanyaan->delete();
+
+        return back()->with('success', 'Soal berhasil dihapus.');
+    }
+
+    // ── PENILAIAN ─────────────────────────────────────────────────────────────
     public function penilaian(Tugas $tugas)
     {
         $this->authorize_guru($tugas);
@@ -184,7 +314,7 @@ class TugasController extends Controller
         return view('guru.tugas.penilaian', compact('tugas', 'siswaKelas', 'pengumpulan'));
     }
 
-    // ── SIMPAN NILAI TUGAS ────────────────────────────────────────────────────
+    // ── SIMPAN NILAI ──────────────────────────────────────────────────────────
     public function simpanNilai(Request $request, Tugas $tugas)
     {
         $this->authorize_guru($tugas);
@@ -210,15 +340,26 @@ class TugasController extends Controller
         return back()->with('success', 'Nilai berhasil disimpan.');
     }
 
+    // ── DESTROY ───────────────────────────────────────────────────────────────
     public function destroy(Tugas $tugas)
     {
         $this->authorize_guru($tugas);
-        
+
+        // Hapus gambar soal kalau CBT
+        if ($tugas->isCbt()) {
+            foreach ($tugas->pertanyaans as $p) {
+                if ($p->gambar_soal) {
+                    Storage::disk('public')->delete($p->gambar_soal);
+                }
+            }
+        }
+
         if ($tugas->file) {
             Storage::disk('public')->delete($tugas->file);
         }
-        
+
         $tugas->delete();
+
         return redirect()->route('guru.tugas.index')->with('success', 'Tugas dihapus.');
     }
 }

@@ -20,23 +20,31 @@ class MateriController extends Controller
     public function index(Request $request)
     {
         $guru = auth()->user()->guru;
+
+        if (!$guru) {
+            abort(403, 'Profil guru tidak ditemukan.');
+        }
         
-        // Hanya ambil mapel milik guru ini
+        // Hanya ambil mapel milik guru ini untuk dropdown filter
         $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
         
-        // Hanya ambil kelas yang diajar guru ini
+        // Hanya ambil kelas yang ditugaskan ke guru ini
         $kelas = Kelas::where('id', $guru->kelas_id)->get(); 
 
+        // QUERY UTAMA: Kunci materi berdasarkan guru_id DAN kelas_id si guru
         $query = Materi::with(['mataPelajaran', 'kelas'])
-            ->where('guru_id', $guru->id);
+            ->where('guru_id', $guru->id)
+            ->where('kelas_id', $guru->kelas_id); // Tambahkan ini biar makin aman!
 
-        // Filter pencarian
+        // Filter pencarian (kalau user milih dari dropdown)
         if ($request->filled('mata_pelajaran_id')) {
             $query->where('mata_pelajaran_id', $request->mata_pelajaran_id);
         }
+        
         if ($request->filled('kelas_id')) {
             $query->where('kelas_id', $request->kelas_id);
         }
+        
         if ($request->filled('tipe')) {
             $query->where('tipe', $request->tipe);
         }
@@ -66,7 +74,7 @@ class MateriController extends Controller
             'deskripsi'         => 'nullable|string',
             'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
             'kelas_id'          => 'required|in:' . $guru->kelas_id, // Validasi ketat kelas harus milik guru
-            'tipe'              => 'required|in:file,link,video',
+            'tipe'              => 'required|in:file,link',
             'link_video'        => 'nullable|url|required_if:tipe,link|required_if:tipe,video',
             'file'              => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip|max:20480|required_if:tipe,file',
         ]);
@@ -117,7 +125,7 @@ class MateriController extends Controller
             'judul'             => 'required|string|max:255',
             'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
             'kelas_id'          => 'required|in:' . $guru->kelas_id,
-            'tipe'              => 'required|in:file,link,video',
+            'tipe'              => 'required|in:file,link',
             'file'              => 'nullable|file|max:20480',
         ]);
 
