@@ -314,6 +314,20 @@ class TugasController extends Controller
         return view('guru.tugas.penilaian', compact('tugas', 'siswaKelas', 'pengumpulan'));
     }
 
+    public function indexPenilaian()
+    {
+        $guru = auth()->user()->guru;
+
+        $daftarTugas = Tugas::with(['kelas', 'mataPelajaran', 'pengumpulan'])
+            ->where('guru_id', $guru->id)
+            ->where('kelas_id', $guru->kelas_id)
+            ->where('status', 'aktif')
+            ->latest()
+            ->paginate(10);
+
+        return view('guru.tugas.list-penilaian', compact('daftarTugas')); // view baru
+    }
+
     // ── SIMPAN NILAI ──────────────────────────────────────────────────────────
     public function simpanNilai(Request $request, Tugas $tugas)
     {
