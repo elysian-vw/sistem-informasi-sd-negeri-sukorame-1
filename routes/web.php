@@ -208,6 +208,14 @@ Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(f
     Route::resource('tugas', GuruTugas::class);
     Route::get('/tugas/{tugas}/penilaian',     [GuruTugas::class, 'penilaian'])->name('tugas.penilaian');
     Route::post('/tugas/{tugas}/simpan-nilai', [GuruTugas::class, 'simpanNilai'])->name('tugas.simpan-nilai');
+    // Tambah di grup guru, setelah route tugas yang sudah ada
+    Route::get('/penilaian-tugas', [GuruTugas::class, 'indexPenilaian'])->name('tugas.penilaian.index');
+
+    // ── Tambah ini ──
+    Route::get('/tugas/{tugas}/soal',                        [GuruTugas::class, 'soal'])->name('tugas.soal');
+    Route::post('/tugas/{tugas}/soal',                       [GuruTugas::class, 'storeSoal'])->name('tugas.soal.store');
+    Route::put('/tugas/{tugas}/soal/{pertanyaan}',           [GuruTugas::class, 'updateSoal'])->name('tugas.soal.update');
+    Route::delete('/tugas/{tugas}/soal/{pertanyaan}',        [GuruTugas::class, 'destroySoal'])->name('tugas.soal.destroy');
 
     // Forum Diskusi
     Route::get('/forum',                        [GuruForum::class, 'index'])->name('forum.index');

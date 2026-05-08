@@ -49,8 +49,14 @@
             <a href="{{ route('guru.materi.index') }}" class="nav-item {{ request()->routeIs('guru.materi*') ? 'active' : '' }}">
                 <i class="fas fa-laptop-code"></i> <span>Kelola Materi Pelajaran</span>
             </a>
-            <a href="{{ route('guru.tugas.index') }}" class="nav-item {{ request()->routeIs('guru.tugas*') ? 'active' : '' }}">
+            <a href="{{ route('guru.tugas.index') }}" 
+            class="nav-item {{ request()->routeIs('guru.tugas.index', 'guru.tugas.create', 'guru.tugas.edit', 'guru.tugas.show') ? 'active' : '' }}">
                 <i class="fas fa-file-pen"></i> <span>Kelola Tugas</span>
+            </a>
+
+            <a href="{{ route('guru.tugas.penilaian.index') }}" 
+            class="nav-item {{ request()->routeIs('guru.tugas.penilaian*', 'guru.tugas.simpan-nilai') ? 'active' : '' }}">
+                <i class="fas fa-marker"></i> <span>Penilaian Tugas</span>
             </a>
             <a href="{{ route('guru.nilai.index') }}" class="nav-item {{ request()->routeIs('guru.nilai*') ? 'active' : '' }}">
                 <i class="fas fa-star"></i> <span>E-Raport</span>
