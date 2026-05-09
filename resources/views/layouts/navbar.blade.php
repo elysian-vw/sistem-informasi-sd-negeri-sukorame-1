@@ -6,7 +6,6 @@
             <span class="bar"></span>
             <span class="bar"></span>
         </button>
-        <h3>@yield('title', 'Dashboard')</h3>
     </div>
 
     <div class="navbar-right">
