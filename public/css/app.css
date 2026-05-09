@@ -127,6 +127,7 @@ a { text-decoration: none; color: inherit; }
     padding: 0 24px; gap: 16px;
     position: sticky; top: 0; z-index: 100;
     box-shadow: 0 1px 0 var(--border);
+    z-index: 1001;
 }
 
 .navbar-left { flex: 1; display: flex; align-items: center; gap: 12px; }
@@ -936,3 +937,70 @@ select.form-control {
 .mr-2 { margin-right: 0.5rem; }
 .ml-2 { margin-left: 0.5rem; }
 .ml-3 { margin-left: 0.75rem; }
+
+/* ================================================
+   HAPUS semua .hamburger-btn lama di app.css,
+   ganti dengan blok ini SATU-SATUNYA
+   ================================================ */
+
+/* Desktop: sembunyikan */
+.hamburger-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    width: 38px;
+    height: 38px;
+    cursor: pointer;
+    margin-right: 12px;
+    flex-shrink: 0;
+    padding: 0;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.hamburger-btn:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+}
+
+/* 3 garis */
+.hamburger-btn .bar {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: #1e293b;
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.2s ease, width 0.3s ease;
+    transform-origin: center;
+}
+
+/* Animasi X saat aktif */
+.hamburger-btn.active .bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+.hamburger-btn.active .bar:nth-child(2) {
+    opacity: 0;
+    width: 0;
+}
+.hamburger-btn.active .bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile: tampilkan */
+@media (max-width: 768px) {
+    .hamburger-btn {
+        display: flex !important;
+    }
+}
+
+/* Sidebar mulai dari bawah navbar (64px = tinggi navbar) */
+@media (max-width: 768px) {
+    .sidebar {
+        top: 64px !important;
+        height: calc(100vh - 64px) !important;
+    }
+}

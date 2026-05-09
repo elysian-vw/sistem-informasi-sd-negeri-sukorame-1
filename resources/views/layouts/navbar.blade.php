@@ -1,6 +1,12 @@
 <nav class="navbar">
     <div class="navbar-left">
-        <h3>Dashboard</h3>
+        {{-- Hamburger: hanya muncul di mobile --}}
+        <button class="hamburger-btn" id="sidebarToggle" aria-label="Buka menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+        <h3>@yield('title', 'Dashboard')</h3>
     </div>
 
     <div class="navbar-right">
