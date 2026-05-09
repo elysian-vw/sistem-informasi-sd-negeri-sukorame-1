@@ -1,58 +1,303 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SIMAS — Sistem Informasi Manajemen Sekolah
+### SD Negeri Sukorame 1 Kediri
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=flat&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=flat&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat&logo=mysql&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Android-Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat)
 
-## About Laravel
+Sistem informasi sekolah berbasis web (Laravel 11) dan mobile (Android/Kotlin) untuk SDN Sukorame 1 Kediri. Dibangun sebagai proyek mata kuliah **PSI** dan **Mobile Programming**, Program Studi D3 Manajemen Informatika — PSDKU Polinema Kampus Kediri.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Daftar Isi
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- [Fitur](#fitur)
+- [Tech Stack](#tech-stack)
+- [Persyaratan Sistem](#persyaratan-sistem)
+- [Kontribusi](#kontribusi)
+- [Tim Pengembang](#tim-pengembang)
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Fitur
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🌐 Web (Laravel)
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+#### 👥 Publik (Tanpa Login)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Halaman yang dapat diakses oleh siapa saja tanpa perlu akun.
 
-```bash
-composer require laravel/boost --dev
+**Profil Sekolah**
+- Visi, misi, dan tujuan sekolah
+- Sejarah berdirinya SDN Sukorame 1
+- Struktur organisasi sekolah
+- Profil komite sekolah
+- Daftar guru & karyawan beserta jabatan
+- Data sarana dan prasarana
+- Status akreditasi sekolah
+- Prestasi siswa & sekolah
 
-php artisan boost:install
-```
+**Akademik**
+- Informasi kurikulum yang digunakan
+- Kalender akademik tahunan
+- Program karakter & pembiasaan
+- Kegiatan ekstrakurikuler
+- Program literasi sekolah
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+**Berita & Informasi**
+- Artikel berita terbaru sekolah
+- Pengumuman resmi
+- Agenda & kegiatan mendatang
+- Info dinas dari Dinas Pendidikan
 
-## Contributing
+**Galeri**
+- Foto dokumentasi kegiatan sekolah
+- Video kegiatan & profil sekolah
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**PPDB (Penerimaan Peserta Didik Baru)**
+- Informasi umum PPDB
+- Persyaratan pendaftaran
+- Jadwal tahapan PPDB
+- Alur & prosedur pendaftaran
 
-## Code of Conduct
+**Layanan Administrasi**
+- Informasi mutasi siswa
+- Pengajuan surat keterangan
+- Prosedur izin siswa
+- Pencarian NISN
+- Informasi Program Indonesia Pintar (PIP)
+- Unduhan formulir & dokumen
+- Informasi alumni
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+#### 🔧 Admin
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Panel pengelolaan data utama sekolah, hanya dapat diakses oleh administrator.
 
-## License
+**Dashboard**
+- Ringkasan statistik: jumlah siswa, guru, kelas aktif, dan pengumuman terbaru
+- Grafik interaktif berbasis Chart.js (tren data per bulan/tahun)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**Manajemen Data Master**
+- **Siswa** — tambah, edit, hapus data siswa; dilengkapi fitur CRUD lengkap
+- **Guru** — kelola data guru termasuk export Excel dan import massal
+- **Kelas** — buat dan atur kelas, assign wali kelas
+- **Mata Pelajaran** — kelola daftar mapel dan assign guru pengampu
+
+**Jadwal Pelajaran**
+- Buat dan atur jadwal pelajaran per kelas
+- Import jadwal massal via file CSV
+- Export jadwal ke CSV
+- Download template CSV untuk kemudahan pengisian
+
+**Pengumuman**
+- Buat, edit, dan hapus pengumuman resmi sekolah
+- Pengumuman tampil di halaman publik dan dashboard semua role
+
+**Pengaturan Sekolah**
+- Edit identitas sekolah (nama, alamat, logo, NPSN, dll.)
+
+---
+
+#### 👨‍🏫 Guru
+
+Panel untuk guru dalam mengelola kegiatan pembelajaran di kelasnya.
+
+**Dashboard**
+- Ringkasan aktivitas: jumlah tugas aktif, materi terpublikasi, siswa belum mengumpulkan, dan absensi hari ini
+
+**Materi Pelajaran**
+- Upload dan kelola materi pembelajaran (file PDF, DOC, atau teks)
+- Atur status materi: aktif atau draft
+- Materi otomatis tampil ke siswa sesuai kelas & mata pelajaran guru
+
+**Kelola Tugas**
+- Buat tugas dengan dua tipe:
+  - **Upload** — siswa mengumpulkan file jawaban (PDF, DOC, ZIP, dll.)
+  - **CBT (Computer Based Test)** — siswa mengerjakan soal pilihan ganda langsung di platform
+- Atur deadline, status (aktif/draft), dan lampiran pendukung
+- Tugas terkunci otomatis ke kelas & mata pelajaran yang diampu guru
+
+**Manajemen Soal CBT**
+- Tambah, edit, hapus soal pilihan ganda (A–D) per tugas CBT
+- Mendukung gambar ilustrasi per soal
+- Tentukan kunci jawaban benar
+
+**Penilaian Tugas**
+- Lihat daftar semua tugas aktif untuk dinilai
+- Halaman penilaian per tugas menampilkan:
+  - Statistik pengumpulan (total siswa, sudah kumpul, belum kumpul, sudah dinilai)
+  - Grafik distribusi nilai (Grade A–E)
+  - Rekap per soal CBT (persentase siswa menjawab benar per opsi)
+- Untuk tugas **Upload**: input nilai 0–100 manual per siswa, dengan grade otomatis
+- Untuk tugas **CBT**: nilai dihitung otomatis berdasarkan jawaban benar, guru hanya menambahkan feedback
+- Fitur isi nilai seragam (bulk) untuk tugas Upload
+- Filter tampilan: semua / sudah kumpul / belum kumpul / belum dinilai
+- Export hasil penilaian ke file CSV
+
+**E-Raport**
+- Input nilai per mata pelajaran untuk seluruh siswa di kelas
+- Nilai tersimpan dan dapat dilihat oleh siswa & wali murid
+
+**Absensi Siswa**
+- Catat kehadiran siswa harian (Hadir / Izin / Sakit / Alpa)
+- Riwayat absensi tersimpan dan dapat dipantau wali murid
+
+**Forum Diskusi**
+- Buat topik diskusi untuk siswa di kelasnya
+- Balas dan moderasi komentar
+- Fitur pin topik penting
+- Hapus topik atau komentar yang tidak relevan
+
+**Program MBG (Makan Bergizi Gratis)**
+- Halaman informasi dan pencatatan program MBG sekolah
+
+---
+
+#### 👨‍👩‍👦 Wali Murid
+
+Panel pemantauan perkembangan anak, dapat diakses oleh orang tua/wali siswa.
+
+**Dashboard**
+- Ringkasan kondisi terkini anak: kehadiran bulan ini, nilai terakhir, tugas yang belum dikumpulkan
+
+**Raport**
+- Lihat nilai rapor anak per mata pelajaran dan per semester
+- Ditampilkan dengan rata-rata dan keterangan grade
+
+**Kehadiran**
+- Rekap absensi anak: jumlah hadir, izin, sakit, dan alpa
+- Riwayat kehadiran per tanggal
+
+**Tugas Anak**
+- Lihat daftar tugas yang diberikan guru kepada anak
+- Status pengumpulan dan nilai tugas yang sudah dinilai
+
+**Pengumuman**
+- Baca pengumuman resmi dari sekolah
+- Detail isi pengumuman beserta tanggal terbit
+
+---
+
+#### 🎓 Siswa
+
+Panel e-learning untuk siswa dalam mengakses dan mengerjakan pembelajaran.
+
+**Dashboard**
+- Ringkasan: tugas yang belum dikumpulkan, materi terbaru, dan nilai terakhir
+
+**Materi Pelajaran**
+- Akses daftar materi yang diunggah guru sesuai kelas & mata pelajaran
+- Unduh file materi atau baca langsung di browser
+
+**Tugas**
+- Lihat daftar semua tugas aktif beserta deadline dan status pengumpulan
+- **Tugas Upload** — unggah file jawaban (PDF, DOC, ZIP, dll.) langsung dari halaman tugas
+- **Tugas CBT** — kerjakan soal pilihan ganda langsung di platform, jawaban tersimpan otomatis saat submit
+- Lihat nilai & feedback dari guru setelah tugas dinilai
+
+**E-Raport**
+- Lihat nilai rapor per semester yang diinput guru
+- Tampil lengkap per mata pelajaran beserta grade
+
+**Absensi**
+- Rekap kehadiran pribadi per bulan
+- Detail status per tanggal (Hadir / Izin / Sakit / Alpa)
+
+---
+
+### 📱 Mobile (Android / Kotlin)
+
+Aplikasi pendamping berbasis Android untuk guru, menggunakan SQLite sebagai penyimpanan lokal.
+
+**Autentikasi**
+- Login dengan NIP dan password
+- Sesi tersimpan lokal, tidak perlu login ulang setiap buka aplikasi
+
+**Dashboard Guru**
+- Tampilan grid 6 menu utama: Materi, Tugas, Rapor, Absensi, Daftar Siswa, Profil
+- Menampilkan nama guru dan kelas yang diampu
+
+**Kelola Materi**
+- Lihat daftar materi yang sudah dibuat
+- Tambah materi baru dengan judul, deskripsi, dan mata pelajaran
+- Data tersimpan lokal di SQLite
+
+**Kelola Tugas**
+- Lihat daftar tugas per kelas
+- Buat tugas baru dengan judul, deskripsi, dan deadline
+
+**Input Nilai Rapor**
+- Pilih siswa dari daftar kelas
+- Input nilai per mata pelajaran
+- Data tersimpan lokal dan dapat disinkronkan
+
+**Daftar Siswa**
+- Lihat daftar siswa di kelas yang diampu
+- Informasi nama, NIS, dan foto siswa
+
+---
+
+## Tech Stack
+
+| Layer         | Teknologi                                 |
+|---------------|-------------------------------------------|
+| Backend       | Laravel 12, PHP 8.2+                      |
+| Frontend      | Blade, Tailwind CSS, Vite JS, Chart.js    |
+| Database      | MySQL 8.0                                 |
+| Mobile        | Kotlin, Android SDK, SQLite               |
+| Auth          | Laravel Breeze (custom multi-role)        |
+| Storage       | Laravel Storage (public disk)             |
+| Dev Server    | Laragon (Windows)                         |
+
+---
+
+## Persyaratan Sistem
+
+- PHP       >= 8.2
+- Composer  >= 2.x
+- Node.js   >= 18.x & NPM
+- MySQL     >= 8.0
+- Laragon / XAMPP / Valet
+- Android Studio (untuk modul mobile)
+
+---
+
+
+## Kontribusi
+
+1. Fork repository ini
+2. Buat branch fitur: `git checkout -b fitur/nama-fitur`
+3. Commit: `git commit -m "feat: deskripsi singkat"`
+4. Push: `git push origin fitur/nama-fitur`
+5. Buat Pull Request ke branch `main`
+
+Konvensi commit: `feat:` / `fix:` / `refactor:` / `docs:` / `style:`
+
+---
+
+## Tim Pengembang
+
+Dikembangkan oleh mahasiswa D3 Manajemen Informatika  
+**PSDKU Polinema Kampus Kediri** — Semester 4
+
+| Nama                      | NIM          | Peran                    |
+|---------------------------|--------------|--------------------------|
+| Ahmad Ubaidillah Tsani    | 243107030095 | Full-stack Web & Android |
+| Berliana Damayanti Riyadi | 243107030075 | Dokumentasi              |
+| Erisa Desmanaya           | 243107030086 | Dokumentasi              |
+| M. Jayraka Ilham Saputra  | 243107030126 | -                        |
+| Noor Achmad Razaq R       | 243107030100 | Full-stack Web & DB Dev  |
+| Wahyu dwi ramadani        | 243107030124 | -                        |
+
+---
+
+## Lisensi
+
+Proyek ini dibuat untuk keperluan akademik.  
+© 2024–2025 Tim SIMAS — PSDKU Polinema Kampus Kediri

@@ -73,17 +73,46 @@
                     </td>
                     <td>
                         <div class="action-btns">
-                            <a href="{{ route('guru.tugas.penilaian', $t) }}" class="btn-icon" style="background:#f3e5f5;color:var(--purple);" title="Penilaian"><i class="fas fa-star"></i></a>
-                            <a href="{{ route('guru.tugas.edit', $t) }}" class="btn-icon btn-edit" title="Edit"><i class="fas fa-pen"></i></a>
+                            <a href="{{ route('guru.tugas.penilaian', $t) }}"
+                               class="btn-icon"
+                               style="background:#f3e5f5;color:var(--purple);"
+                               title="Penilaian">
+                                <i class="fas fa-star"></i>
+                            </a>
+
+                            @if($t->pengumpulan->count() > 0)
+                                <a href="{{ route('guru.tugas.show', $t) }}"
+                                   class="btn-icon"
+                                   style="background:#e0f2fe;color:#0284c7;"
+                                   title="Ada {{ $t->pengumpulan->count() }} siswa sudah mengumpulkan — tidak bisa diedit">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            @else
+                                <a href="{{ route('guru.tugas.edit', $t) }}"
+                                   class="btn-icon"
+                                   title="Edit">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+                            @endif
+
                             <form action="{{ route('guru.tugas.destroy', $t) }}" method="POST" style="display:inline;">
                                 @csrf @method('DELETE')
-                                <button class="btn-icon btn-delete" data-confirm="Hapus tugas ini?" title="Hapus"><i class="fas fa-trash"></i></button>
+                                <button class="btn-icon btn-delete"
+                                        data-confirm="Hapus tugas ini?"
+                                        title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </form>
                         </div>
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="7" class="empty-row"><i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>Belum ada tugas.</td></tr>
+                <tr>
+                    <td colspan="7" class="empty-row">
+                        <i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>
+                        Belum ada tugas.
+                    </td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
