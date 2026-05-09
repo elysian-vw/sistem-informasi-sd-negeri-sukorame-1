@@ -259,10 +259,10 @@ Aplikasi pendamping berbasis Android untuk guru, menggunakan SQLite sebagai peny
 
 ## Persyaratan Sistem
 
-- PHP >= 8.2
-- Composer >= 2.x
-- Node.js >= 18.x & NPM
-- MySQL >= 8.0
+- PHP       >= 8.2
+- Composer  >= 2.x
+- Node.js   >= 18.x & NPM
+- MySQL     >= 8.0
 - Laragon / XAMPP / Valet
 - Android Studio (untuk modul mobile)
 
@@ -289,11 +289,11 @@ Dikembangkan oleh mahasiswa D3 Manajemen Informatika
 | Nama                      | NIM          | Peran                    |
 |---------------------------|--------------|--------------------------|
 | Ahmad Ubaidillah Tsani    | 243107030095 | Full-stack Web & Android |
-| Berliana Damayanti Riyadi | 243107030095 | Dokumentasi              |
-| Erisa Desmanaya           | 243107030095 | Dokumentasi              |
-| M. Jayraka Ilham Saputra  | 243107030095 | -                        |
-| Noor Achmad Razaq R       | 243107030095 | Full-stack Web & DB Dev  |
-| Wahyu dwi ramadani        | 243107030095 | -                        |
+| Berliana Damayanti Riyadi | 243107030075 | Dokumentasi              |
+| Erisa Desmanaya           | 243107030086 | Dokumentasi              |
+| M. Jayraka Ilham Saputra  | 243107030126 | -                        |
+| Noor Achmad Razaq R       | 243107030100 | Full-stack Web & DB Dev  |
+| Wahyu dwi ramadani        | 243107030124 | -                        |
 
 ---
 
