@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Absensi, Kelas, Tugas, Materi, Pengumuman, Forum};
+// Bagian use — tambah JadwalPelajaran
+use App\Models\{Absensi, Kelas, Tugas, Materi, Pengumuman, Forum, JadwalPelajaran};
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -66,9 +67,19 @@ class DashboardController extends Controller
             })
             ->latest()->take(3)->get();
 
+        $hariMap = ['Monday'=>'senin','Tuesday'=>'selasa','Wednesday'=>'rabu','Thursday'=>'kamis','Friday'=>'jumat','Saturday'=>'sabtu'];
+        $hariIni = $hariMap[now()->format('l')] ?? '';
+        $jadwalHariIni = JadwalPelajaran::with('mataPelajaran')
+            ->where('kelas_id', $guru->kelas_id)
+            ->where('hari', $hariIni)
+            ->where('is_aktif', 1)
+            ->orderBy('jam_ke')
+            ->get();
+
         return view('guru.dashboard', compact(
             'guru', 'absensiHariIni', 'tugasAktif', 'materiTerbaru',
-            'pengumuman', 'absensiLabels', 'absensiData', 'diskusiTerbaru'
+            'pengumuman', 'absensiLabels', 'absensiData', 'diskusiTerbaru',
+            'jadwalHariIni', 'hariIni' // ← tambah ini
         ));
     }
 }
