@@ -30,7 +30,10 @@ class TugasController extends Controller
         $guru = $user->guru;
 
         $kelas = Kelas::where('id', $guru->kelas_id)->get();
-        $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
+        $tingkat = Kelas::find($guru->kelas_id)->tingkat;
+        $mapel   = MataPelajaran::where('guru_id', $guru->id)
+                    ->where('tingkat', $tingkat)
+                    ->get();
 
         $query = Tugas::with(['kelas', 'mataPelajaran', 'pengumpulan'])
             ->where('guru_id', $guru->id)
@@ -59,7 +62,10 @@ class TugasController extends Controller
                 ->with('error', 'Anda belum ditugaskan ke kelas manapun. Silakan hubungi Admin untuk mengatur Tugas Kelas Anda.');
         }
 
-        $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
+        $tingkat = Kelas::find($guru->kelas_id)->tingkat;
+        $mapel   = MataPelajaran::where('guru_id', $guru->id)
+                    ->where('tingkat', $tingkat)
+                    ->get();
         $kelas = Kelas::where('id', $guru->kelas_id)->get();
 
         return view('guru.tugas.create', compact('mapel', 'kelas'));
@@ -155,7 +161,10 @@ class TugasController extends Controller
         $this->authorize_guru($tugas);
 
         $guru  = auth()->user()->guru;
-        $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
+        $tingkat = Kelas::find($guru->kelas_id)->tingkat;
+        $mapel   = MataPelajaran::where('guru_id', $guru->id)
+                    ->where('tingkat', $tingkat)
+                    ->get();
         $kelas = Kelas::where('id', $guru->kelas_id)->get();
 
         $tugas->load('pertanyaans');
