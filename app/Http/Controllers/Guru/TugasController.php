@@ -105,7 +105,7 @@ class TugasController extends Controller
             $filePath = $request->file('file')->store('tugas/file', 'public');
         }
 
-        Tugas::create([
+        $tugas = Tugas::create([
             'judul'             => $request->judul,
             'deskripsi'         => $request->deskripsi,
             'mata_pelajaran_id' => $request->mata_pelajaran_id,
@@ -114,7 +114,29 @@ class TugasController extends Controller
             'deadline'          => $request->deadline,
             'status'            => $request->status,
             'file'              => $filePath,
+            'tipe'              => $request->tipe ?? 'upload',
         ]);
+
+        // ← Tambah ini: simpan soal CBT kalau ada
+        if ($request->tipe === 'cbt' && $request->soal) {
+            foreach ($request->soal as $s) {
+                $gambarPath = null;
+                if (isset($s['gambar_soal']) && $s['gambar_soal'] instanceof \Illuminate\Http\UploadedFile) {
+                    $gambarPath = $s['gambar_soal']->store('tugas/gambar-soal', 'public');
+                }
+
+                Pertanyaan::create([
+                    'tugas_id'      => $tugas->id,
+                    'soal'          => $s['soal'],
+                    'gambar_soal'   => $gambarPath,
+                    'pilihan_a'     => $s['pilihan_a'],
+                    'pilihan_b'     => $s['pilihan_b'],
+                    'pilihan_c'     => $s['pilihan_c'],
+                    'pilihan_d'     => $s['pilihan_d'],
+                    'jawaban_benar' => strtoupper($s['jawaban_benar']),
+                ]);
+            }
+        }
 
         return redirect()->route('guru.tugas.index')->with('success', 'Tugas berhasil dibuat.');
     }
