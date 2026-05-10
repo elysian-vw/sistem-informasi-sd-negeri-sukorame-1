@@ -63,19 +63,16 @@
             </div>
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-                {{-- BAGIAN KELAS YANG SUDAH DIKUNCI --}}
                 <div class="form-group">
                     <label>Kelas <span style="color:var(--danger);">*</span></label>
-                    <select name="kelas_id" class="form-control" style="background-color: #f8f9fa; cursor: not-allowed; pointer-events: none;" readonly>
+                    <select name="kelas_id" class="form-control" style="background-color:#f8f9fa;cursor:not-allowed;pointer-events:none;" readonly>
                         @foreach($kelas as $k)
                             <option value="{{ $k->id }}" selected>Kelas {{ $k->nama_kelas }} (Kelas Anda)</option>
                         @endforeach
                     </select>
-                    <small style="color:var(--text-muted);font-size:11px;margin-top:4px;display:block;">
-                        * Terkunci pada kelas yang Anda ajar.
-                    </small>
+                    <small style="color:var(--text-muted);font-size:11px;margin-top:4px;display:block;">* Terkunci pada kelas yang Anda ajar.</small>
                 </div>
-                
+
                 <div class="form-group">
                     <label>Mata Pelajaran <span style="color:var(--danger);">*</span></label>
                     <select name="mata_pelajaran_id" class="form-control">
@@ -101,22 +98,18 @@
                 <div class="form-group">
                     <label>Status</label>
                     <select name="status" class="form-control">
-                        <option value="aktif"  @selected(old('status','aktif')=='aktif')>Aktif</option>
-                        <option value="draft"  @selected(old('status')=='draft')>Draft</option>
+                        <option value="aktif" @selected(old('status','aktif')=='aktif')>Aktif</option>
+                        <option value="draft" @selected(old('status')=='draft')>Draft</option>
                     </select>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Lampiran File (opsional)</label>
-                <input type="file" name="file" class="form-control">
-                <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block;">Maksimal 10 MB. (PDF, Word, Excel, PPT, dll)</small>
             {{-- ── LAMPIRAN (hanya untuk tipe upload) ── --}}
             <div id="sectionUpload">
                 <div class="form-group">
                     <label>Lampiran File (opsional)</label>
                     <input type="file" name="file" class="form-control">
-                    <small style="color:var(--text-muted);font-size:12px;">PDF, DOC, DOCX, ZIP. Maks 5 MB.</small>
+                    <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block;">PDF, DOC, DOCX, ZIP. Maks 5 MB.</small>
                 </div>
             </div>
 
@@ -128,7 +121,7 @@
                             <i class="fas fa-list-check" style="color:var(--purple);margin-right:6px;"></i>
                             Daftar Soal Pilihan Ganda
                         </h4>
-                        <button type="button" class="btn btn-sm" id="btnTambahSoal"
+                        <button type="button" class="btn btn-sm"
                                 style="background:var(--purple);color:#fff;border:none;"
                                 onclick="tambahSoal()">
                             <i class="fas fa-plus"></i> Tambah Soal
@@ -136,7 +129,6 @@
                     </div>
 
                     <div id="containerSoal">
-                        {{-- Soal lama (kalau ada validasi error) --}}
                         @if(old('soal'))
                             @foreach(old('soal') as $i => $s)
                                 <div class="soal-item" data-idx="{{ $i }}">
@@ -224,22 +216,21 @@ function setTipe(tipe) {
         cardCbt.style.borderColor    = 'var(--border)';
         secUpload.style.display      = '';
         secCbt.style.display         = 'none';
-        cardUpload.querySelector('input[type=radio]').checked = true;
+        document.querySelector('input[name="tipe"][value="upload"]').checked = true;
     } else {
         cardCbt.style.borderColor    = 'var(--purple)';
         cardUpload.style.borderColor = 'var(--border)';
         secUpload.style.display      = 'none';
         secCbt.style.display         = '';
-        cardCbt.querySelector('input[type=radio]').checked = true;
+        document.querySelector('input[name="tipe"][value="cbt"]').checked = true;
     }
 }
 
 function tambahSoal() {
-    const tmpl    = document.getElementById('tmplSoal');
-    const clone   = tmpl.content.cloneNode(true);
-    const idx     = soalCount++;
+    const tmpl  = document.getElementById('tmplSoal');
+    const clone = tmpl.content.cloneNode(true);
+    const idx   = soalCount++;
 
-    // Ganti IDX dengan index aktual
     clone.querySelectorAll('[name]').forEach(el => {
         el.name = el.name.replace('IDX', idx);
     });
@@ -265,10 +256,9 @@ function renumberSoal() {
     });
 }
 
-// Inisiasi saat load (jika ada soal lama dari old())
+// Inisiasi saat load
 if (soalCount > 0) {
     document.getElementById('emptyState').style.display = 'none';
-    // Pastikan tipe terpilih CBT
     const oldTipe = '{{ old("tipe", "upload") }}';
     if (oldTipe === 'cbt') setTipe('cbt');
 }

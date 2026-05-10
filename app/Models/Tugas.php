@@ -21,7 +21,10 @@ class Tugas extends Model
     ];
 
     protected $casts = [
-        'deadline' => 'datetime',
+        'deadline'          => 'datetime',
+        'guru_id'           => 'integer', // ← tambah
+        'kelas_id'          => 'integer', // ← tambah
+        'mata_pelajaran_id' => 'integer', // ← tambah
     ];
 
     public function mataPelajaran()
