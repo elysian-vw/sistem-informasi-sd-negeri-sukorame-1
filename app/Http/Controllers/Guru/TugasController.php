@@ -13,7 +13,7 @@ class TugasController extends Controller
     private function authorize_guru(Tugas $tugas)
     {
         $guruId = auth()->user()->guru->id;
-        if ($tugas->guru_id !== $guruId) {
+        if ((int) $tugas->guru_id !== (int) $guruId) {
             abort(403, 'Bukan tugasmu, jangan asal akses.');
         }
     }
@@ -29,19 +29,13 @@ class TugasController extends Controller
 
         $guru = $user->guru;
 
-        // Ambil data referensi untuk dropdown filter di view
-        // Cuma ambil kelas yang ditugaskan ke guru ini
         $kelas = Kelas::where('id', $guru->kelas_id)->get();
-        
-        // Cuma ambil mapel yang diampu oleh guru ini
         $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
 
-        // QUERY UTAMA: Kunci berdasarkan guru_id DAN kelas_id si guru
         $query = Tugas::with(['kelas', 'mataPelajaran', 'pengumpulan'])
             ->where('guru_id', $guru->id)
             ->where('kelas_id', $guru->kelas_id);
 
-        // Filter tambahan kalau gurunya milih dari dropdown
         if ($request->filled('mata_pelajaran_id')) {
             $query->where('mata_pelajaran_id', $request->mata_pelajaran_id);
         }
@@ -58,17 +52,14 @@ class TugasController extends Controller
     // ── CREATE ────────────────────────────────────────────────────────────────
     public function create()
     {
-        $guru  = auth()->user()->guru;
+        $guru = auth()->user()->guru;
 
-        // PROTEKSI: Jika Admin belum menset kelas untuk guru ini
         if (!$guru->kelas_id) {
             return redirect()->route('guru.tugas.index')
                 ->with('error', 'Anda belum ditugaskan ke kelas manapun. Silakan hubungi Admin untuk mengatur Tugas Kelas Anda.');
         }
 
         $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
-        
-        // Ambil kelas yang HANYA diajar oleh guru ini
         $kelas = Kelas::where('id', $guru->kelas_id)->get();
 
         return view('guru.tugas.create', compact('mapel', 'kelas'));
@@ -79,7 +70,6 @@ class TugasController extends Controller
     {
         $guru = auth()->user()->guru;
 
-        // Proteksi ganda di bagian simpan
         if (!$guru->kelas_id) {
             return redirect()->back()->with('error', 'Tugas kelas Anda belum diatur.');
         }
@@ -88,13 +78,13 @@ class TugasController extends Controller
             'judul'             => 'required|string|max:255',
             'deskripsi'         => 'required',
             'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
-            'kelas_id'          => 'required|in:' . $guru->kelas_id, // Kunci validasi harus sesuai kelas guru
+            'kelas_id'          => 'required|in:' . $guru->kelas_id,
             'deadline'          => 'required|date',
             'status'            => 'required|in:aktif,draft',
             'file'              => 'nullable|file|mimes:pdf,doc,docx,zip|max:5120',
         ]);
 
-        // Validasi soal kalau tipe CBT
+        $rules = [];
         if ($request->tipe === 'cbt') {
             $rules['soal']                 = 'required|array|min:1';
             $rules['soal.*.soal']          = 'required|string';
@@ -106,7 +96,9 @@ class TugasController extends Controller
             $rules['soal.*.gambar_soal']   = 'nullable|image|max:2048';
         }
 
-        $request->validate($rules);
+        if (!empty($rules)) {
+            $request->validate($rules);
+        }
 
         $filePath = null;
         if ($request->hasFile('file')) {
@@ -117,7 +109,7 @@ class TugasController extends Controller
             'judul'             => $request->judul,
             'deskripsi'         => $request->deskripsi,
             'mata_pelajaran_id' => $request->mata_pelajaran_id,
-            'kelas_id'          => $guru->kelas_id, // Kunci otomatis pakai data dari profil Guru
+            'kelas_id'          => $guru->kelas_id,
             'guru_id'           => $guru->id,
             'deadline'          => $request->deadline,
             'status'            => $request->status,
@@ -127,6 +119,7 @@ class TugasController extends Controller
         return redirect()->route('guru.tugas.index')->with('success', 'Tugas berhasil dibuat.');
     }
 
+    // ── SHOW (debug sementara) ────────────────────────────────────────────────
     public function show(Tugas $tugas)
     {
         $this->authorize_guru($tugas);
@@ -141,11 +134,8 @@ class TugasController extends Controller
 
         $guru  = auth()->user()->guru;
         $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
-
-        // Cuma ambil kelas yang ditugaskan ke guru ini
         $kelas = Kelas::where('id', $guru->kelas_id)->get();
 
-        // Load soal kalau CBT
         $tugas->load('pertanyaans');
 
         return view('guru.tugas.edit', compact('tugas', 'mapel', 'kelas'));
@@ -155,14 +145,14 @@ class TugasController extends Controller
     public function update(Request $request, Tugas $tugas)
     {
         $this->authorize_guru($tugas);
-        
+
         $guru = auth()->user()->guru;
 
         $rules = [
             'judul'             => 'required|string|max:255',
             'deskripsi'         => 'required',
             'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
-            'kelas_id'          => 'required|in:' . $guru->kelas_id, // Kunci validasi
+            'kelas_id'          => 'required|in:' . $guru->kelas_id,
             'deadline'          => 'required|date',
             'status'            => 'required|in:aktif,draft',
             'file'              => 'nullable|file|mimes:pdf,doc,docx,zip|max:5120',
@@ -174,7 +164,7 @@ class TugasController extends Controller
             'judul'             => $request->judul,
             'deskripsi'         => $request->deskripsi,
             'mata_pelajaran_id' => $request->mata_pelajaran_id,
-            'kelas_id'          => $guru->kelas_id, // Tetap dikunci saat update
+            'kelas_id'          => $guru->kelas_id,
             'deadline'          => $request->deadline,
             'status'            => $request->status,
         ];
@@ -192,10 +182,6 @@ class TugasController extends Controller
     }
 
     // ── MANAJEMEN SOAL CBT ────────────────────────────────────────────────────
-
-    /**
-     * Halaman daftar & kelola soal CBT
-     */
     public function soal(Tugas $tugas)
     {
         $this->authorize_guru($tugas);
@@ -210,9 +196,6 @@ class TugasController extends Controller
         return view('guru.tugas.soal', compact('tugas', 'pertanyaans'));
     }
 
-    /**
-     * Simpan soal baru ke tugas CBT yang sudah ada
-     */
     public function storeSoal(Request $request, Tugas $tugas)
     {
         $this->authorize_guru($tugas);
@@ -246,9 +229,6 @@ class TugasController extends Controller
         return back()->with('success', 'Soal berhasil ditambahkan.');
     }
 
-    /**
-     * Update soal CBT
-     */
     public function updateSoal(Request $request, Tugas $tugas, Pertanyaan $pertanyaan)
     {
         $this->authorize_guru($tugas);
@@ -284,9 +264,6 @@ class TugasController extends Controller
         return back()->with('success', 'Soal berhasil diperbarui.');
     }
 
-    /**
-     * Hapus soal CBT
-     */
     public function destroySoal(Tugas $tugas, Pertanyaan $pertanyaan)
     {
         $this->authorize_guru($tugas);
@@ -325,7 +302,7 @@ class TugasController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('guru.tugas.list-penilaian', compact('daftarTugas')); // view baru
+        return view('guru.tugas.list-penilaian', compact('daftarTugas'));
     }
 
     // ── SIMPAN NILAI ──────────────────────────────────────────────────────────
@@ -359,7 +336,6 @@ class TugasController extends Controller
     {
         $this->authorize_guru($tugas);
 
-        // Hapus gambar soal kalau CBT
         if ($tugas->isCbt()) {
             foreach ($tugas->pertanyaans as $p) {
                 if ($p->gambar_soal) {

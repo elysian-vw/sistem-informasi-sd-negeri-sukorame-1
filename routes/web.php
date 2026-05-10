@@ -205,7 +205,7 @@ Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(f
     Route::get('/mbg', [MbgController::class, 'index'])->name('mbg');
 
     // Tugas
-    Route::resource('tugas', GuruTugas::class);
+    Route::resource('tugas', GuruTugas::class)->parameters(['tugas' => 'tugas']);
     Route::get('/tugas/{tugas}/penilaian',     [GuruTugas::class, 'penilaian'])->name('tugas.penilaian');
     Route::post('/tugas/{tugas}/simpan-nilai', [GuruTugas::class, 'simpanNilai'])->name('tugas.simpan-nilai');
     // Tambah di grup guru, setelah route tugas yang sudah ada
