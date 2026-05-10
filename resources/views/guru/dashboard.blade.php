@@ -42,6 +42,49 @@
     </div>
 </div>
 
+{{-- ganti @if dengan selalu tampil --}}
+<div class="content-card" style="margin-bottom:24px;">
+    <div class="card-header">
+        <h3><i class="fas fa-calendar-day" style="color:var(--primary);margin-right:8px;"></i>Jadwal Hari Ini</h3>
+        <a href="{{ route('guru.jadwal.index') }}" style="font-size:12px;color:var(--primary);font-weight:600;">Lihat semua</a>
+    </div>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width:50px;">Jam</th>
+                    <th>Mata Pelajaran</th>
+                    <th>Waktu</th>
+                    <th>Ruangan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($jadwalHariIni as $j)
+                <tr>
+                    <td style="text-align:center;font-weight:700;">{{ $j->jam_ke }}</td>
+                    <td>
+                        <div style="font-weight:600;">{{ $j->mataPelajaran->nama ?? '-' }}</div>
+                        <div style="font-size:11px;color:var(--text-muted);">{{ $j->mataPelajaran->jenis ?? '' }}</div>
+                    </td>
+                    <td style="font-size:13px;white-space:nowrap;">
+                        {{ \Carbon\Carbon::parse($j->waktu_mulai)->format('H:i') }} –
+                        {{ \Carbon\Carbon::parse($j->waktu_selesai)->format('H:i') }}
+                    </td>
+                    <td style="font-size:13px;">{{ $j->ruangan ?? '-' }}</td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="4" class="empty-row">
+                        <i class="fas fa-calendar-check" style="display:block;font-size:20px;margin-bottom:6px;opacity:.4;"></i>
+                        Tidak ada jadwal hari ini.
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="content-grid" style="margin-bottom:24px;">
     {{-- Grafik Absensi --}}
     <div class="content-card">

@@ -198,6 +198,7 @@ Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(f
     Route::get('/nilai/input/{mapel}', [NilaiController::class, 'input'])->name('nilai.input');
     Route::post('/nilai/store/{mapel}', [NilaiController::class, 'store'])->name('nilai.store');
 
+    Route::get('/jadwal', [App\Http\Controllers\Guru\JadwalController::class, 'index'])->name('jadwal.index');
     // Materi
     Route::resource('materi', MateriController::class);
 
