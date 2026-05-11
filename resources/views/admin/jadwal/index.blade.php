@@ -102,7 +102,7 @@
                                 <span class="kelas-nama">{{ $j->kelas->nama_kelas ?? '-' }}</span>
                             </div>
                         </td>
-                        <td>{{ $j->mataPelajaran->nama_mapel ?? '-' }}</td>
+                        <td>{{ $j->mataPelajaran->nama ?? '-' }}</td>
                         <td>
                             <div class="guru-info">
                                 <div class="guru-avatar">
@@ -184,7 +184,7 @@
                     <label class="form-label">Mata Pelajaran <span class="required">*</span></label>
                     <select name="mata_pelajaran_id" id="f-mapel" class="form-control" required>
                         @foreach($mapels as $m)
-                            <option value="{{ $m->id }}">{{ $m->nama_mapel }}</option>
+                            <option value="{{ $m->id }}">{{ $m->nama }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -208,6 +208,13 @@
                         <label class="form-label">Tahun Ajaran</label>
                         <input type="text" name="tahun_ajaran" id="f-tahun" class="form-control"
                             value="2024/2025" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Semester <span class="required">*</span></label>
+                        <select name="semester" id="f-semester" class="form-control" required>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                        </select>
                     </div>
                 </div>
 
@@ -436,7 +443,7 @@
 /* ── MODAL ── */
 .modal-overlay {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.45); z-index: 1000;
+    background: rgba(0,0,0,.45); z-index: 1050;
     align-items: center; justify-content: center; padding: 20px;
 }
 .modal-overlay.show { display: flex; }
@@ -543,6 +550,7 @@ function openModalEdit(data) {
     document.getElementById('f-tahun').value = data.tahun_ajaran;
 
     document.getElementById('modal-jadwal').classList.add('show');
+    document.getElementById('f-semester').value = data.semester ?? '1';
 }
 
 function openModalImport() {
