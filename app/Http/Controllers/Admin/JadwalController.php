@@ -11,31 +11,58 @@ use Illuminate\Http\Request;
 
 class JadwalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $jadwals = JadwalPelajaran::with(['kelas', 'guru', 'mataPelajaran'])->get();
-        $kelas = Kelas::all();
-        $gurus = Guru::all();
-        $mapels = MataPelajaran::all();
-        
+        $query = JadwalPelajaran::with(['kelas', 'guru.user', 'mataPelajaran']);
+
+        if ($request->filled('filter_hari'))   $query->where('hari', $request->filter_hari);
+        if ($request->filled('filter_kelas'))  $query->where('kelas_id', $request->filter_kelas);
+        if ($request->filled('filter_semester')) $query->where('semester', $request->filter_semester);
+
+        $jadwals = $query->orderBy('hari')->orderBy('jam_ke')->get();
+        $kelas   = Kelas::all();
+        $gurus   = Guru::with('user')->get();
+        $mapels  = MataPelajaran::orderBy('nama')->get();
+
         return view('admin.jadwal.index', compact('jadwals', 'kelas', 'gurus', 'mapels'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'kelas_id' => 'required',
-            'guru_id' => 'required',
+            'kelas_id'          => 'required',
+            'guru_id'           => 'required',
             'mata_pelajaran_id' => 'required',
-            'hari' => 'required',
-            'jam_ke' => 'required|integer',
-            'waktu_mulai' => 'required',
-            'waktu_selesai' => 'required',
-            'tahun_ajaran' => 'required',
+            'hari'              => 'required',
+            'jam_ke'            => 'required|integer|min:1|max:9',
+            'waktu_mulai'       => 'required',
+            'waktu_selesai'     => 'required',
+            'tahun_ajaran'      => 'required',
+            'semester'          => 'required|in:1,2',
         ]);
+
+        $validated['is_aktif'] = true;
 
         JadwalPelajaran::create($validated);
         return redirect()->back()->with('success', 'Jadwal berhasil ditambah!');
+    }
+
+    public function update(Request $request, JadwalPelajaran $jadwal)
+    {
+        $validated = $request->validate([
+            'kelas_id'          => 'required',
+            'guru_id'           => 'required',
+            'mata_pelajaran_id' => 'required',
+            'hari'              => 'required',
+            'jam_ke'            => 'required|integer|min:1|max:9',
+            'waktu_mulai'       => 'required',
+            'waktu_selesai'     => 'required',
+            'tahun_ajaran'      => 'required',
+            'semester'          => 'required|in:1,2',
+        ]);
+
+        $jadwal->update($validated);
+        return redirect()->back()->with('success', 'Jadwal berhasil diupdate!');
     }
 
     public function destroy(JadwalPelajaran $jadwal)
@@ -46,7 +73,7 @@ class JadwalController extends Controller
 
     public function export()
     {
-        $jadwals = \App\Models\Jadwal::with([
+        $jadwals = JadwalPelajaran::with([
             'kelas', 'mataPelajaran', 'guru.user'
         ])->orderBy('hari')->orderBy('jam_ke')->get();
     
@@ -233,7 +260,7 @@ class JadwalController extends Controller
             if (!$guruExists)  { $errors[] = "Baris {$lineNum}: guru_id {$guru_id} tidak ditemukan."; continue; }
     
             // Insert / skip duplikat (hari + jam_ke + kelas sama)
-            \App\Models\Jadwal::firstOrCreate(
+            JadwalPelajaran::firstOrCreate(
                 [
                     'kelas_id'        => (int)$kelas_id,
                     'hari'            => strtolower(trim($hari)),
