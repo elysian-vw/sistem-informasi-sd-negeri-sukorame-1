@@ -71,8 +71,11 @@ class DashboardController extends Controller
         $hariIni = $hariMap[now()->format('l')] ?? '';
         $jadwalHariIni = JadwalPelajaran::with('mataPelajaran')
             ->where('kelas_id', $guru->kelas_id)
+            ->where('guru_id', $guru->id)
             ->where('hari', $hariIni)
             ->where('is_aktif', 1)
+            ->where('tahun_ajaran', '2025/2026') 
+            ->where('semester', '1')
             ->orderBy('jam_ke')
             ->get();
 

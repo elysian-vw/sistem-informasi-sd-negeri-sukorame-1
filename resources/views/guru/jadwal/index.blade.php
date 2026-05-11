@@ -3,91 +3,193 @@
 
 @section('content')
 
+@php
+$guru      = auth()->user()->guru;
+$kelasNama = $guru->kelas->nama_kelas ?? '-';
+$hariList  = ['senin','selasa','rabu','kamis','jumat','sabtu'];
+$labelHari = [
+    'senin'  => 'SENIN',
+    'selasa' => 'SELASA',
+    'rabu'   => 'RABU',
+    'kamis'  => 'KAMIS',
+    'jumat'  => 'JUM\'AT',
+    'sabtu'  => 'SABTU',
+];
+
+// Slot waktu lengkap: jam pelajaran + istirahat
+$slots = [
+    ['no'=>1,  'waktu'=>'07.00 – 07.35', 'tipe'=>'jp',        'jam_ke'=>1],
+    ['no'=>2,  'waktu'=>'07.35 – 08.10', 'tipe'=>'jp',        'jam_ke'=>2],
+    ['no'=>3,  'waktu'=>'08.10 – 08.45', 'tipe'=>'jp',        'jam_ke'=>3],
+    ['no'=>4,  'waktu'=>'08.45 – 09.15', 'tipe'=>'jp',        'jam_ke'=>4],
+    ['no'=>'', 'waktu'=>'09.15 – 09.30', 'tipe'=>'istirahat', 'jam_ke'=>null],
+    ['no'=>5,  'waktu'=>'09.30 – 10.05', 'tipe'=>'jp',        'jam_ke'=>5],
+    ['no'=>6,  'waktu'=>'10.05 – 10.40', 'tipe'=>'jp',        'jam_ke'=>6],
+    ['no'=>'', 'waktu'=>'10.40 – 10.55', 'tipe'=>'istirahat', 'jam_ke'=>null],
+    ['no'=>7,  'waktu'=>'10.55 – 11.30', 'tipe'=>'jp',        'jam_ke'=>7],
+    ['no'=>8,  'waktu'=>'11.30 – 12.05', 'tipe'=>'jp',        'jam_ke'=>8],
+    ['no'=>9,  'waktu'=>'12.05 – 12.40', 'tipe'=>'jp',        'jam_ke'=>9],
+];
+
+// Bangun grid [hari][jam_ke] => item
+$grid = [];
+foreach ($jadwal as $j) {
+    $grid[$j->hari][$j->jam_ke] = $j;
+}
+
+// Helper: singkat nama mapel (hapus "Kelas X" di belakang)
+function singkatMapel($nama) {
+    $nama = preg_replace('/\s+Kelas\s+\d+$/i', '', $nama ?? '-');
+    $singkatan = [
+        'Bahasa Indonesia'         => 'B. Indonesia',
+        'Bahasa Inggris'           => 'B. Inggris',
+        'Bahasa Daerah'            => 'Mulok',
+        'Pendidikan Agama Islam'   => 'Pend. Agama',
+        'Pendidikan Pancasila'     => 'Pend. Pancasila',
+        'Seni Budaya'              => 'Seni Budaya',
+        'Matematika'               => 'Matematika',
+        'PJOK'                     => 'PJOK',
+        'IPA'                      => 'IPA',
+        'IPS'                      => 'IPS',
+        'PPKn'                     => 'PPKn',
+    ];
+    foreach ($singkatan as $panjang => $pendek) {
+        if (str_starts_with($nama, $panjang)) return $pendek;
+    }
+    return \Illuminate\Support\Str::limit($nama, 16);
+}
+@endphp
+
 <div class="page-header">
     <div>
         <h1 class="page-title">Jadwal Pelajaran</h1>
-        <p class="page-subtitle">Jadwal kelas Anda — {{ now()->isoFormat('dddd, D MMMM Y') }}</p>
+        <p class="page-subtitle">Kelas {{ $kelasNama }} &nbsp;·&nbsp; Tahun Pelajaran {{ $tahunAjaran }}</p>
     </div>
 </div>
 
-@php
-$warna = [
-    'senin'   => ['bg'=>'#e3f2fd','color'=>'#1565c0','border'=>'#90caf9'],
-    'selasa'  => ['bg'=>'#f3e5f5','color'=>'#6a1b9a','border'=>'#ce93d8'],
-    'rabu'    => ['bg'=>'#e8f5e9','color'=>'#2e7d32','border'=>'#a5d6a7'],
-    'kamis'   => ['bg'=>'#fff3e0','color'=>'#e65100','border'=>'#ffcc80'],
-    'jumat'   => ['bg'=>'#fce4ec','color'=>'#880e4f','border'=>'#f48fb1'],
-    'sabtu'   => ['bg'=>'#f1f8e9','color'=>'#33691e','border'=>'#c5e1a5'],
-];
-$labelHari = [
-    'senin'=>'Senin','selasa'=>'Selasa','rabu'=>'Rabu',
-    'kamis'=>'Kamis','jumat'=>'Jumat','sabtu'=>'Sabtu',
-];
-@endphp
+<div class="content-card" style="padding:0;overflow:hidden;">
 
-@if($jadwalTerurut->isEmpty())
-    <div class="content-card">
-        <div style="text-align:center;padding:40px;color:var(--text-muted);">
-            <i class="fas fa-calendar-xmark" style="font-size:36px;display:block;margin-bottom:12px;opacity:.4;"></i>
-            Belum ada jadwal untuk kelas Anda.
+    {{-- Info header --}}
+    <div style="background:var(--primary);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div>
+            <div style="font-size:10px;opacity:.75;letter-spacing:.5px;text-transform:uppercase;">Kelas</div>
+            <div style="font-weight:700;font-size:16px;">{{ $kelasNama }} ({{ ['1'=>'SATU','2'=>'DUA','3'=>'TIGA','4'=>'EMPAT','5'=>'LIMA','6'=>'ENAM'][$kelasNama] ?? $kelasNama }})</div>
+        </div>
+        <div>
+            <div style="font-size:10px;opacity:.75;letter-spacing:.5px;text-transform:uppercase;">Semester</div>
+            <div style="font-weight:700;font-size:16px;">{{ $semesterAktif }} ({{ $semesterAktif==='1' ? 'SATU' : 'DUA' }})</div>
+        </div>
+        <div>
+            <div style="font-size:10px;opacity:.75;letter-spacing:.5px;text-transform:uppercase;">Tahun Pelajaran</div>
+            <div style="font-weight:700;font-size:16px;">{{ $tahunAjaran }}</div>
+        </div>
+        <div>
+            <div style="font-size:10px;opacity:.75;letter-spacing:.5px;text-transform:uppercase;">Wali Kelas</div>
+            <div style="font-weight:700;font-size:16px;">{{ auth()->user()->name }}</div>
         </div>
     </div>
-@else
-    @foreach($jadwalTerurut as $hari => $items)
-    @php $w = $warna[$hari] ?? ['bg'=>'#f5f5f5','color'=>'#333','border'=>'#ddd']; @endphp
-    <div class="content-card" style="margin-bottom:20px;{{ $hari === $hariIni ? 'border:2px solid var(--primary);' : '' }}">
-        <div class="card-header" style="background:{{ $w['bg'] }};border-bottom:1px solid {{ $w['border'] }};">
-            <h3 style="color:{{ $w['color'] }};margin:0;display:flex;align-items:center;gap:8px;">
-                <i class="fas fa-calendar-day"></i>
-                {{ $labelHari[$hari] ?? ucfirst($hari) }}
-                @if($hari === $hariIni)
-                    <span class="badge badge-blue" style="font-size:11px;">Hari Ini</span>
-                @endif
-            </h3>
-            <span style="font-size:12px;color:{{ $w['color'] }};opacity:.8;">{{ $items->count() }} sesi</span>
-        </div>
-        <div class="table-responsive">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th style="width:60px;">Jam</th>
-                        <th>Mata Pelajaran</th>
-                        <th>Guru</th>
-                        <th>Waktu</th>
-                        <th>Ruangan</th>
-                        <th>Semester</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($items->sortBy('jam_ke') as $j)
-                    <tr style="{{ $hari === $hariIni ? 'background:rgba(26,115,232,0.03);' : '' }}">
-                        <td style="text-align:center;">
-                            <span style="width:28px;height:28px;border-radius:50%;background:{{ $w['bg'] }};color:{{ $w['color'] }};display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">
-                                {{ $j->jam_ke }}
-                            </span>
-                        </td>
-                        <td>
-                            <div style="font-weight:600;">{{ $j->mataPelajaran->nama ?? '-' }}</div>
-                            <div style="font-size:11px;color:var(--text-muted);">{{ $j->mataPelajaran->jenis ?? '' }}</div>
-                        </td>
-                        <td style="font-size:13px;">{{ $j->guru->user->name ?? '-' }}</td>
-                        <td style="font-size:13px;white-space:nowrap;">
-                            {{ \Carbon\Carbon::parse($j->waktu_mulai)->format('H:i') }} –
-                            {{ \Carbon\Carbon::parse($j->waktu_selesai)->format('H:i') }}
-                        </td>
-                        <td style="font-size:13px;">{{ $j->ruangan ?? '-' }}</td>
-                        <td>
-                            <span class="badge {{ $j->semester == '1' ? 'badge-blue' : 'badge-green' }}">
-                                Sem {{ $j->semester }}
-                            </span>
-                        </td>
-                    </tr>
+
+    {{-- Tabel jadwal --}}
+    <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;min-width:700px;font-size:12px;">
+            <thead>
+                <tr>
+                    <th style="padding:10px 8px;text-align:center;border:2px solid #334155;background:#1e293b;color:#fff;width:36px;">NO</th>
+                    <th style="padding:10px 8px;text-align:center;border:2px solid #334155;background:#1e293b;color:#fff;width:115px;">HARI/WAKTU</th>
+                    @foreach($hariList as $h)
+                    <th style="padding:10px 8px;text-align:center;border:2px solid #334155;
+                                background:{{ $h === $hariIni ? '#1d4ed8' : '#1e293b' }};
+                                color:#fff;">
+                        {{ $labelHari[$h] }}
+                        @if($h === $hariIni)
+                            <div style="font-size:9px;font-weight:400;margin-top:2px;color:#bfdbfe;">● hari ini</div>
+                        @endif
+                    </th>
                     @endforeach
-                </tbody>
-            </table>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($slots as $idx => $slot)
+
+                @if($slot['tipe'] === 'istirahat')
+                {{-- Baris istirahat --}}
+                <tr>
+                    <td style="padding:5px 8px;text-align:center;border:1px solid #94a3b8;background:#fef3c7;color:#92400e;font-size:10px;font-weight:700;">–</td>
+                    <td style="padding:5px 8px;text-align:center;border:1px solid #94a3b8;background:#fef3c7;color:#92400e;font-size:10px;font-style:italic;font-weight:600;">{{ $slot['waktu'] }}</td>
+                    <td colspan="6" style="padding:5px;text-align:center;border:1px solid #94a3b8;background:#fef3c7;color:#92400e;font-weight:700;font-size:11px;letter-spacing:2px;">
+                        I S T I R A H A T
+                    </td>
+                </tr>
+
+                @else
+                {{-- Baris jam pelajaran --}}
+                @php
+                    $jamKe  = $slot['jam_ke'];
+                    $rowBg  = $idx % 2 === 0 ? '#f8fafc' : '#ffffff';
+                @endphp
+                <tr style="background:{{ $rowBg }};">
+                    <td style="padding:10px 8px;text-align:center;border:1px solid #cbd5e1;font-weight:700;color:var(--primary);font-size:14px;">{{ $slot['no'] }}</td>
+                    <td style="padding:10px 8px;text-align:center;border:1px solid #cbd5e1;color:#64748b;white-space:nowrap;font-size:11px;font-style:italic;">{{ $slot['waktu'] }}</td>
+
+                    @foreach($hariList as $h)
+                    @php
+                        $item    = $grid[$h][$jamKe] ?? null;
+                        $isMulok = $item && ($item->mataPelajaran->jenis ?? '') === 'mulok';
+                        $isMe    = $item && $item->guru_id === $guru->id;
+                        $isHariIni = $h === $hariIni;
+
+                        if ($isMulok)         $cellBg = '#dcfce7';
+                        elseif ($isHariIni)   $cellBg = '#eff6ff';
+                        else                  $cellBg = 'transparent';
+                    @endphp
+                    <td style="padding:8px 6px;border:1px solid #cbd5e1;text-align:center;vertical-align:middle;background:{{ $cellBg }};">
+                        @if($item)
+                        <div style="font-weight:{{ $isMe ? '700' : '600' }};font-size:12px;
+                                    color:{{ $isMulok ? '#166534' : ($isMe ? 'var(--primary)' : '#374151') }};
+                                    line-height:1.3;">
+                            {{ singkatMapel($item->mataPelajaran->nama ?? '-') }}
+                        </div>
+                        @if($item->guru && $item->guru->user)
+                        <div style="font-size:9px;color:#94a3b8;margin-top:3px;">
+                            {{ collect(explode(' ', $item->guru->user->name ?? ''))->take(2)->implode(' ') }}
+                        </div>
+                        @endif
+                        @else
+                        <span style="color:#e2e8f0;font-size:16px;">·</span>
+                        @endif
+                    </td>
+                    @endforeach
+                </tr>
+                @endif
+
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+
+    {{-- Footer legend --}}
+    <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:#f8fafc;">
+        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#64748b;">
+                <div style="width:12px;height:12px;border-radius:2px;background:#dcfce7;border:1px solid #86efac;"></div>
+                Muatan Lokal (Mulok)
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#64748b;">
+                <div style="width:12px;height:12px;border-radius:2px;background:#eff6ff;border:1px solid #93c5fd;"></div>
+                Hari Ini
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#64748b;">
+                <div style="width:12px;height:12px;border-radius:2px;background:#fef3c7;border:1px solid #fcd34d;"></div>
+                Istirahat
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--primary);font-weight:600;">
+                Tebal biru = jadwal Anda
+            </div>
+        </div>
+        <div style="font-size:11px;color:#94a3b8;">
+            {{ $jadwal->count() }} sesi &nbsp;·&nbsp; Semester {{ $semesterAktif }} &nbsp;·&nbsp; {{ $tahunAjaran }}
         </div>
     </div>
-    @endforeach
-@endif
+</div>
 
 @endsection
