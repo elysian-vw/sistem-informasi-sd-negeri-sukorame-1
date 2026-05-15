@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
             PengajuanLayananTableSeeder::class,
             NotifikasiTableSeeder::class,
             KomiteTableSeeder::class,
+            RaportTableSeeder::class,
         ]);
     }
 }

@@ -40,13 +40,22 @@ class RaportWaliController extends Controller
             403
         );
 
+        $raport->load('siswa.kelas');
+
+        // Filter nilai hanya untuk mata pelajaran sesuai tingkat kelas siswa
         $nilai = Nilai::where('siswa_id', $raport->siswa_id)
             ->where('semester', $raport->semester)
             ->where('tahun_ajaran', $raport->tahun_ajaran)
-            ->with('mataPelajaran')
-            ->get();
-
-        $raport->load('siswa.kelas');
+            ->with([
+                'mataPelajaran' => function ($query) use ($raport) {
+                    $query->where('tingkat', $raport->siswa->kelas->tingkat);
+                }
+            ])
+            ->get()
+            ->filter(function ($item) {
+                return $item->mataPelajaran !== null;
+            })
+            ->values();
 
         return view('wali.raport.show', compact('raport', 'nilai'));
     }
