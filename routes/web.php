@@ -236,7 +236,8 @@ Route::prefix('wali')->name('wali.')->middleware(['auth', 'role:wali_murid'])->g
     Route::get('/dashboard', [WaliDashboard::class, 'index'])->name('dashboard');
 
     // Raport & Kehadiran
-    Route::get('/raport',    [RaportWaliController::class,    'index'])->name('raport');
+    Route::get('raport',        [RaportWaliController::class, 'index'])->name('raport.index');
+    Route::get('raport/{raport}', [RaportWaliController::class, 'show'])->name('raport.show');
     Route::get('/kehadiran', [KehadiranWaliController::class, 'index'])->name('kehadiran');
 
     // Tugas Anak

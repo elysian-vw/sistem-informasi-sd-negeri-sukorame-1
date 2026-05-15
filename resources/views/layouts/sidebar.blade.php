@@ -86,7 +86,7 @@
             <a href="{{ route('wali.pengumuman.index') }}" class="nav-item {{ request()->routeIs('wali.pengumuman*') ? 'active' : '' }}">
                 <i class="fas fa-bullhorn"></i> <span>Pengumuman</span>
             </a>
-            <a href="{{ route('wali.raport') }}" class="nav-item {{ request()->routeIs('wali.raport') ? 'active' : '' }}">
+            <a href="{{ route('wali.raport.index') }}" class="nav-item {{ request()->routeIs('wali.raport*') ? 'active' : '' }}">
                 <i class="fas fa-file-alt"></i> <span>E-Raport</span>
             </a>
 
@@ -98,9 +98,6 @@
             </a>
             <a href="{{ route('siswa.tugas.index') }}" class="nav-item {{ request()->routeIs('siswa.tugas*') ? 'active' : '' }}">
                 <i class="fas fa-file-pen"></i> <span>Tugas</span>
-            </a>
-            <a href="{{ route('siswa.absensi.index') }}" class="nav-item {{ request()->routeIs('siswa.absensi*') ? 'active' : '' }}">
-                <i class="fas fa-calendar-check"></i> <span>Absensi</span>
             </a>
         @endif
     </nav>
