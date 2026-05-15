@@ -31,10 +31,10 @@
         </div>
     </div>
     <div class="stat-card stat-purple">
-        <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+        <div class="stat-icon"><i class="fas fa-user-clock"></i></div>
         <div class="stat-info">
-            <span class="stat-number">{{ $data['total_mapel'] }}</span>
-            <span class="stat-label">Mata Pelajaran</span>
+            <span class="stat-number">{{ $data['siswa_belum_aktif'] }}</span>
+            <span class="stat-label">Siswa Belum Aktif</span>
         </div>
     </div>
 </div>
