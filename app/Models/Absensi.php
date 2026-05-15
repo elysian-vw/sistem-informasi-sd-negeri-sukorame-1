@@ -16,6 +16,10 @@ class Absensi extends Model
         'keterangan',
     ];
 
+    protected $casts = [
+        'tanggal' => 'date', // ← tambahkan ini
+    ];
+
     public function siswa()
     {
         return $this->belongsTo(Siswa::class, 'siswa_id');

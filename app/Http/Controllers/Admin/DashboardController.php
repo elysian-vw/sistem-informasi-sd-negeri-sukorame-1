@@ -39,7 +39,7 @@ class DashboardController extends Controller
             'total_siswa'        => Siswa::count(),
             'total_guru'         => Guru::count(),
             'total_kelas'        => Kelas::count(),
-            'total_mapel'        => MataPelajaran::count(),
+            'siswa_belum_aktif'  => Siswa::whereNull('user_id')->count(), // ← ganti ini
             'pengumuman_terbaru' => Pengumuman::latest()->take(5)->get(),
             'siswa_terbaru'      => Siswa::with('kelas')->latest()->take(5)->get(),
             'absensi_labels'     => $absensiLabels,
