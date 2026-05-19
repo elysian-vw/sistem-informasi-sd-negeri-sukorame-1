@@ -281,7 +281,7 @@
             <div class="slide-item" style="min-width:100%; position:relative;">
                 {{-- Hero bg image --}}
                 <div style="position:absolute;inset:0;z-index:0;overflow:hidden;">
-                    <img src="https://picsum.photos/seed/school1/1400/600"
+                    <img src="https://images.unsplash.com/photo-1594608661623-aa0bd3a69d98?w=1400&q=80"
                          style="width:100%;height:100%;object-fit:cover;opacity:.15;" alt="" loading="eager">
                 </div>
                 <div class="max-w-7xl mx-auto px-8 py-20 flex flex-col md:flex-row items-center gap-10 relative z-10">
@@ -337,7 +337,7 @@
             {{-- ── Slide 2: E-Learning SIMAS ── --}}
             <div class="slide-item" style="min-width:100%; background: linear-gradient(135deg, #0c1445 0%, #1e3a8a 50%, #1d4ed8 100%); position:relative;">
                 <div style="position:absolute;inset:0;z-index:0;overflow:hidden;">
-                    <img src="https://picsum.photos/seed/elearning2/1400/600"
+                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1400&q=80"
                          style="width:100%;height:100%;object-fit:cover;opacity:.1;" alt="" loading="lazy">
                 </div>
                 <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 32px 32px;"></div>
@@ -366,7 +366,7 @@
             {{-- ── Slide 3: PPDB ── --}}
             <div class="slide-item" style="min-width:100%; background: linear-gradient(135deg, #052e16 0%, #14532d 50%, #15803d 100%); position:relative;">
                 <div style="position:absolute;inset:0;z-index:0;overflow:hidden;">
-                    <img src="https://picsum.photos/seed/ppdb3/1400/600"
+                    <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=1400&q=80"
                          style="width:100%;height:100%;object-fit:cover;opacity:.1;" alt="" loading="lazy">
                 </div>
                 <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 32px 32px;"></div>

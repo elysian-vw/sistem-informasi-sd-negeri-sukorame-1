@@ -33,7 +33,7 @@ class LoginController extends Controller
                 'admin'          => redirect()->route('admin.dashboard'),
                 'guru'           => redirect()->route('guru.dashboard'),
                 'wali_murid'     => redirect()->route('wali.dashboard'),
-                'siswa'          => redirect()->route('siswa.dashboard'),
+                'siswa'          => redirect()->route('siswa.tugas.index'),
                 default          => redirect('/'),
             };
         }
