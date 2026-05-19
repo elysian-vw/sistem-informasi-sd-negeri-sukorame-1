@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['admin', 'guru', 'wali_murid', 'siswa']);
+            $table->enum('role', ['admin', 'guru', 'wali_murid', 'siswa', 'kepala_sekolah']);
             $table->string('foto')->nullable();
             $table->string('no_hp')->nullable();
             $table->rememberToken();

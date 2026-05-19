@@ -85,6 +85,7 @@
                             <option value="uts" {{ old('tipe') == 'uts' ? 'selected' : '' }}>UTS</option>
                             <option value="uas" {{ old('tipe') == 'uas' ? 'selected' : '' }}>UAS</option>
                         </select>
+                        @error('tipe') <div class="form-error" style="color:red; font-size:12px; margin-top:4px;">{{ $message }}</div> @enderror
                     </div>
                     <div class="form-group" id="deadlineBox" style="display:none; margin-bottom: 0;">
                         <label class="form-label">Batas Waktu (Deadline)</label>
@@ -92,7 +93,7 @@
                     </div>
                 </div>
 
-                {{-- Tipe Media (VIDEO DIHAPUS) --}}
+                {{-- Tipe Media --}}
                 <div class="form-group">
                     <label class="form-label">Format Media <span class="required">*</span></label>
                     <div class="tipe-selector">
@@ -106,6 +107,7 @@
                         </label>
                         @endforeach
                     </div>
+                    @error('format_media') <div class="form-error" style="color:red; font-size:12px; margin-top:4px;">{{ $message }}</div> @enderror
                 </div>
 
                 {{-- Input File --}}

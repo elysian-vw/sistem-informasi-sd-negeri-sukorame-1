@@ -24,19 +24,29 @@ class MataPelajaranTableSeeder extends Seeder
 
         $guruIds = DB::table('guru')->pluck('id')->toArray();
 
+        // Proteksi jika tabel guru masih kosong
+        if (empty($guruIds)) {
+            $this->command->warn('Data Guru masih kosong! Lewati seeding Mata Pelajaran.');
+            return;
+        }
+
         for ($tingkat = 1; $tingkat <= 6; $tingkat++) {
             foreach ($mapelDasar as $mapel) {
-                DB::table('mata_pelajaran')->insert([
-                    'kode'          => $mapel['kode'] . '-' . $tingkat,
-                    'nama'          => $mapel['nama'] . ' Kelas ' . $tingkat,
-                    'tingkat'       => $tingkat,
-                    'kkm'           => 70,
-                    'guru_id'       => $guruIds[array_rand($guruIds)],
-                    'jenis'         => $mapel['jenis'],
-                    'status'        => 'aktif',
-                    'created_at'    => now(),
-                    'updated_at'    => now(),
-                ]);
+                $kodeMapel = $mapel['kode'] . '-' . $tingkat;
+
+                DB::table('mata_pelajaran')->updateOrInsert(
+                    ['kode' => $kodeMapel], // Kondisi pencarian berdasarkan kode mata pelajaran
+                    [
+                        'nama'          => $mapel['nama'] . ' Kelas ' . $tingkat,
+                        'tingkat'       => $tingkat,
+                        'kkm'           => 70,
+                        'guru_id'       => $guruIds[array_rand($guruIds)],
+                        'jenis'         => $mapel['jenis'],
+                        'status'        => 'aktif',
+                        'created_at'    => now(),
+                        'updated_at'    => now(),
+                    ]
+                );
             }
         }
     }
