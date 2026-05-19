@@ -29,15 +29,31 @@ class TugasController extends Controller
 
         $guru = $user->guru;
 
-        $kelas = Kelas::where('id', $guru->kelas_id)->get();
-        $tingkat = Kelas::find($guru->kelas_id)->tingkat;
-        $mapel   = MataPelajaran::where('guru_id', $guru->id)
-                    ->where('tingkat', $tingkat)
-                    ->get();
+        // ── FIX: Menggunakan auth()->id() karena wali_kelas_id merujuk ke tabel users ──
+        $kelasTarget = Kelas::where('wali_kelas_id', auth()->id())->first();
+        if (!$kelasTarget && $guru->kelas_id) {
+            $kelasTarget = Kelas::find($guru->kelas_id);
+        }
 
         $query = Tugas::with(['kelas', 'mataPelajaran', 'pengumpulan'])
-            ->where('guru_id', $guru->id)
-            ->where('kelas_id', $guru->kelas_id);
+            ->where('guru_id', $guru->id);
+
+        if ($kelasTarget) {
+            // Jika Wali Kelas / Guru Kelas, kunci mutlak hanya untuk kelasnya sendiri
+            $kelas = Kelas::where('id', $kelasTarget->id)->get();
+            $tingkat = $kelasTarget->tingkat;
+            $mapel = MataPelajaran::where('guru_id', $guru->id)->where('tingkat', $tingkat)->get();
+            
+            $query->where('kelas_id', $kelasTarget->id);
+        } else {
+            // Jika Guru Mapel Umum, berikan pilihan filter kelas
+            $kelas = Kelas::all();
+            $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
+            
+            if ($request->filled('kelas_id')) {
+                $query->where('kelas_id', $request->kelas_id);
+            }
+        }
 
         if ($request->filled('mata_pelajaran_id')) {
             $query->where('mata_pelajaran_id', $request->mata_pelajaran_id);
@@ -57,16 +73,25 @@ class TugasController extends Controller
     {
         $guru = auth()->user()->guru;
 
-        if (!$guru->kelas_id) {
-            return redirect()->route('guru.tugas.index')
-                ->with('error', 'Anda belum ditugaskan ke kelas manapun. Silakan hubungi Admin untuk mengatur Tugas Kelas Anda.');
+        // ── FIX: Menggunakan auth()->id() untuk mendeteksi wali kelas ──
+        $kelasTarget = Kelas::where('wali_kelas_id', auth()->id())->first();
+        if (!$kelasTarget && $guru->kelas_id) {
+            $kelasTarget = Kelas::find($guru->kelas_id);
         }
 
-        $tingkat = Kelas::find($guru->kelas_id)->tingkat;
-        $mapel   = MataPelajaran::where('guru_id', $guru->id)
-                    ->where('tingkat', $tingkat)
-                    ->get();
-        $kelas = Kelas::where('id', $guru->kelas_id)->get();
+        if ($kelasTarget) {
+            $tingkat = $kelasTarget->tingkat;
+            $mapel   = MataPelajaran::where('guru_id', $guru->id)->where('tingkat', $tingkat)->get();
+            $kelas   = Kelas::where('id', $kelasTarget->id)->get();
+        } else {
+            $mapel   = MataPelajaran::where('guru_id', $guru->id)->get();
+            $kelas   = Kelas::all();
+        }
+
+        if ($kelas->isEmpty()) {
+            return redirect()->route('guru.tugas.index')
+                ->with('error', 'Data kelas belum tersedia di sistem. Silakan hubungi Admin.');
+        }
 
         return view('guru.tugas.create', compact('mapel', 'kelas'));
     }
@@ -76,15 +101,11 @@ class TugasController extends Controller
     {
         $guru = auth()->user()->guru;
 
-        if (!$guru->kelas_id) {
-            return redirect()->back()->with('error', 'Tugas kelas Anda belum diatur.');
-        }
-
         $request->validate([
             'judul'             => 'required|string|max:255',
             'deskripsi'         => 'required',
             'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
-            'kelas_id'          => 'required|in:' . $guru->kelas_id,
+            'kelas_id'          => 'required|exists:kelas,id',
             'deadline'          => 'required|date',
             'status'            => 'required|in:aktif,draft',
             'file'              => 'nullable|file|mimes:pdf,doc,docx,zip|max:5120',
@@ -115,7 +136,7 @@ class TugasController extends Controller
             'judul'             => $request->judul,
             'deskripsi'         => $request->deskripsi,
             'mata_pelajaran_id' => $request->mata_pelajaran_id,
-            'kelas_id'          => $guru->kelas_id,
+            'kelas_id'          => $request->kelas_id,
             'guru_id'           => $guru->id,
             'deadline'          => $request->deadline,
             'status'            => $request->status,
@@ -123,7 +144,6 @@ class TugasController extends Controller
             'tipe'              => $request->tipe ?? 'upload',
         ]);
 
-        // ← Tambah ini: simpan soal CBT kalau ada
         if ($request->tipe === 'cbt' && $request->soal) {
             foreach ($request->soal as $s) {
                 $gambarPath = null;
@@ -147,7 +167,7 @@ class TugasController extends Controller
         return redirect()->route('guru.tugas.index')->with('success', 'Tugas berhasil dibuat.');
     }
 
-    // ── SHOW (debug sementara) ────────────────────────────────────────────────
+    // ── SHOW ──────────────────────────────────────────────────────────────────
     public function show(Tugas $tugas)
     {
         $this->authorize_guru($tugas);
@@ -160,12 +180,21 @@ class TugasController extends Controller
     {
         $this->authorize_guru($tugas);
 
-        $guru  = auth()->user()->guru;
-        $tingkat = Kelas::find($guru->kelas_id)->tingkat;
-        $mapel   = MataPelajaran::where('guru_id', $guru->id)
-                    ->where('tingkat', $tingkat)
-                    ->get();
-        $kelas = Kelas::where('id', $guru->kelas_id)->get();
+        $guru = auth()->user()->guru;
+
+        // ── FIX: Menggunakan auth()->id() untuk mendeteksi wali kelas ──
+        $kelasTarget = Kelas::where('wali_kelas_id', auth()->id())->first();
+        if (!$kelasTarget && $guru->kelas_id) {
+            $kelasTarget = Kelas::find($guru->kelas_id);
+        }
+
+        if ($kelasTarget) {
+            $kelas = Kelas::where('id', $kelasTarget->id)->get();
+            $mapel = MataPelajaran::where('guru_id', $guru->id)->where('tingkat', $kelasTarget->tingkat)->get();
+        } else {
+            $kelas = Kelas::all();
+            $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
+        }
 
         $tugas->load('pertanyaans');
 
@@ -177,13 +206,11 @@ class TugasController extends Controller
     {
         $this->authorize_guru($tugas);
 
-        $guru = auth()->user()->guru;
-
         $rules = [
             'judul'             => 'required|string|max:255',
             'deskripsi'         => 'required',
             'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
-            'kelas_id'          => 'required|in:' . $guru->kelas_id,
+            'kelas_id'          => 'required|exists:kelas,id',
             'deadline'          => 'required|date',
             'status'            => 'required|in:aktif,draft',
             'file'              => 'nullable|file|mimes:pdf,doc,docx,zip|max:5120',
@@ -195,7 +222,7 @@ class TugasController extends Controller
             'judul'             => $request->judul,
             'deskripsi'         => $request->deskripsi,
             'mata_pelajaran_id' => $request->mata_pelajaran_id,
-            'kelas_id'          => $guru->kelas_id,
+            'kelas_id'          => $request->kelas_id,
             'deadline'          => $request->deadline,
             'status'            => $request->status,
         ];
@@ -326,12 +353,21 @@ class TugasController extends Controller
     {
         $guru = auth()->user()->guru;
 
-        $daftarTugas = Tugas::with(['kelas', 'mataPelajaran', 'pengumpulan'])
+        // ── FIX: Menggunakan auth()->id() untuk pencarian rekap penilaian ──
+        $kelasTarget = Kelas::where('wali_kelas_id', auth()->id())->first();
+        if (!$kelasTarget && $guru->kelas_id) {
+            $kelasTarget = Kelas::find($guru->kelas_id);
+        }
+
+        $query = Tugas::with(['kelas', 'mataPelajaran', 'pengumpulan'])
             ->where('guru_id', $guru->id)
-            ->where('kelas_id', $guru->kelas_id)
-            ->where('status', 'aktif')
-            ->latest()
-            ->paginate(10);
+            ->where('status', 'aktif');
+
+        if ($kelasTarget) {
+            $query->where('kelas_id', $kelasTarget->id);
+        }
+
+        $daftarTugas = $query->latest()->paginate(10);
 
         return view('guru.tugas.list-penilaian', compact('daftarTugas'));
     }

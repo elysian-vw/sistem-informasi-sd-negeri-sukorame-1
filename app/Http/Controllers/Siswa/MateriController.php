@@ -15,8 +15,9 @@ class MateriController extends Controller
 
         $mapel = MataPelajaran::where('tingkat', $tingkat)->get();
 
+        // Kunci murni berdasarkan kelas_id siswa DAN tipenya adalah 'materi'
         $query = Materi::with(['mataPelajaran', 'guru.user'])
-            ->whereHas('mataPelajaran', fn($q) => $q->where('tingkat', $tingkat))
+            ->where('kelas_id', $siswa->kelas_id)
             ->where('tipe', 'materi');
 
         if ($request->filled('mata_pelajaran_id')) {
@@ -30,6 +31,10 @@ class MateriController extends Controller
 
     public function show(Materi $materi)
     {
+        if ($materi->kelas_id !== auth()->user()->siswa->kelas_id) {
+            abort(403, 'Akses Ditolak! Materi ini bukan untuk kelas Anda.');
+        }
+
         return view('siswa.materi.show', compact('materi'));
     }
 }

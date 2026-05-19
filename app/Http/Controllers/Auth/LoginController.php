@@ -27,12 +27,14 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
+            // SINKRONISASI PINTU MASUK SESUAI ROLE USER
             return match (Auth::user()->role) {
-                'admin'      => redirect()->route('admin.dashboard'),
-                'guru'       => redirect()->route('guru.dashboard'),
-                'wali_murid' => redirect()->route('wali.dashboard'),
-                'siswa'      => redirect()->route('siswa.dashboard'),
-                default      => redirect('/'),
+                'kepala_sekolah' => redirect()->route('kepala_sekolah.dashboard'), // <- Berhasil Ditambahkan!
+                'admin'          => redirect()->route('admin.dashboard'),
+                'guru'           => redirect()->route('guru.dashboard'),
+                'wali_murid'     => redirect()->route('wali.dashboard'),
+                'siswa'          => redirect()->route('siswa.dashboard'),
+                default          => redirect('/'),
             };
         }
 
