@@ -131,8 +131,43 @@
                     <div id="containerSoal">
                         @if(old('soal'))
                             @foreach(old('soal') as $i => $s)
-                                <div class="soal-item" data-idx="{{ $i }}">
-                                    @include('guru.tugas._soal_item', ['i' => $i, 's' => $s])
+                                <div class="soal-item" style="border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;position:relative;background:var(--bg);">
+                                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                                        <span style="font-weight:700;font-size:13px;color:var(--purple);">
+                                            <i class="fas fa-circle-question"></i> Soal #<span class="soal-num">{{ $i + 1 }}</span>
+                                        </span>
+                                        <button type="button" onclick="hapusSoal(this)"
+                                                style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:14px;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="font-size:12px;">Pertanyaan <span style="color:var(--danger);">*</span></label>
+                                        <textarea name="soal[{{ $i }}][soal]" rows="2" class="form-control" required>{{ $s['soal'] ?? '' }}</textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="font-size:12px;">Gambar Soal (opsional)</label>
+                                        <input type="file" name="soal[{{ $i }}][gambar_soal]" class="form-control" accept="image/*">
+                                    </div>
+                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                                        @foreach(['a','b','c','d'] as $opt)
+                                        <div class="form-group" style="margin-bottom:8px;">
+                                            <label style="font-size:12px;">Pilihan {{ strtoupper($opt) }}</label>
+                                            <input type="text" name="soal[{{ $i }}][pilihan_{{ $opt }}]"
+                                                value="{{ $s['pilihan_'.$opt] ?? '' }}"
+                                                class="form-control" required>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <label style="font-size:12px;">Jawaban Benar</label>
+                                        <select name="soal[{{ $i }}][jawaban_benar]" class="form-control" required>
+                                            <option value="">-- Pilih --</option>
+                                            @foreach(['A','B','C','D'] as $opt)
+                                            <option value="{{ $opt }}" @selected(($s['jawaban_benar'] ?? '') === $opt)>{{ $opt }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
                             @endforeach
                         @endif
