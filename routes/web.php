@@ -228,21 +228,15 @@ Route::prefix('wali')->name('wali.')->middleware(['auth', 'role:wali_murid'])->g
 // ═══════════════════════════════════════════════════════════════════════════════
 
 Route::prefix('siswa')->name('siswa.')->middleware(['auth', 'role:siswa'])->group(function () {
-    Route::get('/dashboard', [SiswaDashboard::class, 'index'])->name('dashboard');
-
-    Route::get('/elearning', [ElearningController::class,  'index'])->name('elearning');
-    Route::get('/raport',    [RaportSiswaController::class, 'index'])->name('raport');
-
-    Route::get('/materi',          [SiswaMateri::class, 'index'])->name('materi.index');
-    Route::get('/materi/{materi}', [SiswaMateri::class, 'show'])->name('materi.show');
-
     Route::get('/tugas',                     [SiswaTugas::class, 'index'])->name('tugas.index');
     Route::get('/tugas/{tugas}',             [SiswaTugas::class, 'show'])->name('tugas.show');
     Route::post('/tugas/{tugas}/kumpulkan',  [SiswaTugas::class, 'kumpulkan'])->name('tugas.kumpulkan');
     Route::get('/tugas/{tugas}/kerjakan',    [SiswaTugas::class, 'kerjakan'])->name('tugas.kerjakan');
     Route::post('/tugas/{tugas}/simpan-cbt', [SiswaTugas::class, 'simpanCBT'])->name('tugas.simpanCBT');
+    
+    Route::get('/materi',          [SiswaMateri::class, 'index'])->name('materi.index');
+    Route::get('/materi/{materi}', [SiswaMateri::class, 'show'])->name('materi.show');
 
-    Route::get('/absensi', [SiswaAbsensi::class, 'index'])->name('absensi.index');
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
