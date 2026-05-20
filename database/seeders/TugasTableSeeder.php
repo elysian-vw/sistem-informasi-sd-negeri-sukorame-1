@@ -9,23 +9,43 @@ class TugasTableSeeder extends Seeder
 {
     public function run(): void
     {
-        $mapel = DB::table('mata_pelajaran')->pluck('id');
-        $kelas = DB::table('kelas')->pluck('id');
-        $guru  = DB::table('guru')->pluck('id');
+        // Ambil mapel beserta relasi guru dan tingkat
+        $mapelList = DB::table('mata_pelajaran')
+            ->whereNotNull('guru_id')
+            ->get();
 
-        for ($i = 1; $i <= 20; $i++) {
-            DB::table('tugas')->insert([
-                'judul'             => "Tugas $i",
-                'deskripsi'         => "Kerjakan soal-soal latihan",
+        if ($mapelList->isEmpty()) {
+            $this->command->warn('Data mata pelajaran kosong! Lewati seeding Tugas.');
+            return;
+        }
+
+        $status = ['aktif', 'draft'];
+        $data   = [];
+
+        foreach ($mapelList as $mapel) {
+            // Kelas konsisten dengan tingkat mapel
+            $kelas = DB::table('kelas')->where('tingkat', $mapel->tingkat)->first();
+            if (!$kelas) continue;
+
+            $data[] = [
+                'judul'             => 'Tugas ' . $mapel->nama,
+                'deskripsi'         => 'Kerjakan soal-soal latihan ' . $mapel->nama,
                 'file'              => null,
-                'mata_pelajaran_id' => $mapel->random(),
-                'kelas_id'          => $kelas->random(),
-                'guru_id'           => $guru->random(),
-                'deadline'          => now()->addDays(rand(1, 14)),
-                'status'            => 'aktif',
+                'mata_pelajaran_id' => $mapel->id,
+                'kelas_id'          => $kelas->id,      // konsisten dengan tingkat mapel
+                'guru_id'           => $mapel->guru_id, // konsisten dengan mapel
+                'deadline'          => now()->addDays(rand(7, 21)),
+                'status'            => $status[array_rand($status)],
+                'tipe'              => 'upload',
                 'created_at'        => now(),
                 'updated_at'        => now(),
-            ]);
+            ];
         }
+
+        foreach (array_chunk($data, 50) as $chunk) {
+            DB::table('tugas')->insert($chunk);
+        }
+
+        $this->command->info('Tugas di-seed: ' . count($data) . ' data.');
     }
 }

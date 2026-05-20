@@ -62,16 +62,34 @@
                     
                     <div class="form-group">
                         <label class="form-label">Kelas <span class="required">*</span></label>
-                        <select name="kelas_id"
-                                class="form-input @error('kelas_id') is-invalid @enderror"
-                                style="background-color: #f8f9fa; cursor: not-allowed; pointer-events: none;" readonly>
-                            @foreach($kelas as $k)
-                                <option value="{{ $k->id }}" selected>
-                                    Kelas {{ $k->nama_kelas }} (Kelas Anda)
+                        @if($kelas->count() === 1)
+                            {{-- Guru punya kelas tetap — lock --}}
+                            <select name="kelas_id"
+                                    class="form-input"
+                                    style="background-color:#f8f9fa;cursor:not-allowed;pointer-events:none;">
+                                <option value="{{ $kelas->first()->id }}" selected>
+                                    Kelas {{ $kelas->first()->nama_kelas }} (Kelas Anda)
                                 </option>
-                            @endforeach
-                        </select>
-                        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">* Terkunci pada kelas yang Anda ajar.</div>
+                            </select>
+                            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
+                                * Terkunci pada kelas yang Anda ajar.
+                            </div>
+                        @else
+                            {{-- Guru mulok — bebas pilih --}}
+                            <select name="kelas_id"
+                                    class="form-input @error('kelas_id') is-invalid @enderror">
+                                <option value="">-- Pilih Kelas --</option>
+                                @foreach($kelas as $k)
+                                    <option value="{{ $k->id }}"
+                                        {{ old('kelas_id', $materi->kelas_id) == $k->id ? 'selected' : '' }}>
+                                        Kelas {{ $k->nama_kelas }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('kelas_id')
+                                <div class="form-error" style="color:red;font-size:12px;margin-top:4px;">{{ $message }}</div>
+                            @enderror
+                        @endif
                     </div>
                 </div>
 

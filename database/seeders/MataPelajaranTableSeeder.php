@@ -10,21 +10,20 @@ class MataPelajaranTableSeeder extends Seeder
     public function run(): void
     {
         $mapelDasar = [
-            ['kode' => 'MTK', 'nama' => 'Matematika', 'jenis' => 'wajib'],
-            ['kode' => 'BIN', 'nama' => 'Bahasa Indonesia', 'jenis' => 'wajib'],
-            ['kode' => 'BIG', 'nama' => 'Bahasa Inggris', 'jenis' => 'wajib'],
-            ['kode' => 'IPA', 'nama' => 'IPA', 'jenis' => 'wajib'],
-            ['kode' => 'IPS', 'nama' => 'IPS', 'jenis' => 'wajib'],
-            ['kode' => 'PAI', 'nama' => 'Pendidikan Agama Islam', 'jenis' => 'wajib'],
-            ['kode' => 'PJOK', 'nama' => 'PJOK', 'jenis' => 'wajib'],
-            ['kode' => 'SBK', 'nama' => 'Seni Budaya', 'jenis' => 'wajib'],
-            ['kode' => 'PPKn', 'nama' => 'PPKn', 'jenis' => 'wajib'],
-            ['kode' => 'MULOK', 'nama' => 'Bahasa Daerah', 'jenis' => 'mulok'],
+            ['kode' => 'MTK',   'nama' => 'Matematika',              'jenis' => 'wajib', 'is_mulok' => false],
+            ['kode' => 'BIN',   'nama' => 'Bahasa Indonesia',        'jenis' => 'wajib', 'is_mulok' => false],
+            ['kode' => 'BIG',   'nama' => 'Bahasa Inggris',          'jenis' => 'wajib', 'is_mulok' => true],
+            ['kode' => 'IPA',   'nama' => 'IPA',                     'jenis' => 'wajib', 'is_mulok' => false],
+            ['kode' => 'IPS',   'nama' => 'IPS',                     'jenis' => 'wajib', 'is_mulok' => false],
+            ['kode' => 'PAI',   'nama' => 'Pendidikan Agama Islam',  'jenis' => 'wajib', 'is_mulok' => true],
+            ['kode' => 'PJOK',  'nama' => 'PJOK',                    'jenis' => 'wajib', 'is_mulok' => true],
+            ['kode' => 'SBK',   'nama' => 'Seni Budaya',             'jenis' => 'wajib', 'is_mulok' => true],
+            ['kode' => 'PPKn',  'nama' => 'PPKn',                    'jenis' => 'wajib', 'is_mulok' => false],
+            ['kode' => 'MULOK', 'nama' => 'Bahasa Daerah',           'jenis' => 'mulok', 'is_mulok' => true],
         ];
 
         $guruIds = DB::table('guru')->pluck('id')->toArray();
 
-        // Proteksi jika tabel guru masih kosong
         if (empty($guruIds)) {
             $this->command->warn('Data Guru masih kosong! Lewati seeding Mata Pelajaran.');
             return;
@@ -35,16 +34,17 @@ class MataPelajaranTableSeeder extends Seeder
                 $kodeMapel = $mapel['kode'] . '-' . $tingkat;
 
                 DB::table('mata_pelajaran')->updateOrInsert(
-                    ['kode' => $kodeMapel], // Kondisi pencarian berdasarkan kode mata pelajaran
+                    ['kode' => $kodeMapel],
                     [
-                        'nama'          => $mapel['nama'] . ' Kelas ' . $tingkat,
-                        'tingkat'       => $tingkat,
-                        'kkm'           => 70,
-                        'guru_id'       => $guruIds[array_rand($guruIds)],
-                        'jenis'         => $mapel['jenis'],
-                        'status'        => 'aktif',
-                        'created_at'    => now(),
-                        'updated_at'    => now(),
+                        'nama'       => $mapel['nama'] . ' Kelas ' . $tingkat,
+                        'tingkat'    => $tingkat,
+                        'kkm'        => 70,
+                        'guru_id'    => $guruIds[array_rand($guruIds)],
+                        'jenis'      => $mapel['jenis'],
+                        'is_mulok'   => $mapel['is_mulok'], // ← tambahan
+                        'status'     => 'aktif',
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ]
                 );
             }
