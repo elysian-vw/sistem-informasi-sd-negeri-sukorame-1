@@ -62,7 +62,6 @@ class TugasTableSeeder extends Seeder
 
         $this->command->info('Tugas di-seed: ' . count($data) . ' data.');
 
-        // ── Seed soal CBT untuk setiap tugas bertipe cbt ──────────────────────
         $this->seedSoalCbt();
     }
 
@@ -75,15 +74,15 @@ class TugasTableSeeder extends Seeder
             return;
         }
 
-        // Template soal generik — 5 soal per tugas CBT
         $templateSoal = [
             [
-                'soal'          => 'Berapakah hasil dari 2 + 2?',
-                'pilihan_a'     => '3',
-                'pilihan_b'     => '4',
-                'pilihan_c'     => '5',
-                'pilihan_d'     => '6',
-                'jawaban_benar' => 'B',
+                'soal'          => 'Berapakah hasil dari 12 × 8?',
+                'pilihan_a'     => '96',
+                'pilihan_b'     => '86',
+                'pilihan_c'     => '106',
+                'pilihan_d'     => '76',
+                'jawaban_benar' => 'A',
+                'pakai_gambar'  => true,
             ],
             [
                 'soal'          => 'Manakah yang merupakan bilangan prima?',
@@ -92,6 +91,7 @@ class TugasTableSeeder extends Seeder
                 'pilihan_c'     => '7',
                 'pilihan_d'     => '9',
                 'jawaban_benar' => 'C',
+                'pakai_gambar'  => false,
             ],
             [
                 'soal'          => 'Ibu kota negara Indonesia adalah?',
@@ -100,6 +100,7 @@ class TugasTableSeeder extends Seeder
                 'pilihan_c'     => 'Medan',
                 'pilihan_d'     => 'Jakarta',
                 'jawaban_benar' => 'D',
+                'pakai_gambar'  => true,
             ],
             [
                 'soal'          => 'Hewan yang berkembang biak dengan bertelur disebut?',
@@ -108,6 +109,7 @@ class TugasTableSeeder extends Seeder
                 'pilihan_c'     => 'Ovovivipar',
                 'pilihan_d'     => 'Mamalia',
                 'jawaban_benar' => 'B',
+                'pakai_gambar'  => false,
             ],
             [
                 'soal'          => 'Pancasila memiliki berapa sila?',
@@ -116,17 +118,32 @@ class TugasTableSeeder extends Seeder
                 'pilihan_c'     => '5',
                 'pilihan_d'     => '6',
                 'jawaban_benar' => 'C',
+                'pakai_gambar'  => true,
             ],
         ];
 
-        $soalData = [];
+        $soalData   = [];
+        $gambarSeed = 100;
+
+        $totalCbt = $tugasCbt->count();
+        $current  = 0;
 
         foreach ($tugasCbt as $tugas) {
-            foreach ($templateSoal as $idx => $soal) {
+            $current++;
+            $this->command->info("Seeding soal CBT [{$current}/{$totalCbt}]: {$tugas->judul}");
+
+            foreach ($templateSoal as $soal) {
+                $gambarUrl = null;
+
+                if ($soal['pakai_gambar']) {
+                    $gambarUrl = "https://picsum.photos/seed/{$gambarSeed}/800/400";
+                    $gambarSeed++;
+                }
+
                 $soalData[] = [
                     'tugas_id'      => $tugas->id,
                     'soal'          => $soal['soal'],
-                    'gambar_soal'   => null,
+                    'gambar_soal'   => $gambarUrl,
                     'pilihan_a'     => $soal['pilihan_a'],
                     'pilihan_b'     => $soal['pilihan_b'],
                     'pilihan_c'     => $soal['pilihan_c'],
@@ -142,6 +159,7 @@ class TugasTableSeeder extends Seeder
             DB::table('pertanyaans')->insert($chunk);
         }
 
-        $this->command->info('Soal CBT di-seed: ' . count($soalData) . ' soal untuk ' . $tugasCbt->count() . ' tugas CBT.');
+        $this->command->info('Soal CBT di-seed: ' . count($soalData) . ' soal.');
+        $this->command->info('Gambar pakai URL langsung, tidak ada file yang didownload.');
     }
 }
