@@ -11,11 +11,17 @@ class MataPelajaran extends Model
     protected $fillable = [
         'kode',
         'nama',
+        'is_mulok',
         'jenis',
         'tingkat',
         'kkm',
         'guru_id',
+        'kelas_id',
         'status',
+    ];
+
+    protected $casts = [
+        'is_mulok' => 'boolean',
     ];
 
     public function guru()

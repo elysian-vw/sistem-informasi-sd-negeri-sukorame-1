@@ -358,7 +358,13 @@
                 <p class="soal-text">{{ $p->soal }}</p>
 
                 @if($p->gambar_soal)
-                <img src="{{ asset('storage/'.$p->gambar_soal) }}" class="soal-img" alt="Gambar soal">
+                    @if(str_starts_with($p->gambar_soal, 'http'))
+                        {{-- URL langsung dari Picsum --}}
+                        <img src="{{ $p->gambar_soal }}" class="soal-img" alt="Gambar soal">
+                    @else
+                        {{-- Path lokal di storage --}}
+                        <img src="{{ asset('storage/' . $p->gambar_soal) }}" class="soal-img" alt="Gambar soal">
+                    @endif
                 @endif
 
                 <div class="pilihan-grid" id="pilihan-group-{{ $p->id }}">
@@ -572,7 +578,7 @@ async function submitCBT() {
         document.getElementById('hasilTitle').textContent  = title;
         document.getElementById('hasilSub').textContent    = sub;
         document.getElementById('nilaiNum').textContent    = nilai;
-        document.getElementById('nilaiDetail').textContent = `${benar} benar dari ${{{ $pertanyaan->count() }}} soal`;
+        document.getElementById('nilaiDetail').textContent = `${benar} benar dari ${TOTAL} soal`;
 
         document.getElementById('modalHasil').classList.add('open');
 

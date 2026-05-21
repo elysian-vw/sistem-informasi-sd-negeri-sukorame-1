@@ -10,7 +10,7 @@ class Guru extends Model
 
     protected $fillable = [
         'user_id',
-        'kelas_id', // Tambahkan ini
+        'kelas_id',
         'nip',
         'mata_pelajaran',
         'status',
@@ -21,9 +21,15 @@ class Guru extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Ubah relasi menjadi belongsTo karena 1 Guru ditugaskan di 1 Kelas
     public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
+    }
+
+    public function isMapelMulok(): bool
+    {
+        return MataPelajaran::where('guru_id', $this->id)
+            ->where('is_mulok', true)
+            ->exists();
     }
 }
