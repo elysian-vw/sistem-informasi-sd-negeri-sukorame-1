@@ -9,7 +9,6 @@ class TugasTableSeeder extends Seeder
 {
     public function run(): void
     {
-        // Ambil mapel beserta relasi guru dan tingkat
         $mapelList = DB::table('mata_pelajaran')
             ->whereNotNull('guru_id')
             ->get();
@@ -23,20 +22,35 @@ class TugasTableSeeder extends Seeder
         $data   = [];
 
         foreach ($mapelList as $mapel) {
-            // Kelas konsisten dengan tingkat mapel
             $kelas = DB::table('kelas')->where('tingkat', $mapel->tingkat)->first();
             if (!$kelas) continue;
 
+            // ── Tugas upload biasa ────────────────────────────────────────────
             $data[] = [
                 'judul'             => 'Tugas ' . $mapel->nama,
                 'deskripsi'         => 'Kerjakan soal-soal latihan ' . $mapel->nama,
                 'file'              => null,
                 'mata_pelajaran_id' => $mapel->id,
-                'kelas_id'          => $kelas->id,      // konsisten dengan tingkat mapel
-                'guru_id'           => $mapel->guru_id, // konsisten dengan mapel
+                'kelas_id'          => $kelas->id,
+                'guru_id'           => $mapel->guru_id,
                 'deadline'          => now()->addDays(rand(7, 21)),
                 'status'            => $status[array_rand($status)],
                 'tipe'              => 'upload',
+                'created_at'        => now(),
+                'updated_at'        => now(),
+            ];
+
+            // ── Tugas CBT ─────────────────────────────────────────────────────
+            $data[] = [
+                'judul'             => 'Ulangan Harian ' . $mapel->nama,
+                'deskripsi'         => 'Kerjakan soal pilihan ganda berikut dengan teliti.',
+                'file'              => null,
+                'mata_pelajaran_id' => $mapel->id,
+                'kelas_id'          => $kelas->id,
+                'guru_id'           => $mapel->guru_id,
+                'deadline'          => now()->addDays(rand(7, 14)),
+                'status'            => 'aktif',
+                'tipe'              => 'cbt',
                 'created_at'        => now(),
                 'updated_at'        => now(),
             ];
@@ -47,5 +61,87 @@ class TugasTableSeeder extends Seeder
         }
 
         $this->command->info('Tugas di-seed: ' . count($data) . ' data.');
+
+        // ── Seed soal CBT untuk setiap tugas bertipe cbt ──────────────────────
+        $this->seedSoalCbt();
+    }
+
+    private function seedSoalCbt(): void
+    {
+        $tugasCbt = DB::table('tugas')->where('tipe', 'cbt')->get();
+
+        if ($tugasCbt->isEmpty()) {
+            $this->command->warn('Tidak ada tugas CBT ditemukan.');
+            return;
+        }
+
+        // Template soal generik — 5 soal per tugas CBT
+        $templateSoal = [
+            [
+                'soal'          => 'Berapakah hasil dari 2 + 2?',
+                'pilihan_a'     => '3',
+                'pilihan_b'     => '4',
+                'pilihan_c'     => '5',
+                'pilihan_d'     => '6',
+                'jawaban_benar' => 'B',
+            ],
+            [
+                'soal'          => 'Manakah yang merupakan bilangan prima?',
+                'pilihan_a'     => '4',
+                'pilihan_b'     => '6',
+                'pilihan_c'     => '7',
+                'pilihan_d'     => '9',
+                'jawaban_benar' => 'C',
+            ],
+            [
+                'soal'          => 'Ibu kota negara Indonesia adalah?',
+                'pilihan_a'     => 'Bandung',
+                'pilihan_b'     => 'Surabaya',
+                'pilihan_c'     => 'Medan',
+                'pilihan_d'     => 'Jakarta',
+                'jawaban_benar' => 'D',
+            ],
+            [
+                'soal'          => 'Hewan yang berkembang biak dengan bertelur disebut?',
+                'pilihan_a'     => 'Vivipar',
+                'pilihan_b'     => 'Ovipar',
+                'pilihan_c'     => 'Ovovivipar',
+                'pilihan_d'     => 'Mamalia',
+                'jawaban_benar' => 'B',
+            ],
+            [
+                'soal'          => 'Pancasila memiliki berapa sila?',
+                'pilihan_a'     => '3',
+                'pilihan_b'     => '4',
+                'pilihan_c'     => '5',
+                'pilihan_d'     => '6',
+                'jawaban_benar' => 'C',
+            ],
+        ];
+
+        $soalData = [];
+
+        foreach ($tugasCbt as $tugas) {
+            foreach ($templateSoal as $idx => $soal) {
+                $soalData[] = [
+                    'tugas_id'      => $tugas->id,
+                    'soal'          => $soal['soal'],
+                    'gambar_soal'   => null,
+                    'pilihan_a'     => $soal['pilihan_a'],
+                    'pilihan_b'     => $soal['pilihan_b'],
+                    'pilihan_c'     => $soal['pilihan_c'],
+                    'pilihan_d'     => $soal['pilihan_d'],
+                    'jawaban_benar' => $soal['jawaban_benar'],
+                    'created_at'    => now(),
+                    'updated_at'    => now(),
+                ];
+            }
+        }
+
+        foreach (array_chunk($soalData, 100) as $chunk) {
+            DB::table('pertanyaans')->insert($chunk);
+        }
+
+        $this->command->info('Soal CBT di-seed: ' . count($soalData) . ' soal untuk ' . $tugasCbt->count() . ' tugas CBT.');
     }
 }

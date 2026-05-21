@@ -572,7 +572,7 @@ async function submitCBT() {
         document.getElementById('hasilTitle').textContent  = title;
         document.getElementById('hasilSub').textContent    = sub;
         document.getElementById('nilaiNum').textContent    = nilai;
-        document.getElementById('nilaiDetail').textContent = `${benar} benar dari ${{{ $pertanyaan->count() }}} soal`;
+        document.getElementById('nilaiDetail').textContent = `${benar} benar dari ${TOTAL} soal`;
 
         document.getElementById('modalHasil').classList.add('open');
 
