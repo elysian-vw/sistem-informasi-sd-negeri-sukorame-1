@@ -8,6 +8,7 @@ use App\Models\Kelas;
 use App\Models\Guru;
 use App\Models\MataPelajaran;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException; // Ditambahkan untuk menangkap error database
 
 class JadwalController extends Controller
 {
@@ -43,8 +44,16 @@ class JadwalController extends Controller
 
         $validated['is_aktif'] = true;
 
-        JadwalPelajaran::create($validated);
-        return redirect()->back()->with('success', 'Jadwal berhasil ditambah!');
+        try {
+            JadwalPelajaran::create($validated);
+            return redirect()->back()->with('success', 'Jadwal berhasil ditambah!');
+        } catch (QueryException $e) {
+            // Menangkap error 1062 (Duplicate Entry / Bentrok)
+            if ($e->errorInfo[1] == 1062) {
+                return back()->withInput()->with('error', '⚠️ Gagal! Jadwal bentrok. Sudah ada mata pelajaran lain di kelas, hari, dan jam tersebut.');
+            }
+            return back()->withInput()->with('error', 'Terjadi kesalahan pada database: ' . $e->getMessage());
+        }
     }
 
     public function update(Request $request, JadwalPelajaran $jadwal)
@@ -61,8 +70,16 @@ class JadwalController extends Controller
             'semester'          => 'required|in:1,2',
         ]);
 
-        $jadwal->update($validated);
-        return redirect()->back()->with('success', 'Jadwal berhasil diupdate!');
+        try {
+            $jadwal->update($validated);
+            return redirect()->back()->with('success', 'Jadwal berhasil diupdate!');
+        } catch (QueryException $e) {
+            // Menangkap error 1062 (Duplicate Entry / Bentrok)
+            if ($e->errorInfo[1] == 1062) {
+                return back()->withInput()->with('error', '⚠️ Gagal! Jadwal bentrok. Sudah ada mata pelajaran lain di kelas, hari, dan jam tersebut. Silakan geser waktu atau hari.');
+            }
+            return back()->withInput()->with('error', 'Terjadi kesalahan pada database: ' . $e->getMessage());
+        }
     }
 
     public function destroy(JadwalPelajaran $jadwal)
@@ -102,7 +119,7 @@ class JadwalController extends Controller
             foreach ($jadwals as $j) {
                 fputcsv($file, [
                     $j->id,
-                    $j->kelas->nama_kelas      ?? '',
+                    $j->kelas->nama_kelas     ?? '',
                     ucfirst($j->hari),
                     $j->mataPelajaran->nama_mapel ?? '',
                     $j->guru->user->name       ?? '',
@@ -212,16 +229,8 @@ class JadwalController extends Controller
         if (in_array($ext, ['csv', 'txt'])) {
             $rows = array_map('str_getcsv', file($file->getRealPath()));
         }
-        // ── Baca XLSX (butuh package PhpSpreadsheet / Laravel Excel) ──
+        // ── Baca XLSX ──
         elseif (in_array($ext, ['xlsx', 'xls'])) {
-            // Pastikan sudah install: composer require maatwebsite/excel
-            // Uncomment kode di bawah jika sudah install:
-            //
-            // $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file->getRealPath());
-            // $sheet = $spreadsheet->getActiveSheet();
-            // $rows  = $sheet->toArray();
-    
-            // Fallback sementara jika belum install PhpSpreadsheet:
             return redirect()->route('admin.jadwal.index')
                 ->with('error', 'Import XLSX belum didukung. Gunakan format CSV.');
         }
@@ -233,7 +242,6 @@ class JadwalController extends Controller
         $hariValid = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
     
         foreach ($rows as $rowIndex => $row) {
-            // Skip header (baris pertama) dan baris kosong/referensi
             if ($rowIndex === 0)          continue; // header
             if (empty(array_filter($row))) continue; // baris kosong
             if (count($row) < 8)          continue; // baris referensi / tidak lengkap
@@ -244,13 +252,11 @@ class JadwalController extends Controller
     
             $lineNum = $rowIndex + 1;
     
-            // Validasi manual per baris
             if (!in_array(strtolower(trim($hari)), $hariValid)) {
                 $errors[] = "Baris {$lineNum}: hari tidak valid ({$hari}).";
                 continue;
             }
     
-            // Cek relasi
             $kelasExists = \App\Models\Kelas::find((int)$kelas_id);
             $mapelExists = \App\Models\MataPelajaran::find((int)$mapel_id);
             $guruExists  = \App\Models\Guru::find((int)$guru_id);
@@ -259,23 +265,31 @@ class JadwalController extends Controller
             if (!$mapelExists) { $errors[] = "Baris {$lineNum}: mata_pelajaran_id {$mapel_id} tidak ditemukan."; continue; }
             if (!$guruExists)  { $errors[] = "Baris {$lineNum}: guru_id {$guru_id} tidak ditemukan."; continue; }
     
-            // Insert / skip duplikat (hari + jam_ke + kelas sama)
-            JadwalPelajaran::firstOrCreate(
-                [
-                    'kelas_id'        => (int)$kelas_id,
-                    'hari'            => strtolower(trim($hari)),
-                    'jam_ke'          => (int)$jam_ke,
-                ],
-                [
-                    'mata_pelajaran_id' => (int)$mapel_id,
-                    'guru_id'           => (int)$guru_id,
-                    'waktu_mulai'       => trim($waktu_mulai),
-                    'waktu_selesai'     => trim($waktu_selesai),
-                    'tahun_ajaran'      => trim($tahun_ajaran) ?: '2024/2025',
-                ]
-            );
-    
-            $imported++;
+            try {
+                // Insert / skip duplikat
+                JadwalPelajaran::firstOrCreate(
+                    [
+                        'kelas_id'        => (int)$kelas_id,
+                        'hari'            => strtolower(trim($hari)),
+                        'jam_ke'          => (int)$jam_ke,
+                    ],
+                    [
+                        'mata_pelajaran_id' => (int)$mapel_id,
+                        'guru_id'           => (int)$guru_id,
+                        'waktu_mulai'       => trim($waktu_mulai),
+                        'waktu_selesai'     => trim($waktu_selesai),
+                        'tahun_ajaran'      => trim($tahun_ajaran) ?: '2024/2025',
+                    ]
+                );
+                $imported++;
+            } catch (QueryException $e) {
+                // Tangkap jika terjadi bentrok saat import data massal
+                if ($e->errorInfo[1] == 1062) {
+                    $errors[] = "Baris {$lineNum}: Gagal, jadwal bentrok dengan data yang sudah ada.";
+                } else {
+                    $errors[] = "Baris {$lineNum}: Terjadi kesalahan database saat menyimpan.";
+                }
+            }
         }
     
         if (!empty($errors)) {

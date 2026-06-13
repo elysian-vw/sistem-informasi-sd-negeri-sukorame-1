@@ -13,7 +13,8 @@ use App\Http\Controllers\Admin\{
     MataPelajaranController,
     PengumumanController,
     SekolahController,
-    JadwalController
+    JadwalController,
+    PageContentController// ⬅️ Tambahan untuk fitur Kelola Web
 };
 
 // ─── GURU ────────────────────────────────────────────────────────────────────
@@ -137,10 +138,23 @@ Route::post('/reset-password',        [LoginController::class, 'resetPassword'])
 // ═══════════════════════════════════════════════════════════════════════════════
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
+
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
+
     Route::get('/dashboard/chart-data', [AdminDashboard::class, 'getChartData'])->name('chart-data');
 
+    // ── KELOLA KONTEN HALAMAN DINAMIS (Pusat Edit Akademik, PPDB, Layanan) ──
+    Route::get('/content', [PageContentController::class, 'index'])->name('content.index');
+    Route::get('/content/{slug}/edit', [PageContentController::class, 'edit'])->name('content.edit');
+    Route::post('/content/{slug}/update', [PageContentController::class, 'update'])->name('content.update');
+    Route::get('/content/create', [PageContentController::class, 'create'])->name('content.create');
+
+    Route::post('/content/upload-image', [PageContentController::class, 'uploadImage'])->name('content.upload');
+    Route::post('/content/store', [PageContentController::class, 'store'])->name('content.store');
+
     Route::resource('siswa', SiswaController::class);
+    Route::resource('kelas', KelasController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('pengumuman', PengumumanController::class);
 
     Route::get('/guru',           [GuruController::class, 'index'])->name('guru.index');
     Route::post('/guru',          [GuruController::class, 'store'])->name('guru.store');
@@ -151,9 +165,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 
     Route::resource('kelas', KelasController::class)->only(['index', 'store', 'update', 'destroy']);
 
-    Route::get('/mata-pelajaran',                     [MataPelajaranController::class, 'index'])->name('mata-pelajaran.index');
-    Route::post('/mata-pelajaran',                    [MataPelajaranController::class, 'store'])->name('mata-pelajaran.store');
-    Route::put('/mata-pelajaran/{mata_pelajaran}',    [MataPelajaranController::class, 'update'])->name('mata-pelajaran.update');
+    Route::get('/mata-pelajaran',                    [MataPelajaranController::class, 'index'])->name('mata-pelajaran.index');
+    Route::post('/mata-pelajaran',                   [MataPelajaranController::class, 'store'])->name('mata-pelajaran.store');
+    Route::put('/mata-pelajaran/{mata_pelajaran}',   [MataPelajaranController::class, 'update'])->name('mata-pelajaran.update');
     Route::delete('/mata-pelajaran/{mata_pelajaran}', [MataPelajaranController::class, 'destroy'])->name('mata-pelajaran.destroy');
 
     Route::resource('pengumuman', PengumumanController::class);
@@ -161,14 +175,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/sekolah', [SekolahController::class, 'index'])->name('sekolah');
     Route::put('/sekolah', [SekolahController::class, 'update'])->name('sekolah.update');
 
+    // 1. Letakkan rute spesifik DI ATAS resource
+    Route::get('jadwal/export', [JadwalController::class, 'export'])->name('jadwal.export');
+    Route::get('jadwal/template', [JadwalController::class, 'template'])->name('jadwal.template');
+    Route::post('jadwal/import', [JadwalController::class, 'import'])->name('jadwal.import');
+
+    // 2. Gunakan ->only agar Laravel tidak membuat method yang tidak ada (seperti show)
     Route::resource('jadwal', JadwalController::class)->names([
         'index' => 'jadwal.index',
         'store' => 'jadwal.store',
         'destroy' => 'jadwal.destroy',
-    ]);
-    Route::get('jadwal/export', [JadwalController::class, 'export'])->name('jadwal.export');
-    Route::get('jadwal/template', [JadwalController::class, 'template'])->name('jadwal.template');
-    Route::post('jadwal/import', [JadwalController::class, 'import'])->name('jadwal.import');
+    ])->only(['index', 'store', 'destroy']); // Batasi hanya method yang Ndoro punya
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -183,6 +200,8 @@ Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(f
     Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
     Route::get('/nilai/input/{mapel}', [NilaiController::class, 'input'])->name('nilai.input');
     Route::post('/nilai/store/{mapel}', [NilaiController::class, 'store'])->name('nilai.store');
+    Route::get('/nilai/export/{mapel}', [NilaiController::class, 'export'])->name('nilai.export');
+Route::post('/nilai/import/{mapel}', [NilaiController::class, 'import'])->name('nilai.import');
 
     Route::get('/jadwal', [App\Http\Controllers\Guru\JadwalController::class, 'index'])->name('jadwal.index');
     Route::resource('materi', MateriController::class);
@@ -211,15 +230,25 @@ Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(f
 // WALI MURID
 // ═══════════════════════════════════════════════════════════════════════════════
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// WALI MURID
+// ═══════════════════════════════════════════════════════════════════════════════
+
 Route::prefix('wali')->name('wali.')->middleware(['auth', 'role:wali_murid'])->group(function () {
     Route::get('/dashboard', [WaliDashboard::class, 'index'])->name('dashboard');
 
-    Route::get('raport',        [RaportWaliController::class, 'index'])->name('raport.index');
-    Route::get('raport/{raport}', [RaportWaliController::class, 'show'])->name('raport.show');
+    // ── Raport ──
+    Route::get('/raport', [RaportWaliController::class, 'index'])->name('raport.index');
+    Route::get('/raport/{raport}', [RaportWaliController::class, 'show'])->name('raport.show');
+    // Cukup tulis 'raport.ekspor' saja karena otomatis ditambah 'wali.' dari grup
+    Route::get('/raport/{raport}/ekspor', [RaportWaliController::class, 'eksporPdf'])->name('raport.ekspor'); 
+
+    // ── Kehadiran & Tugas ──
     Route::get('/kehadiran', [KehadiranWaliController::class, 'index'])->name('kehadiran');
     Route::get('/tugas', [TugasWaliController::class, 'index'])->name('tugas');
 
-    Route::get('/pengumuman',              [PengumumanWaliController::class, 'index'])->name('pengumuman.index');
+    // ── Pengumuman ──
+    Route::get('/pengumuman', [PengumumanWaliController::class, 'index'])->name('pengumuman.index');
     Route::get('/pengumuman/{pengumuman}', [PengumumanWaliController::class, 'show'])->name('pengumuman.show');
 });
 

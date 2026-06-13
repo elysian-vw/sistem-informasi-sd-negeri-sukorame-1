@@ -96,8 +96,11 @@ class DashboardController extends Controller
     // LAPORAN KEHADIRAN BULANAN GLOBAL SEKOLAH
     public function laporanKehadiran(Request $request)
     {
-        $bulanDipilih = $request->get('bulan', date('m'));
-        $tahunDipilih = $request->get('tahun', date('Y'));
+        $bulan = $request->get('bulan');
+        $bulanDipilih = (is_string($bulan) || is_numeric($bulan)) && !empty($bulan) ? str_pad($bulan, 2, '0', STR_PAD_LEFT) : date('m');
+        
+        $tahun = $request->get('tahun');
+        $tahunDipilih = (is_string($tahun) || is_numeric($tahun)) && !empty($tahun) ? $tahun : date('Y');
 
         $listKelas = Kelas::all();
 

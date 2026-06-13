@@ -38,16 +38,24 @@
 </head>
 <body>
     <div class="sidebar">
-        <div class="sidebar-brand"><i class="fas fa-graduation-cap" style="color:var(--primary);"></i> SIM SEKOLAH</div>
+        <div class="sidebar-brand">
+            <i class="fas fa-graduation-cap" style="color:var(--primary);"></i> SIM SEKOLAH
+        </div>
         <ul class="sidebar-menu">
-            <li class="sidebar-item active">
-                <a href="{{ route('kepala_sekolah.dashboard') }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
+            <li class="{{ request()->routeIs('kepala_sekolah.dashboard') ? 'sidebar-item active' : 'sidebar-item' }}">
+                <a href="{{ route('kepala_sekolah.dashboard') }}">
+                    <i class="fas fa-chart-pie"></i> Dashboard
+                </a>
             </li>
-            <li class="sidebar-item">
-                <a href="{{ route('kepala_sekolah.laporan.kehadiran') }}"><i class="fas fa-calendar-check"></i> Kehadiran Bulanan</a>
+            <li class="{{ request()->routeIs('kepala_sekolah.laporan.kehadiran') ? 'sidebar-item active' : 'sidebar-item' }}">
+                <a href="{{ route('kepala_sekolah.laporan.kehadiran') }}">
+                    <i class="fas fa-calendar-check"></i> Kehadiran Bulanan
+                </a>
             </li>
-            <li class="sidebar-item">
-                <a href="{{ route('kepala_sekolah.laporan.nilai') }}"><i class="fas fa-star"></i> Laporan Nilai</a>
+            <li class="{{ request()->routeIs('kepala_sekolah.laporan.nilai') ? 'sidebar-item active' : 'sidebar-item' }}">
+                <a href="{{ route('kepala_sekolah.laporan.nilai') }}">
+                    <i class="fas fa-star"></i> Laporan Nilai
+                </a>
             </li>
             <li class="sidebar-item" style="margin-top: 50px;">
                 <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="color: #ef4444;">

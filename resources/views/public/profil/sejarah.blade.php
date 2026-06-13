@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', $pageTitle)
+@section('title', $pageTitle ?? 'Sejarah - SDN Sukorame 1')
 
 @push('head')
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -33,6 +33,12 @@
     }
     .sec-label::before { content: ''; width: 6px; height: 6px; background: #1d4ed8; border-radius: 50%; }
 
+    /* ── CMS CONTENT STYLING ── */
+    .cms-content p { margin-bottom: 1.2rem; color: #4b5563; line-height: 1.8; font-size: 14px; }
+    .cms-content strong { color: #1d4ed8; font-weight: 700; }
+    .cms-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.2rem; color: #4b5563; }
+    .cms-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1.2rem; color: #4b5563; }
+
     /* ── STAT CARD ── */
     .stat-card {
         background: white; border-radius: 20px; padding: 24px 20px; text-align: center;
@@ -63,7 +69,6 @@
         position: relative;
     }
 
-    /* Era label */
     .era-badge {
         display: inline-flex; align-items: center; gap: 6px;
         font-size: 10px; font-weight: 800; letter-spacing: .12em;
@@ -71,7 +76,6 @@
         margin-bottom: 8px;
     }
 
-    /* Card kiri / kanan */
     .tl-card {
         width: calc(50% - 52px);
         background: white; border-radius: 20px; padding: 22px 24px;
@@ -84,7 +88,6 @@
     .tl-card.left  { margin-right: auto; }
     .tl-card.right { margin-left: auto; }
 
-    /* Arrow kiri */
     .tl-card.left::after {
         content: ''; position: absolute;
         top: 24px; right: -9px;
@@ -92,7 +95,6 @@
         border-left-color: #f1f5f9;
     }
     .tl-card.left:hover::after { border-left-color: #bfdbfe; }
-    /* Arrow kanan */
     .tl-card.right::after {
         content: ''; position: absolute;
         top: 24px; left: -9px;
@@ -101,7 +103,6 @@
     }
     .tl-card.right:hover::after { border-right-color: #bfdbfe; }
 
-    /* Dot tengah */
     .tl-dot-wrap {
         position: absolute; left: 50%; top: 20px;
         transform: translateX(-50%);
@@ -124,7 +125,6 @@
     }
     .tl-item:hover .tl-dot.milestone { box-shadow: 0 0 0 4px #fde68a; }
 
-    /* Year pill */
     .tl-year {
         display: inline-flex; align-items: center;
         background: #1d4ed8; color: white;
@@ -134,7 +134,6 @@
     }
     .tl-year.gold { background: linear-gradient(135deg,#d97706,#f59e0b); }
 
-    /* Mobile timeline */
     @media (max-width: 768px) {
         .tl-dot-wrap { left: 28px; }
         .tl-card { width: calc(100% - 68px); margin-left: 68px !important; margin-right: 0 !important; }
@@ -168,27 +167,6 @@
         top: 20px; right: 28px; pointer-events: none; user-select: none;
     }
 
-    /* ── PRESTASI STRIP ── */
-    .prestasi-item {
-        display: flex; align-items: center; gap: 14px;
-        padding: 14px 18px; border-radius: 16px;
-        background: white; border: 1px solid #f1f5f9;
-        transition: all .22s;
-    }
-    .prestasi-item:hover { border-color: #bfdbfe; background: #f8fbff; transform: translateX(4px); }
-
-    /* ── CTA BAND ── */
-    .cta-band {
-        background: linear-gradient(135deg, #0c1445 0%, #1e3a8a 50%, #1d4ed8 100%);
-        position: relative; overflow: hidden;
-    }
-    .cta-band::before {
-        content: ''; position: absolute; inset: 0; opacity: .04;
-        background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0);
-        background-size: 24px 24px;
-    }
-
-    /* ── DIVIDER ── */
     .section-divider { height: 1px; background: linear-gradient(90deg, transparent, #e5e7eb 30%, #e5e7eb 70%, transparent); }
 
     /* Animasi masuk */
@@ -201,6 +179,13 @@
 
 @section('content')
 
+{{-- 1. RUMUS SAKTI PENGAMBIL DATA DATABASE --}}
+@php
+    $page = \App\Models\PageContent::where('slug', 'profil-sejarah')->first();
+    // Berikan default teks jika Admin belum mengisi
+    $kontenDinams = $page && !empty($page->content) ? $page->content : '<p>Konten sejarah belum diisi dari Admin. Silakan buka menu Kelola Konten dan tambahkan halaman dengan slug <strong>profil-sejarah</strong>.</p>';
+@endphp
+
 {{-- ══════════════════════════════════════
      PAGE HERO
 ══════════════════════════════════════ --}}
@@ -210,11 +195,10 @@
     <div style="position:absolute;width:250px;height:250px;left:8%;bottom:-80px;border-radius:50%;background:radial-gradient(circle,rgba(217,119,6,.12) 0%,transparent 70%);pointer-events:none;"></div>
 
     <div class="max-w-5xl mx-auto px-6 relative z-10">
-        {{-- Breadcrumb --}}
         <nav class="flex items-center gap-2 text-white/50 text-xs mb-8">
             <a href="{{ route('home') }}" class="hover:text-white transition-colors">Beranda</a>
             <i class="fa fa-chevron-right text-[9px]"></i>
-            <a href="#" class="hover:text-white transition-colors">Profil</a>
+            <span class="text-white/80">Profil</span>
             <i class="fa fa-chevron-right text-[9px]"></i>
             <span class="text-white/80">Sejarah Sekolah</span>
         </nav>
@@ -234,12 +218,11 @@
                 </p>
             </div>
 
-            {{-- Stat mini di hero --}}
             <div class="flex gap-3 flex-shrink-0">
                 @php
                     $hero_stats = [
                         ['val'=>'±1965','lbl'=>'Tahun Berdiri','ico'=>'fa-flag'],
-                        ['val'=>'59+',  'lbl'=>'Tahun Berdiri','ico'=>'fa-history'],
+                        ['val'=>'59+',  'lbl'=>'Tahun Melayani','ico'=>'fa-history'],
                         ['val'=>'B',    'lbl'=>'Akreditasi',   'ico'=>'fa-star'],
                     ];
                 @endphp
@@ -255,11 +238,10 @@
     </div>
 </div>
 
-
 <main class="bg-gray-50">
 
     {{-- ══════════════════════════════════════
-         NARASI SEJARAH
+         NARASI SEJARAH (DINAMIS DARI ADMIN)
     ══════════════════════════════════════ --}}
     <section class="py-20 bg-white">
         <div class="max-w-4xl mx-auto px-6">
@@ -271,30 +253,13 @@
             <div class="narasi-card fade-up">
                 <div class="quote-deco">"</div>
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-8 items-start">
-                    {{-- Kolom kiri: inti narasi --}}
-                    <div class="md:col-span-3 space-y-4 text-gray-600 text-sm leading-relaxed">
-                        <p>
-                            <span class="text-blue-700 font-bold text-base">SD Negeri Sukorame 1</span> berdiri pada tahun
-                            <strong class="text-gray-900">1965</strong> atas inisiatif Pemerintah Kota Kediri sebagai
-                            respons terhadap kebutuhan pendidikan dasar yang semakin besar di wilayah Mojoroto.
-                            Sejak awal pendiriannya, sekolah ini telah menjadi pilihan utama bagi keluarga-keluarga
-                            di Kelurahan Sukorame dan sekitarnya.
-                        </p>
-                        <p>
-                            Selama hampir enam dekade, SDN Sukorame 1 telah bertransformasi dari sebuah sekolah sederhana
-                            menjadi institusi pendidikan modern yang dipercaya ribuan keluarga. Perjalanan ini ditandai
-                            dengan berbagai tonggak penting — dari renovasi gedung, perolehan akreditasi A, hingga
-                            peluncuran platform digital <strong class="text-blue-700">SIMAS</strong> yang menjadi
-                            jembatan antara sekolah dan orang tua.
-                        </p>
-                        <p>
-                            Kini, dengan menerapkan <strong>Kurikulum Merdeka</strong>, sekolah kami terus berkomitmen
-                            menghadirkan pendidikan yang relevan, inovatif, dan berpusat pada siswa — mempersiapkan
-                            generasi yang siap menghadapi tantangan abad ke-21.
-                        </p>
+                    
+                    {{-- 2. DISINILAH KONTEN DARI ADMIN DITAMPILKAN --}}
+                    <div class="md:col-span-3 cms-content">
+                        {!! $kontenDinams !!}
                     </div>
 
-                    {{-- Kolom kanan: identitas cepat --}}
+                    {{-- Kolom kanan: identitas cepat (Tetap Statis) --}}
                     <div class="md:col-span-2">
                         <div class="bg-blue-50 border border-blue-100 rounded-2xl p-5 space-y-3">
                             <p class="text-blue-800 font-bold text-xs uppercase tracking-wider mb-4">Identitas Singkat</p>
@@ -324,7 +289,7 @@
     <div class="section-divider"></div>
 
     {{-- ══════════════════════════════════════
-         STATISTIK
+         STATISTIK (TETAP STATIS AGAR DESAIN AMAN)
     ══════════════════════════════════════ --}}
     <section class="py-14 bg-gray-50">
         <div class="max-w-4xl mx-auto px-6">
@@ -361,7 +326,7 @@
     <div class="section-divider"></div>
 
     {{-- ══════════════════════════════════════
-         TIMELINE
+         TIMELINE (TETAP STATIS AGAR DESAIN AMAN)
     ══════════════════════════════════════ --}}
     <section class="py-20 bg-white" id="timeline">
         <div class="max-w-5xl mx-auto px-6">
@@ -376,89 +341,49 @@
             @php
                 $timeline = [
                     [
-                        'year'  => '1965',
-                        'era'   => 'Era Pendirian',
-                        'era_c' => 'bg-blue-100 text-blue-800',
-                        'icon'  => 'fa-flag',
-                        'milestone' => false,
-                        'title' => 'Pendirian Sekolah',
-                        'desc'  => 'SDN Sukorame 1 resmi didirikan oleh Pemerintah Kota Kediri sebagai sekolah dasar negeri untuk melayani kebutuhan pendidikan masyarakat Kelurahan Sukorame, Kecamatan Mojoroto.',
-                        'side'  => 'left',
-                        'tags'  => ['Negeri','Mojoroto','Kota Kediri'],
+                        'year'  => '1965', 'era' => 'Era Pendirian', 'era_c' => 'bg-blue-100 text-blue-800',
+                        'icon'  => 'fa-flag', 'milestone' => false, 'title' => 'Pendirian Sekolah',
+                        'desc'  => 'SDN Sukorame 1 resmi didirikan oleh Pemerintah Kota Kediri...',
+                        'side'  => 'left', 'tags'  => ['Negeri','Mojoroto','Kota Kediri'],
                     ],
                     [
-                        'year'  => '1975',
-                        'era'   => null,
-                        'icon'  => 'fa-users',
-                        'milestone' => false,
-                        'title' => 'Pertumbuhan Siswa Pesat',
-                        'desc'  => 'Animo masyarakat yang tinggi mendorong pertumbuhan jumlah siswa secara signifikan. Sekolah menjadi pilihan utama keluarga di wilayah Mojoroto dan sekitarnya.',
-                        'side'  => 'right',
-                        'tags'  => ['Pertumbuhan','Komunitas'],
+                        'year'  => '1975', 'era' => null, 'icon' => 'fa-users', 'milestone' => false,
+                        'title' => 'Pertumbuhan Siswa Pesat', 'desc' => 'Animo masyarakat yang tinggi mendorong pertumbuhan jumlah siswa...',
+                        'side'  => 'right', 'tags' => ['Pertumbuhan','Komunitas'],
                     ],
                     [
-                        'year'  => '1985',
-                        'era'   => 'Era Pembangunan',
-                        'era_c' => 'bg-indigo-100 text-indigo-800',
-                        'icon'  => 'fa-building',
-                        'milestone' => false,
-                        'title' => 'Renovasi & Perluasan Gedung',
-                        'desc'  => 'Dilaksanakan renovasi besar-besaran gedung sekolah dan penambahan ruang kelas baru untuk mengakomodasi jumlah siswa yang terus meningkat.',
-                        'side'  => 'left',
-                        'tags'  => ['Renovasi','Infrastruktur'],
+                        'year'  => '1985', 'era' => 'Era Pembangunan', 'era_c' => 'bg-indigo-100 text-indigo-800',
+                        'icon'  => 'fa-building', 'milestone' => false, 'title' => 'Renovasi & Perluasan Gedung',
+                        'desc'  => 'Dilaksanakan renovasi besar-besaran gedung sekolah...',
+                        'side'  => 'left', 'tags' => ['Renovasi','Infrastruktur'],
                     ],
                     [
-                        'year'  => '2000',
-                        'era'   => 'Era Mutu',
-                        'era_c' => 'bg-amber-100 text-amber-800',
-                        'icon'  => 'fa-award',
-                        'milestone' => true,
-                        'title' => 'Akreditasi A Pertama',
-                        'desc'  => 'Tonggak bersejarah: SDN Sukorame 1 berhasil meraih predikat Akreditasi A dari BAN-SM untuk pertama kalinya, membuktikan standar mutu pendidikan yang sangat baik.',
-                        'side'  => 'right',
-                        'tags'  => ['Akreditasi A','BAN-SM','Pencapaian'],
+                        'year'  => '2000', 'era' => 'Era Mutu', 'era_c' => 'bg-amber-100 text-amber-800',
+                        'icon'  => 'fa-award', 'milestone' => true, 'title' => 'Akreditasi A Pertama',
+                        'desc'  => 'SDN Sukorame 1 berhasil meraih predikat Akreditasi A dari BAN-SM...',
+                        'side'  => 'right', 'tags' => ['Akreditasi A','BAN-SM','Pencapaian'],
                     ],
                     [
-                        'year'  => '2010',
-                        'era'   => null,
-                        'icon'  => 'fa-desktop',
-                        'milestone' => false,
-                        'title' => 'Lab Komputer & Teknologi',
-                        'desc'  => 'Pengenalan program komputer dan teknologi informasi ke dalam kurikulum. Laboratorium komputer pertama diresmikan sebagai sarana literasi digital siswa.',
-                        'side'  => 'left',
-                        'tags'  => ['Teknologi','Lab Komputer','Digital'],
+                        'year'  => '2010', 'era' => null, 'icon' => 'fa-desktop', 'milestone' => false,
+                        'title' => 'Lab Komputer & Teknologi', 'desc' => 'Pengenalan program komputer dan teknologi informasi...',
+                        'side'  => 'left', 'tags' => ['Teknologi','Lab Komputer','Digital'],
                     ],
                     [
-                        'year'  => '2018',
-                        'era'   => 'Era Kurikulum',
-                        'era_c' => 'bg-green-100 text-green-800',
-                        'icon'  => 'fa-book-open',
-                        'milestone' => false,
-                        'title' => 'Implementasi Kurikulum 2013',
-                        'desc'  => 'SDN Sukorame 1 mengimplementasikan Kurikulum 2013 secara penuh, menggeser pendekatan pembelajaran ke model tematik-integratif yang lebih berpusat pada siswa.',
-                        'side'  => 'right',
-                        'tags'  => ['K13','Tematik','Berpusat Siswa'],
+                        'year'  => '2018', 'era' => 'Era Kurikulum', 'era_c' => 'bg-green-100 text-green-800',
+                        'icon'  => 'fa-book-open', 'milestone' => false, 'title' => 'Implementasi Kurikulum 2013',
+                        'desc'  => 'Mengimplementasikan Kurikulum 2013 secara penuh...',
+                        'side'  => 'right', 'tags' => ['K13','Tematik','Berpusat Siswa'],
                     ],
                     [
-                        'year'  => '2022',
-                        'era'   => 'Era Digital',
-                        'era_c' => 'bg-blue-100 text-blue-800',
-                        'icon'  => 'fa-laptop-code',
-                        'milestone' => true,
-                        'title' => 'Peluncuran Platform SIMAS',
-                        'desc'  => 'Babak baru digitalisasi sekolah: SIMAS (Sistem Informasi Manajemen Sekolah) resmi diluncurkan. Platform terintegrasi ini memungkinkan orang tua memantau nilai, absensi, tugas, dan raport digital secara real-time.',
-                        'side'  => 'left',
-                        'tags'  => ['SIMAS','E-Learning','Digitalisasi'],
+                        'year'  => '2022', 'era' => 'Era Digital', 'era_c' => 'bg-blue-100 text-blue-800',
+                        'icon'  => 'fa-laptop-code', 'milestone' => true, 'title' => 'Peluncuran Platform SIMAS',
+                        'desc'  => 'Babak baru digitalisasi sekolah: SIMAS resmi diluncurkan...',
+                        'side'  => 'left', 'tags' => ['SIMAS','E-Learning','Digitalisasi'],
                     ],
                     [
-                        'year'  => '2024',
-                        'era'   => null,
-                        'icon'  => 'fa-graduation-cap',
-                        'milestone' => true,
-                        'title' => 'Kurikulum Merdeka & Fasilitas Modern',
-                        'desc'  => 'SDN Sukorame 1 mengadopsi Kurikulum Merdeka dengan semangat pembelajaran yang lebih fleksibel dan bermakna. Bersamaan dengan itu, sejumlah fasilitas diperbarui untuk menciptakan lingkungan belajar yang lebih nyaman dan modern.',
-                        'side'  => 'right',
-                        'tags'  => ['Kurikulum Merdeka','Fasilitas','Kekinian'],
+                        'year'  => '2024', 'era' => null, 'icon' => 'fa-graduation-cap', 'milestone' => true,
+                        'title' => 'Kurikulum Merdeka', 'desc' => 'SDN Sukorame 1 mengadopsi Kurikulum Merdeka...',
+                        'side'  => 'right', 'tags' => ['Kurikulum Merdeka','Fasilitas'],
                     ],
                 ];
             @endphp
@@ -466,38 +391,25 @@
             <div class="timeline-wrap space-y-10">
                 @foreach ($timeline as $idx => $t)
                 <div class="tl-item relative" style="min-height: 60px;">
-
-                    {{-- Dot tengah --}}
                     <div class="tl-dot-wrap">
                         <div class="tl-dot {{ $t['milestone'] ? 'milestone' : '' }}">
                             <i class="fa {{ $t['icon'] }} text-sm"></i>
                         </div>
                     </div>
-
-                    {{-- Card --}}
                     <div class="tl-card {{ $t['side'] }}" style="animation-delay: {{ $idx * 80 }}ms">
-
-                        {{-- Era badge --}}
                         @if (!empty($t['era']))
                         <span class="era-badge {{ $t['era_c'] }}">
                             <i class="fa fa-bookmark text-[9px]"></i> {{ $t['era'] }}
                         </span>
                         @endif
-
-                        {{-- Year --}}
                         <div class="tl-year {{ $t['milestone'] ? 'gold' : '' }} mb-2">{{ $t['year'] }}</div>
-
                         <h3 class="font-bold text-gray-900 text-base mb-2 leading-snug">{{ $t['title'] }}</h3>
                         <p class="text-gray-500 text-xs leading-relaxed mb-4">{{ $t['desc'] }}</p>
-
-                        {{-- Tags --}}
                         <div class="flex flex-wrap gap-1.5">
                             @foreach ($t['tags'] as $tag)
                             <span class="text-[10px] font-semibold bg-gray-100 text-gray-500 px-2.5 py-1 rounded-full">{{ $tag }}</span>
                             @endforeach
                         </div>
-
-                        {{-- Milestone badge --}}
                         @if ($t['milestone'])
                         <div class="absolute -top-3 {{ $t['side'] === 'right' ? 'right-4' : 'left-4' }} inline-flex items-center gap-1 bg-amber-400 text-amber-900 text-[10px] font-bold px-3 py-1 rounded-full shadow-sm">
                             <i class="fa fa-star text-[8px]"></i> Tonggak Sejarah
@@ -508,7 +420,6 @@
                 @endforeach
             </div>
 
-            {{-- Timeline end dot --}}
             <div class="flex justify-center mt-10">
                 <div class="flex flex-col items-center gap-2">
                     <div class="w-10 h-10 rounded-full bg-blue-700 border-4 border-white shadow-lg flex items-center justify-center">
@@ -519,16 +430,12 @@
             </div>
         </div>
     </section>
-
 </main>
-
 @endsection
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-
-    // ── Fade-up observer ──
     const fadeEls = document.querySelectorAll('.fade-up');
     const fadeObs = new IntersectionObserver(entries => {
         entries.forEach((e, i) => {
@@ -540,7 +447,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }, { threshold: 0.12 });
     fadeEls.forEach(el => fadeObs.observe(el));
 
-    // ── Timeline card observer ──
     const tlCards = document.querySelectorAll('.tl-card');
     const tlObs = new IntersectionObserver(entries => {
         entries.forEach(e => {
@@ -551,7 +457,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }, { threshold: 0.1 });
     tlCards.forEach((el, i) => {
-        // Slide dari kiri/kanan sesuai posisi
         const isLeft = el.classList.contains('left');
         el.style.transform = isLeft ? 'translateX(-24px)' : 'translateX(24px)';
         el.style.transitionDelay = (i * 60) + 'ms';
@@ -559,7 +464,6 @@ document.addEventListener('DOMContentLoaded', function () {
         tlObs.observe(el);
     });
 
-    // Saat visible, reset transform
     const visObs = new MutationObserver(mutations => {
         mutations.forEach(m => {
             if (m.target.classList.contains('visible')) {
@@ -568,7 +472,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
     tlCards.forEach(el => visObs.observe(el, { attributes: true, attributeFilter: ['class'] }));
-
 });
 </script>
 @endpush

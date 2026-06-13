@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Guru;
 
+use App\Exports\NilaiExport;
+use App\Imports\NilaiImport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
 use App\Models\{Nilai, Kelas, MataPelajaran, Siswa};
 use Illuminate\Http\Request;
@@ -87,5 +90,24 @@ class NilaiController extends Controller
         }
 
         return redirect()->route('guru.nilai.index')->with('success', 'Nilai Rapor berhasil disimpan!');
+    }
+
+    // Fungsi untuk Download Template/Data Nilai
+    public function export($mapel_id) 
+    {
+        return Excel::download(new NilaiExport($mapel_id), 'Data_Nilai_Siswa.xlsx');
+    }
+
+    // Fungsi untuk Upload/Impor Data Nilai
+    public function import(Request $request, $mapel_id) 
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        // Sesuaikan semester dan tahun ajaran dengan data yang aktif
+        Excel::import(new NilaiImport($mapel_id, 'Ganjil', '2024/2025'), $request->file('file'));
+
+        return back()->with('success', 'Data nilai berhasil diimpor!');
     }
 }

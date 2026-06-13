@@ -39,6 +39,10 @@
             <a href="{{ route('admin.pengumuman.index') }}" class="nav-item {{ request()->routeIs('admin.pengumuman*') ? 'active' : '' }}">
                 <i class="fas fa-bullhorn"></i> <span>Kelola Pengumuman</span>
             </a>
+            {{-- MENU MANAGE WEB (TERPISAH SEKARANG) --}}
+<a href="{{ route('admin.content.index') }}" class="nav-item {{ request()->routeIs('admin.content*') ? 'active' : '' }}">
+    <i class="fas fa-file-alt"></i> <span>Kelola Konten Halaman</span>
+</a>
 
         {{-- ══════════════════ GURU ══════════════════ --}}
         @elseif($role === 'guru')
