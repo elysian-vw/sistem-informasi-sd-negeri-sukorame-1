@@ -16,11 +16,14 @@ class ProfilController extends Controller
         ];
     }
 
+    // Contoh di ProfilController.php
     public function visiMisi()
     {
-        return view('public.profil.visi-misi', array_merge($this->baseData(), [
-            'pageTitle' => 'Visi & Misi — SDN Sukorame 1',
-        ]));
+        // Ambil konten dari database
+        $visi = \App\Models\PageContent::where('slug', 'profil-visi-misi')->first();
+        $misi = \App\Models\PageContent::where('slug', 'profil-misi')->first();
+
+        return view('public.profil.visi-misi', compact('visi', 'misi'));
     }
 
     public function sejarah()

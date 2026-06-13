@@ -60,7 +60,7 @@
     <div class="card-header" style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
         <h3 style="margin:0; font-size:15px; font-weight:700;">
             <i class="fas fa-table" style="color:var(--primary); margin-right:8px;"></i>
-            Data Persentase Bulanan: {{ $namaBulan[$bulanDipilih] }} {{ $tahunDipilih }}
+            Data Persentase Bulanan: {{ $namaBulan[$bulanDipilih] ?? '' }} {{ $tahunDipilih }}
         </h3>
     </div>
     <div class="card-body" style="padding:0;">

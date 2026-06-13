@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Wali;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Raport, Siswa, Nilai};
+use App\Models\{Raport, Siswa, Nilai, Absensi};
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class RaportWaliController extends Controller
 {
@@ -42,7 +43,7 @@ class RaportWaliController extends Controller
 
         $raport->load('siswa.kelas');
 
-        // Filter nilai hanya untuk mata pelajaran sesuai tingkat kelas siswa
+        // Filter nilai
         $nilai = Nilai::where('siswa_id', $raport->siswa_id)
             ->where('semester', $raport->semester)
             ->where('tahun_ajaran', $raport->tahun_ajaran)
@@ -57,6 +58,48 @@ class RaportWaliController extends Controller
             })
             ->values();
 
-        return view('wali.raport.show', compact('raport', 'nilai'));
+        // Hitung Absensi tanpa filter semester/tahun_ajaran (mengatasi error SQL)
+        $absensi = [
+            'sakit' => Absensi::where('siswa_id', $raport->siswa_id)->where('status', 'sakit')->count(),
+            'izin'  => Absensi::where('siswa_id', $raport->siswa_id)->where('status', 'izin')->count(),
+            'alpha' => Absensi::where('siswa_id', $raport->siswa_id)->where('status', 'alpha')->count(),
+        ];
+
+        return view('wali.raport.show', compact('raport', 'nilai', 'absensi'));
+    }
+
+    // --- FUNGSI BARU UNTUK EKSPOR PDF ---
+    public function eksporPdf(Raport $raport)
+    {
+        // 1. Keamanan: Pastikan hanya wali murid yang sah yang bisa download
+        $user = auth()->user();
+        $anakList = Siswa::where('wali_murid_id', $user->id)->pluck('id');
+        abort_unless($anakList->contains($raport->siswa_id) && $raport->status === 'terbit', 403);
+
+        $raport->load('siswa.kelas');
+
+        // 2. Ambil data Nilai (sama seperti fungsi show)
+        $nilai = Nilai::where('siswa_id', $raport->siswa_id)
+            ->where('semester', $raport->semester)
+            ->where('tahun_ajaran', $raport->tahun_ajaran)
+            ->with(['mataPelajaran' => function ($query) use ($raport) {
+                $query->where('tingkat', $raport->siswa->kelas->tingkat);
+            }])->get()->filter(function ($item) {
+                return $item->mataPelajaran !== null;
+            })->values();
+
+        // 3. Ambil data Absensi tanpa filter semester/tahun_ajaran
+        $absensi = [
+            'sakit' => Absensi::where('siswa_id', $raport->siswa_id)->where('status', 'sakit')->count(),
+            'izin'  => Absensi::where('siswa_id', $raport->siswa_id)->where('status', 'izin')->count(),
+            'alpha' => Absensi::where('siswa_id', $raport->siswa_id)->where('status', 'alpha')->count(),
+        ];
+
+        // 4. Proses jadikan PDF
+        $pdf = Pdf::loadView('wali.raport.pdf', compact('raport', 'nilai', 'absensi'));
+        
+        // 5. Download file
+        $namaFile = 'e-Raport_' . $raport->siswa->nama_lengkap . '_Semester_' . $raport->semester . '.pdf';
+        return $pdf->download(str_replace(' ', '_', $namaFile));
     }
 }
