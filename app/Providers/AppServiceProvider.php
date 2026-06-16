@@ -23,10 +23,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Memaksa koneksi ke HTTPS
+        if ($this->app->environment('production')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         Paginator::defaultView('vendor.pagination.custom');
         Paginator::defaultSimpleView('vendor.pagination.simple-custom');
 
-        // Share data sekolah ke semua view
         View::composer('*', function ($view) {
             $view->with('sekolah', Sekolah::first());
         });
