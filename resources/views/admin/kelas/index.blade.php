@@ -101,16 +101,16 @@
                                 {{ $k->status === 'aktif' ? 'Aktif' : 'Tidak Aktif' }}
                             </span>
                         </td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="btn-icon btn-edit" title="Edit"
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-primary border-0" title="Edit Data"
                                     onclick="openModalEdit({{ json_encode($k) }})">
-                                    <i class="fas fa-pencil-alt"></i>
+                                    <i class="fas fa-edit"></i>
                                 </button>
-                                <form action="{{ route('admin.kelas.destroy', $k->id) }}" method="POST"
-                                    onsubmit="return confirm('Hapus kelas {{ $k->nama_kelas }}? Siswa di kelas ini tidak akan terhapus.')">
+                                <form action="{{ route('admin.kelas.destroy', $k->id) }}" method="POST" class="d-inline"
+                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn-icon btn-delete" title="Hapus">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Hapus Data">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
@@ -233,13 +233,6 @@
 .badge { display:inline-flex; padding:3px 10px; border-radius:20px; font-size:11.5px; font-weight:500; }
 .badge-success { background:#dcfce7; color:#15803d; }
 .badge-danger  { background:#fee2e2; color:#b91c1c; }
-
-.action-btns { display:flex; gap:6px; }
-.btn-icon { width:30px; height:30px; border:none; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px; transition:all .15s; }
-.btn-edit { background:#eff6ff; color:#2563eb; }
-.btn-edit:hover { background:#dbeafe; }
-.btn-delete { background:#fef2f2; color:#dc2626; }
-.btn-delete:hover { background:#fee2e2; }
 
 .empty-state { text-align:center; color:#9ca3af; padding:40px; }
 .pagination-wrap { padding:16px 20px; border-top:1px solid #f3f4f6; }

@@ -306,32 +306,34 @@
             @endphp
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                @foreach($unggulan as $idx => $p)
-                @php $ms = $medalStyle[$p['level']]; @endphp
+                @forelse($prestasi->take(6) as $idx => $p)
+                @php $ms = $medalStyle[$p->level] ?? $medalStyle['lainnya']; @endphp
                 <div class="prestasi-card {{ $ms['card'] }} fade-up" style="transition-delay: {{ ($idx % 3) * 70 }}ms">
                     <div class="medal-wrap bg-gradient-to-br from-gray-50 to-white">
-                        <div class="medal-icon {{ $p['level'] }}">
-                            <i class="fa {{ $p['ico'] }} text-white"></i>
+                        <div class="medal-icon {{ $p->level }}">
+                            <i class="fa {{ $p->ico }} text-white"></i>
                         </div>
-                        <span class="rank-badge {{ $ms['badge'] }}">{{ $p['juara'] }}</span>
+                        <span class="rank-badge {{ $ms['badge'] }}">{{ $p->juara }}</span>
                     </div>
                     <div class="p-5">
-                        <p class="font-black text-gray-900 text-sm leading-snug mb-2">{{ $p['nama'] }}</p>
+                        <p class="font-black text-gray-900 text-sm leading-snug mb-2">{{ $p->nama }}</p>
                         <div class="flex flex-wrap gap-2 mb-3">
                             <span class="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full font-semibold">
-                                <i class="fa fa-location-dot text-[9px]"></i> {{ $p['tingkat'] }}
+                                <i class="fa fa-location-dot text-[9px]"></i> {{ $p->tingkat }}
                             </span>
                             <span class="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-semibold">
-                                <i class="fa fa-calendar text-[9px]"></i> {{ $p['tahun'] }}
+                                <i class="fa fa-calendar text-[9px]"></i> {{ $p->tahun }}
                             </span>
                         </div>
                         <div class="flex items-center gap-2 text-xs text-gray-500 border-t border-gray-50 pt-3">
                             <i class="fa fa-user text-gray-300 text-[10px]"></i>
-                            {{ $p['peserta'] }}
+                            {{ $p->peserta }}
                         </div>
                     </div>
                 </div>
-                @endforeach
+                @empty
+                <div class="col-span-full text-center py-10 text-gray-400">Belum ada data prestasi unggulan.</div>
+                @endforelse
             </div>
         </div>
     </section>

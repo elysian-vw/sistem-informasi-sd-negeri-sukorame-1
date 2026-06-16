@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\{Absensi, Kelas, Siswa};
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AbsensiController extends Controller
 {
@@ -32,7 +33,20 @@ class AbsensiController extends Controller
             ->get()
             ->keyBy('siswa_id');
 
-        return view('guru.absensi.index', compact('kelas', 'siswaKelas', 'tanggal', 'absensiHariIni'));
+        // Ambil riwayat absensi dengan rekap jumlah (15 hari terakhir)
+        $riwayatAbsensi = Absensi::where('kelas_id', $kelas->id)
+            ->select('tanggal', 
+                DB::raw('count(case when status = "hadir" then 1 end) as hadir'),
+                DB::raw('count(case when status = "sakit" then 1 end) as sakit'),
+                DB::raw('count(case when status = "izin" then 1 end) as izin'),
+                DB::raw('count(case when status = "alpha" then 1 end) as alpha')
+            )
+            ->groupBy('tanggal')
+            ->orderBy('tanggal', 'desc')
+            ->take(15)
+            ->get();
+
+        return view('guru.absensi.index', compact('kelas', 'siswaKelas', 'tanggal', 'absensiHariIni', 'riwayatAbsensi'));
     }
 
     // Proses menyimpan data absensi seluruh siswa

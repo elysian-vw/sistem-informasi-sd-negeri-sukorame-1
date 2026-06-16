@@ -14,12 +14,6 @@
     </a>
 </div>
 
-@if(session('success'))
-    <div class="alert-success-toast">
-        <i class="fas fa-check-circle"></i> {{ session('success') }}
-    </div>
-@endif
-
 {{-- Filter Bar --}}
 <div class="content-card" style="margin-bottom:20px;">
     <form method="GET" action="{{ route('guru.materi.index') }}" class="filter-bar">

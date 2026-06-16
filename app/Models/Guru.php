@@ -13,6 +13,8 @@ class Guru extends Model
         'kelas_id',
         'nip',
         'mata_pelajaran',
+        'jabatan',
+        'foto',
         'status',
     ];
 

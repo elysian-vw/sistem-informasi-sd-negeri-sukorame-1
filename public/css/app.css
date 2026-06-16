@@ -990,6 +990,34 @@ select.form-control {
     transform: translateY(-7px) rotate(-45deg);
 }
 
+/* Styling Dropdown */
+.nav-dropdown summary {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+.nav-dropdown summary::-webkit-details-marker {
+    display: none;
+}
+.nav-item-content {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Sesuaikan dengan layoutmu */
+}
+/* Efek Rotasi Panah pas Terbuka */
+.nav-dropdown[open] .arrow-icon {
+    transform: rotate(90deg);
+}
+.arrow-icon {
+    transition: transform 0.2s ease;
+}
+/* Menu di dalam dropdown agak masuk ke dalam */
+.dropdown-content {
+    padding-left: 15px; 
+}
+
 /* Mobile: tampilkan */
 @media (max-width: 768px) {
     .hamburger-btn {

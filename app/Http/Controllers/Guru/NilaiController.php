@@ -21,7 +21,9 @@ class NilaiController extends Controller
         }
 
         $kelas = Kelas::find($guru->kelas_id);
-        $mapel = MataPelajaran::where('guru_id', $guru->id)->get();
+        $mapel = MataPelajaran::where('guru_id', $guru->id)
+            ->where('kelas_id', $guru->kelas_id)
+            ->get();
 
         return view('guru.nilai.index', compact('kelas', 'mapel'));
     }

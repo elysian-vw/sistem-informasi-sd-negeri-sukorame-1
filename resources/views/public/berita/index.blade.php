@@ -141,7 +141,7 @@
                 </h1>
                 <p class="text-white/70 leading-relaxed max-w-lg" style="font-size:1rem;">
                     Ikuti informasi terkini, pengumuman resmi, dan pemberitahuan penting
-                    dari {{ $sekolah->nama ?? 'SD Negeri Sukorame 1 Kota Kediri' }}.
+                    dari {{ $sekolah->nama_sekolah ?? 'SD Negeri Sukorame 1 Kota Kediri' }}.
                 </p>
             </div>
             <div class="flex gap-3 flex-shrink-0">

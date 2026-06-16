@@ -49,8 +49,12 @@
             <option value="">-- Silakan Pilih Bagian Website --</option>
             
             <optgroup label="HALAMAN BERANDA">
-                <option value="home-hero-title">Beranda - Teks Judul Banner Utama</option>
-                <option value="home-hero-subtitle">Beranda - Teks Sub-Judul Banner</option>
+                <option value="home-hero-title">Beranda - Teks Judul Banner Utama (Slide 1)</option>
+                <option value="home-hero-subtitle">Beranda - Teks Sub-Judul Banner (Slide 1)</option>
+                <option value="home-slide2-judul">Beranda - Judul Banner E-Learning (Slide 2)</option>
+                <option value="home-slide2-konten">Beranda - Teks Deskripsi E-Learning (Slide 2)</option>
+                <option value="home-slide3-label">Beranda - Label Tahun PPDB (Slide 3, contoh: PPDB 2025/2026)</option>
+                <option value="home-slide3-konten">Beranda - Teks Deskripsi PPDB (Slide 3)</option>
                 <option value="home-sambutan-nama">Beranda - Nama Kepala Sekolah</option>
                 <option value="home-sambutan-konten">Beranda - Isi Sambutan Kepala Sekolah</option>
             </optgroup>
@@ -68,9 +72,11 @@
                 <option value="akademik-kurikulum">Akademik - Informasi Kurikulum</option>
                 <option value="akademik-kalender">Akademik - Kalender Akademik</option>
                 <option value="akademik-literasi">Akademik - Pojok Literasi</option>
+                <option value="akademik-karakter">Akademik - Pendidikan Karakter</option>
             </optgroup>
             
             <optgroup label="MENU PPDB">
+                <option value="ppdb-info">PPDB - Informasi Umum PPDB</option>
                 <option value="ppdb-alur">PPDB - Alur Pendaftaran</option>
                 <option value="ppdb-syarat">PPDB - Syarat & Ketentuan</option>
                 <option value="ppdb-jadwal">PPDB - Jadwal Pendaftaran</option>
@@ -79,7 +85,11 @@
             <optgroup label="MENU LAYANAN">
                 <option value="layanan-surat">Layanan - Informasi Surat Menyurat</option>
                 <option value="layanan-mutasi">Layanan - Informasi Mutasi Siswa</option>
+                <option value="layanan-izin">Layanan - Izin Penelitian / PKL</option>
+                <option value="layanan-nisn">Layanan - Cek / Cetak NISN</option>
                 <option value="layanan-pip">Layanan - Program Indonesia Pintar (PIP)</option>
+                <option value="layanan-unduhan">Layanan - Unduhan Dokumen</option>
+                <option value="layanan-alumni">Layanan - Penjaringan Alumni</option>
             </optgroup>
         </select>
         
@@ -101,7 +111,7 @@
                     <th style="width: 60px; text-align: center;">No</th>
                     <th>Nama / Judul Internal Sistem</th>
                     <th>URL Kunci (Slug)</th>
-                    <th style="text-align: center; width: 140px;">Aksi Cepat</th>
+                    <th class="text-center" style="width: 150px;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -112,10 +122,12 @@
                         <td>
                             <span class="badge-slug"><i class="fas fa-link" style="color: #9ca3af; margin-right: 4px; font-size: 10px;"></i>{{ $p->slug }}</span>
                         </td>
-                        <td style="text-align: center;">
-                            <a href="{{ route('admin.content.edit', $p->slug) }}" class="btn btn-edit" style="padding: 6px 12px; font-size: 12px;">
-                                <i class="fas fa-pen"></i> Edit Ulang
-                            </a>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <a href="{{ route('admin.content.edit', $p->slug) }}" class="btn btn-sm btn-outline-primary border-0" title="Edit Data">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                 @empty

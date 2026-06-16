@@ -57,11 +57,12 @@
                 <tr>
                     <th>NIP</th>
                     <th>Nama</th>
+                    <th>Jabatan</th>
                     <th>Kelas Tugas</th>
                     <th>Mata Pelajaran</th>
                     <th>No HP</th>
                     <th>Status</th>
-                    <th>Aksi</th>
+                    <th class="text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -83,6 +84,7 @@
                                 </div>
                             </div>
                         </td>
+                        <td>{{ $g->jabatan ?? '-' }}</td>
                         <td>
                             @if($g->kelas_id)
                                 <span class="badge badge-success" style="background:#e0f2fe; color:#0284c7;">
@@ -99,9 +101,9 @@
                                 {{ $g->status === 'aktif' ? 'Aktif' : 'Tidak Aktif' }}
                             </span>
                         </td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="btn-icon btn-edit" title="Edit"
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-primary border-0" title="Edit Data"
                                     onclick="openModalEdit({{ json_encode([
                                         'id'             => $g->id,
                                         'name'           => $g->user?->name,
@@ -110,14 +112,15 @@
                                         'nip'            => $g->nip,
                                         'kelas_id'       => $g->kelas_id,
                                         'mata_pelajaran' => $g->mata_pelajaran,
+                                        'jabatan'        => $g->jabatan,
                                         'status'         => $g->status,
                                     ]) }})">
-                                    <i class="fas fa-pencil-alt"></i>
+                                    <i class="fas fa-edit"></i>
                                 </button>
-                                <form action="{{ route('admin.guru.destroy', $g->id) }}" method="POST"
+                                <form action="{{ route('admin.guru.destroy', $g->id) }}" method="POST" class="d-inline"
                                     onsubmit="return confirm('Hapus data {{ $g->user?->name }}?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn-icon btn-delete" title="Hapus">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Hapus Data">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
@@ -199,12 +202,25 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Jabatan Struktural</label>
+                        <select name="jabatan" id="f-jabatan" class="form-control">
+                            <option value="">-- Pilih --</option>
+                            @foreach($jabatanList as $j)
+                                <option value="{{ $j }}">{{ $j }}</option>
+                            @endforeach
+                        </select>
+                        <small class="form-hint">Muncul di Bagan Struktur Organisasi.</small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
                         <label class="form-label">Status <span class="required">*</span></label>
                         <select name="status" id="f-status" class="form-control" required>
                             <option value="aktif">Aktif</option>
                             <option value="tidak_aktif">Tidak Aktif</option>
                         </select>
                     </div>
+                    <div class="form-group"></div>
                 </div>
                 
                 {{-- Keterangan Upload Foto --}}
@@ -293,13 +309,6 @@
 .badge-success { background:#dcfce7; color:#15803d; }
 .badge-danger  { background:#fee2e2; color:#b91c1c; }
 
-.action-btns { display:flex; gap:6px; }
-.btn-icon { width:30px; height:30px; border:none; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px; transition:all .15s; }
-.btn-edit { background:#eff6ff; color:#2563eb; }
-.btn-edit:hover { background:#dbeafe; }
-.btn-delete { background:#fef2f2; color:#dc2626; }
-.btn-delete:hover { background:#fee2e2; }
-
 .empty-state { text-align:center; color:#9ca3af; padding:40px; }
 .pagination-wrap { padding:16px 20px; border-top:1px solid #f3f4f6; }
 
@@ -356,6 +365,7 @@ function openModalEdit(guru) {
     document.getElementById('f-kelas').value   = guru.kelas_id ?? ''; 
     document.getElementById('f-status').value  = guru.status ?? 'aktif';
     document.getElementById('f-mapel').value   = guru.mata_pelajaran ?? '';
+    document.getElementById('f-jabatan').value = guru.jabatan ?? '';
     document.getElementById('f-password').value = '';
 
     document.getElementById('modal-guru').classList.add('show');

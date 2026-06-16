@@ -14,29 +14,45 @@ class PpdbController extends Controller
 
     public function info()
     {
+        $content = \App\Models\PageContent::where('slug', 'ppdb-info')->first();
+        $sekolah = $this->baseData()['sekolah'];
+        $schoolName = $sekolah->nama_sekolah ?? config('app.name');
         return view('public.ppdb.info', array_merge($this->baseData(), [
-            'pageTitle' => 'Informasi PPDB 2025/2026 — SDN Sukorame 1',
+            'pageTitle' => 'Informasi PPDB 2025/2026 — ' . $schoolName,
+            'content' => $content
         ]));
     }
 
     public function syarat()
     {
+        $content = \App\Models\PageContent::where('slug', 'ppdb-syarat')->first();
+        $sekolah = $this->baseData()['sekolah'];
+        $schoolName = $sekolah->nama_sekolah ?? config('app.name');
         return view('public.ppdb.syarat', array_merge($this->baseData(), [
-            'pageTitle' => 'Syarat Pendaftaran PPDB — SDN Sukorame 1',
+            'pageTitle' => 'Syarat Pendaftaran PPDB — ' . $schoolName,
+            'content' => $content
         ]));
     }
 
     public function jadwal()
     {
+        $content = \App\Models\PageContent::where('slug', 'ppdb-jadwal')->first();
+        $sekolah = $this->baseData()['sekolah'];
+        $schoolName = $sekolah->nama_sekolah ?? config('app.name');
         return view('public.ppdb.jadwal', array_merge($this->baseData(), [
-            'pageTitle' => 'Jadwal PPDB — SDN Sukorame 1',
+            'pageTitle' => 'Jadwal PPDB — ' . $schoolName,
+            'content' => $content
         ]));
     }
 
     public function alur()
     {
+        $content = \App\Models\PageContent::where('slug', 'ppdb-alur')->first();
+        $sekolah = $this->baseData()['sekolah'];
+        $schoolName = $sekolah->nama_sekolah ?? config('app.name');
         return view('public.ppdb.alur', array_merge($this->baseData(), [
-            'pageTitle' => 'Alur Pendaftaran PPDB — SDN Sukorame 1',
+            'pageTitle' => 'Alur Pendaftaran PPDB — ' . $schoolName,
+            'content' => $content
         ]));
     }
 }

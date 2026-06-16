@@ -27,6 +27,8 @@ class Sekolah extends Model
         'website',
         'nama_kepala_sekolah',
         'nip_kepala_sekolah',
+        'foto_kepsek',
+        'sambutan_kepsek',
         'logo',
         'nama_singkat',
         'slogan',
@@ -34,5 +36,12 @@ class Sekolah extends Model
         'tahun_akreditasi',
         'nomor_sk_akreditasi',
         'nilai_akreditasi',
+        'latitude',
+        'longitude',
+        'facebook',
+        'instagram',
+        'youtube',
+        'tahun_ajaran_aktif',
+        'semester_aktif',
     ];
 }

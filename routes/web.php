@@ -14,7 +14,15 @@ use App\Http\Controllers\Admin\{
     PengumumanController,
     SekolahController,
     JadwalController,
-    PageContentController// ⬅️ Tambahan untuk fitur Kelola Web
+    PageContentController,
+    GaleriController as AdminGaleri,
+    SaranaController as AdminSarana,
+    KomiteController as AdminKomite,
+    PrestasiController as AdminPrestasi,
+    BeritaController as AdminBerita,
+    KegiatanController as AdminKegiatan,
+    EkskulController as AdminEkskul,
+    KeunggulanController as AdminKeunggulan,
 };
 
 // ─── GURU ────────────────────────────────────────────────────────────────────
@@ -123,9 +131,29 @@ Route::prefix('layanan')->name('layanan.')->group(function () {
 // AUTH
 // ═══════════════════════════════════════════════════════════════════════════════
 
+// Load auth routes (register/login/password/email verification)
+require __DIR__ . '/auth.php';
+
 Route::get('/login',  [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Generic dashboard route used by tests/scaffolding — redirects authenticated users
+Route::middleware('auth')->get('/dashboard', function () {
+    // If user has admin role, redirect to admin dashboard; otherwise go to home
+    $user = auth()->user();
+    if ($user && $user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+    return redirect()->route('home');
+})->name('dashboard');
+
+// Profile routes (view, update, delete)
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 // ── Password Reset ────────────────────────────────────────────────────────────
 Route::get('/forgot-password',        [LoginController::class, 'showForgotForm'])->name('password.request');
@@ -171,6 +199,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::delete('/mata-pelajaran/{mata_pelajaran}', [MataPelajaranController::class, 'destroy'])->name('mata-pelajaran.destroy');
 
     Route::resource('pengumuman', PengumumanController::class);
+    Route::resource('galeri', AdminGaleri::class);
+    Route::resource('sarana', AdminSarana::class);
+    Route::resource('komite', AdminKomite::class);
+    Route::resource('prestasi', AdminPrestasi::class);
+    Route::resource('berita', AdminBerita::class);
+    Route::resource('kegiatan', AdminKegiatan::class);
+    Route::resource('ekskul', AdminEkskul::class);
+
+     Route::resource('keunggulan', AdminKeunggulan::class)
+         ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
     Route::get('/sekolah', [SekolahController::class, 'index'])->name('sekolah');
     Route::put('/sekolah', [SekolahController::class, 'update'])->name('sekolah.update');
@@ -194,6 +232,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 
 Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(function () {
     Route::get('/dashboard', [GuruDashboard::class, 'index'])->name('dashboard');
+    Route::get('/chart-data', [GuruDashboard::class, 'getChartData'])->name('chart-data');
 
     Route::resource('absensi', AbsensiController::class);
 

@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', $pageTitle ?? 'Layanan Mutasi Siswa — SDN Sukorame 1')
+@section('title', $pageTitle ?? 'Layanan Mutasi Siswa — ' . ($sekolah->nama_sekolah ?? 'SDN Sukorame 1'))
 
 @push('head')
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -41,7 +41,7 @@
                     Layanan<br><span style="color:#FDE68A;">Mutasi Siswa</span>
                 </h1>
                 <p class="text-white/70 leading-relaxed max-w-xl">
-                    Layanan mutasi masuk dan keluar bagi siswa SDN Sukorame 1. Proses dilakukan secara administratif dengan persyaratan yang jelas dan transparan.
+                    Layanan mutasi masuk dan keluar bagi siswa {{ $sekolah->nama_sekolah ?? 'SDN Sukorame 1' }}. Proses dilakukan secara administratif dengan persyaratan yang jelas dan transparan.
                 </p>
             </div>
             <div class="grid grid-cols-2 gap-3 flex-shrink-0">
@@ -57,19 +57,29 @@
 </div>
 
 <main class="bg-gray-50">
+    @if($content && $content->content)
+    <section class="py-16 bg-white border-b border-gray-100">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="prose max-w-none text-gray-600">
+                {!! $content->content !!}
+            </div>
+        </div>
+    </section>
+    @endif
+
     {{-- JENIS MUTASI --}}
     <section class="py-20 bg-white">
         <div class="max-w-5xl mx-auto px-6">
             <div class="text-center mb-14 fade-up">
                 <div class="sec-label">Jenis Layanan</div>
                 <h2 class="font-display text-3xl md:text-4xl font-black text-gray-900 mb-3">Mutasi Masuk & Keluar</h2>
-                <p class="text-gray-500 text-sm max-w-xl mx-auto">SDN Sukorame 1 melayani dua jenis mutasi siswa. Pilih sesuai kebutuhan Anda.</p>
+                <p class="text-gray-500 text-sm max-w-xl mx-auto">{{ $sekolah->nama_sekolah ?? 'SDN Sukorame 1' }} melayani dua jenis mutasi siswa. Pilih sesuai kebutuhan Anda.</p>
             </div>
             <div class="grid md:grid-cols-2 gap-6">
                 @php
                 $jenis = [
-                    ['icon'=>'fa-sign-in-alt','bg'=>'bg-green-600','title'=>'Mutasi Masuk','desc'=>'Siswa dari sekolah lain yang ingin pindah ke SDN Sukorame 1. Penerimaan disesuaikan dengan ketersediaan kursi di kelas tujuan.','syarat'=>['Surat permohonan pindah dari orang tua/wali','Surat keterangan pindah dari sekolah asal','Raport asli semester terakhir','Akta kelahiran (fotokopi)','Kartu Keluarga (fotokopi)','Pas foto 3×4 sebanyak 4 lembar'],'ket'=>'Proses: 3–5 hari kerja setelah berkas lengkap'],
-                    ['icon'=>'fa-sign-out-alt','bg'=>'bg-amber-500','title'=>'Mutasi Keluar','desc'=>'Siswa SDN Sukorame 1 yang akan pindah ke sekolah lain. Surat keterangan pindah diterbitkan setelah semua administrasi diselesaikan.','syarat'=>['Surat permohonan pindah dari orang tua/wali','Mengembalikan buku-buku perpustakaan','Menyelesaikan seluruh kewajiban administrasi','Surat keterangan tujuan sekolah baru'],'ket'=>'Proses: 2–3 hari kerja setelah berkas lengkap'],
+                    ['icon'=>'fa-sign-in-alt','bg'=>'bg-green-600','title'=>'Mutasi Masuk','desc'=>'Siswa dari sekolah lain yang ingin pindah ke ' . ($sekolah->nama_sekolah ?? 'SDN Sukorame 1') . '. Penerimaan disesuaikan dengan ketersediaan kursi di kelas tujuan.','syarat'=>['Surat permohonan pindah dari orang tua/wali','Surat keterangan pindah dari sekolah asal','Raport asli semester terakhir','Akta kelahiran (fotokopi)','Kartu Keluarga (fotokopi)','Pas foto 3×4 sebanyak 4 lembar'],'ket'=>'Proses: 3–5 hari kerja setelah berkas lengkap'],
+                    ['icon'=>'fa-sign-out-alt','bg'=>'bg-amber-500','title'=>'Mutasi Keluar','desc'=>'Siswa ' . ($sekolah->nama_sekolah ?? 'SDN Sukorame 1') . ' yang akan pindah ke sekolah lain. Surat keterangan pindah diterbitkan setelah semua administrasi diselesaikan.','syarat'=>['Surat permohonan pindah dari orang tua/wali','Mengembalikan buku-buku perpustakaan','Menyelesaikan seluruh kewajiban administrasi','Surat keterangan tujuan sekolah baru'],'ket'=>'Proses: 2–3 hari kerja setelah berkas lengkap'],
                 ];
                 @endphp
                 @foreach($jenis as $j)

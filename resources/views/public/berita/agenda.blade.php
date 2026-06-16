@@ -120,107 +120,41 @@
 @section('content')
 
 @php
-$agendaData = collect([
-    [
-        'judul'     => 'Ujian Akhir Semester Genap',
-        'tanggal'   => \Carbon\Carbon::create(2025, 6, 2),
-        'selesai'   => \Carbon\Carbon::create(2025, 6, 13),
-        'jenis'     => 'akademik',
-        'deskripsi' => 'Pelaksanaan Ujian Akhir Semester (UAS) Genap Tahun Pelajaran 2024/2025 untuk seluruh kelas I–VI.',
-        'lokasi'    => 'Ruang Kelas SDN Sukorame 1',
-        'warna'     => '#1d4ed8',
-    ],
-    [
-        'judul'     => 'Peringatan Hari Lahir Pancasila',
-        'tanggal'   => \Carbon\Carbon::create(2025, 6, 1),
-        'selesai'   => null,
-        'jenis'     => 'nasional',
-        'deskripsi' => 'Upacara bendera dalam rangka memperingati Hari Lahir Pancasila 1 Juni 2025.',
-        'lokasi'    => 'Halaman Upacara SDN Sukorame 1',
-        'warna'     => '#e11d48',
-    ],
-    [
-        'judul'     => 'Lomba Lukis Tingkat Kecamatan',
-        'tanggal'   => \Carbon\Carbon::create(2025, 6, 21),
-        'selesai'   => null,
-        'jenis'     => 'seni',
-        'deskripsi' => 'Perwakilan siswa kelas IV–VI mengikuti lomba lukis tingkat kecamatan yang diselenggarakan oleh Diknas Kota Kediri.',
-        'lokasi'    => 'SDN Mojoroto 1, Kota Kediri',
-        'warna'     => '#9333ea',
-    ],
-    [
-        'judul'     => 'Rapat Orang Tua / Wali Murid',
-        'tanggal'   => \Carbon\Carbon::create(2025, 6, 28),
-        'selesai'   => null,
-        'jenis'     => 'rapat',
-        'deskripsi' => 'Rapat koordinasi wali murid membahas persiapan kenaikan kelas dan pembagian rapor semester genap.',
-        'lokasi'    => 'Aula SDN Sukorame 1',
-        'warna'     => '#475569',
-    ],
-    [
-        'judul'     => 'Pembagian Rapor Semester Genap',
-        'tanggal'   => \Carbon\Carbon::create(2025, 6, 21),
-        'selesai'   => null,
-        'jenis'     => 'akademik',
-        'deskripsi' => 'Pembagian buku rapor semester genap kepada wali murid kelas I–V.',
-        'lokasi'    => 'Ruang Kelas Masing-Masing',
-        'warna'     => '#1d4ed8',
-    ],
-    [
-        'judul'     => 'Masa Pengenalan Lingkungan Sekolah (MPLS)',
-        'tanggal'   => \Carbon\Carbon::create(2025, 7, 14),
-        'selesai'   => \Carbon\Carbon::create(2025, 7, 16),
-        'jenis'     => 'akademik',
-        'deskripsi' => 'Kegiatan MPLS bagi peserta didik baru kelas I Tahun Pelajaran 2025/2026.',
-        'lokasi'    => 'SDN Sukorame 1',
-        'warna'     => '#1d4ed8',
-    ],
-    [
-        'judul'     => 'Penerimaan Peserta Didik Baru (PPDB)',
-        'tanggal'   => \Carbon\Carbon::create(2025, 7, 1),
-        'selesai'   => \Carbon\Carbon::create(2025, 7, 10),
-        'jenis'     => 'akademik',
-        'deskripsi' => 'Pendaftaran peserta didik baru kelas I Tahun Pelajaran 2025/2026 secara online melalui portal PPDB Kota Kediri.',
-        'lokasi'    => 'Online & SDN Sukorame 1',
-        'warna'     => '#1d4ed8',
-    ],
-    [
-        'judul'     => 'Hari Pertama Masuk Sekolah TP 2025/2026',
-        'tanggal'   => \Carbon\Carbon::create(2025, 7, 14),
-        'selesai'   => null,
-        'jenis'     => 'akademik',
-        'deskripsi' => 'Seluruh siswa mulai aktif belajar untuk Tahun Pelajaran 2025/2026.',
-        'lokasi'    => 'SDN Sukorame 1',
-        'warna'     => '#1d4ed8',
-    ],
-    [
-        'judul'     => 'Lomba Gerak Jalan Kemerdekaan',
-        'tanggal'   => \Carbon\Carbon::create(2025, 8, 16),
-        'selesai'   => null,
-        'jenis'     => 'olahraga',
-        'deskripsi' => 'Lomba gerak jalan dalam rangka menyambut HUT Kemerdekaan RI ke-80, diikuti oleh perwakilan siswa kelas IV–VI.',
-        'lokasi'    => 'Rute: SDN Sukorame 1 – Alun-Alun Kota Kediri',
-        'warna'     => '#d97706',
-    ],
-    [
-        'judul'     => 'Upacara HUT RI ke-80',
-        'tanggal'   => \Carbon\Carbon::create(2025, 8, 17),
-        'selesai'   => null,
-        'jenis'     => 'nasional',
-        'deskripsi' => 'Upacara bendera peringatan Hari Ulang Tahun Kemerdekaan Republik Indonesia ke-80.',
-        'lokasi'    => 'Halaman Upacara SDN Sukorame 1',
-        'warna'     => '#e11d48',
-    ],
-]);
+$agendaItems = collect($agendaItems ?? []);
+$agendaData = $agendaItems->map(function ($item) {
+    $tanggalMulai = $item->tanggal_mulai ? \Carbon\Carbon::parse($item->tanggal_mulai) : null;
+    $tanggalSelesai = $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai) : null;
+
+    return [
+        'judul'     => $item->judul,
+        'tanggal'   => $tanggalMulai,
+        'selesai'   => $tanggalSelesai,
+        'jenis'     => $item->kategori,
+        'deskripsi' => $item->deskripsi ?: 'Tidak ada deskripsi tambahan.',
+        'lokasi'    => $item->tempat ?: 'SDN Sukorame 1',
+        'warna'     => match($item->kategori) {
+            'upacara'   => '#1d4ed8',
+            'penilaian' => '#2563eb',
+            'perpisahan'=> '#e11d48',
+            'libur'     => '#f59e0b',
+            'ppdb'      => '#10b981',
+            'ekskul'    => '#9333ea',
+            'rapat'     => '#475569',
+            default     => '#64748b',
+        },
+    ];
+})->filter(fn($item) => $item['tanggal'])->values();
 
 $grouped  = $agendaData->groupBy(fn($a) => $a['tanggal']->format('Y-m'));
 $jenisMap = [
-    'akademik' => ['label'=>'Akademik',        'cls'=>'jenis-akademik',  'ico'=>'fa-book'],
-    'olahraga' => ['label'=>'Olahraga',         'cls'=>'jenis-olahraga',  'ico'=>'fa-running'],
-    'seni'     => ['label'=>'Seni',             'cls'=>'jenis-seni',      'ico'=>'fa-palette'],
-    'nasional' => ['label'=>'Hari Nasional',    'cls'=>'jenis-nasional',  'ico'=>'fa-flag'],
-    'ekstra'   => ['label'=>'Ekstrakurikuler',  'cls'=>'jenis-ekstra',    'ico'=>'fa-star'],
-    'rapat'    => ['label'=>'Rapat',            'cls'=>'jenis-rapat',     'ico'=>'fa-users'],
+    'upacara'    => ['label'=>'Upacara',          'cls'=>'jenis-akademik',  'ico'=>'fa-flag'],
+    'penilaian'  => ['label'=>'Penilaian',        'cls'=>'jenis-akademik',  'ico'=>'fa-book'],
+    'perpisahan' => ['label'=>'Perpisahan',       'cls'=>'jenis-nasional',  'ico'=>'fa-users'],
+    'libur'      => ['label'=>'Libur',            'cls'=>'jenis-olahraga',  'ico'=>'fa-sun'],
+    'ppdb'       => ['label'=>'PPDB',             'cls'=>'jenis-ekstra',    'ico'=>'fa-user-plus'],
+    'ekskul'     => ['label'=>'Ekstrakurikuler',  'cls'=>'jenis-ekstra',    'ico'=>'fa-star'],
+    'rapat'      => ['label'=>'Rapat',            'cls'=>'jenis-rapat',     'ico'=>'fa-users'],
+    'lainnya'    => ['label'=>'Lainnya',          'cls'=>'jenis-ekstra',    'ico'=>'fa-info-circle'],
 ];
 @endphp
 
@@ -273,10 +207,10 @@ $jenisMap = [
         {{-- Summary stats --}}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-14 fade-up">
             @foreach([
-                ['Akademik',    $agendaData->where('jenis','akademik')->count(),  'jenis-akademik', 'fa-book'],
-                ['Nasional',    $agendaData->where('jenis','nasional')->count(),   'jenis-nasional', 'fa-flag'],
-                ['Seni',        $agendaData->where('jenis','seni')->count(),       'jenis-seni',     'fa-palette'],
-                ['Olahraga',    $agendaData->where('jenis','olahraga')->count(),   'jenis-olahraga', 'fa-running'],
+                ['Upacara',           $agendaData->where('jenis','upacara')->count(),    'jenis-akademik', 'fa-flag'],
+                ['Penilaian',         $agendaData->where('jenis','penilaian')->count(),  'jenis-akademik', 'fa-book'],
+                ['Ekstrakurikuler',   $agendaData->where('jenis','ekskul')->count(),      'jenis-ekstra',   'fa-star'],
+                ['PPDB',              $agendaData->where('jenis','ppdb')->count(),        'jenis-ekstra',   'fa-user-plus'],
             ] as [$lbl, $count, $cls, $ico])
             <div class="stat-card fade-up">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2 {{ $cls }}" style="width:44px;height:44px;">

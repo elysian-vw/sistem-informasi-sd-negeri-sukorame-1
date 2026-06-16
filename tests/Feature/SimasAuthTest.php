@@ -17,7 +17,7 @@ class SimasAuthTest extends TestCase
     {
         $response = $this->get('/');
         $response->assertStatus(200);
-        $response->assertSee('SD Negeri Sukorame 1');
+        $response->assertSee(config('app.name'));
     }
 
     /**

@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Galeri Foto — SDN Sukorame 1')
+@section('title', $pageTitle ?? ('Galeri Foto — ' . ($sekolah->nama_sekolah ?? 'Sekolah')))
 
 @push('head')
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -149,90 +149,6 @@
 @section('content')
 
 @php
-$fotoData = collect([
-    [
-        'judul'     => 'Upacara Hari Kemerdekaan RI ke-79',
-        'kategori'  => 'nasional',
-        'tanggal'   => '17 Agustus 2024',
-        'deskripsi' => 'Pelaksanaan upacara bendera HUT RI ke-79 di halaman SDN Sukorame 1.',
-        'src'       => asset('images/galeri/foto/upacara-hut-ri.jpg'),
-        'thumb'     => asset('images/galeri/foto/upacara-hut-ri.jpg'),
-        'tinggi'    => '260',
-    ],
-    [
-        'judul'     => 'Kegiatan P5 — Tema Kewirausahaan',
-        'kategori'  => 'pembelajaran',
-        'tanggal'   => '12 Oktober 2024',
-        'deskripsi' => 'Siswa kelas V mempresentasikan produk karya mereka pada pameran P5 tema kewirausahaan.',
-        'src'       => asset('images/galeri/foto/p5-kewirausahaan.jpg'),
-        'thumb'     => asset('images/galeri/foto/p5-kewirausahaan.jpg'),
-        'tinggi'    => '200',
-    ],
-    [
-        'judul'     => 'Lomba Cerdas Cermat Tingkat Kota',
-        'kategori'  => 'prestasi',
-        'tanggal'   => '5 September 2024',
-        'deskripsi' => 'Tim cerdas cermat SDN Sukorame 1 meraih juara II tingkat Kota Kediri.',
-        'src'       => asset('images/galeri/foto/cerdas-cermat.jpg'),
-        'thumb'     => asset('images/galeri/foto/cerdas-cermat.jpg'),
-        'tinggi'    => '300',
-    ],
-    [
-        'judul'     => 'PPDB Tahun Pelajaran 2024/2025',
-        'kategori'  => 'ppdb',
-        'tanggal'   => '8 Juli 2024',
-        'deskripsi' => 'Proses penerimaan peserta didik baru di SDN Sukorame 1 berjalan tertib dan lancar.',
-        'src'       => asset('images/galeri/foto/ppdb-2024.jpg'),
-        'thumb'     => asset('images/galeri/foto/ppdb-2024.jpg'),
-        'tinggi'    => '220',
-    ],
-    [
-        'judul'     => 'Program Makan Bergizi Gratis',
-        'kategori'  => 'kegiatan',
-        'tanggal'   => '3 Maret 2025',
-        'deskripsi' => 'Distribusi Makan Bergizi Gratis perdana di SDN Sukorame 1.',
-        'src'       => asset('images/galeri/foto/mbg.jpg'),
-        'thumb'     => asset('images/galeri/foto/mbg.jpg'),
-        'tinggi'    => '190',
-    ],
-    [
-        'judul'     => 'Pentas Seni Akhir Tahun',
-        'kategori'  => 'kegiatan',
-        'tanggal'   => '20 Juni 2024',
-        'deskripsi' => 'Siswa menampilkan berbagai pertunjukan seni budaya pada acara pentas seni akhir tahun pelajaran.',
-        'src'       => asset('images/galeri/foto/pentas-seni.jpg'),
-        'thumb'     => asset('images/galeri/foto/pentas-seni.jpg'),
-        'tinggi'    => '280',
-    ],
-    [
-        'judul'     => 'Ekstrakurikuler Pramuka',
-        'kategori'  => 'ekstra',
-        'tanggal'   => '22 Februari 2025',
-        'deskripsi' => 'Kegiatan latihan pramuka rutin setiap hari Sabtu.',
-        'src'       => asset('images/galeri/foto/pramuka.jpg'),
-        'thumb'     => asset('images/galeri/foto/pramuka.jpg'),
-        'tinggi'    => '210',
-    ],
-    [
-        'judul'     => 'Kerja Bakti Lingkungan Sekolah',
-        'kategori'  => 'kegiatan',
-        'tanggal'   => '15 Januari 2025',
-        'deskripsi' => 'Seluruh warga sekolah bersama-sama melakukan kerja bakti membersihkan lingkungan.',
-        'src'       => asset('images/galeri/foto/kerja-bakti.jpg'),
-        'thumb'     => asset('images/galeri/foto/kerja-bakti.jpg'),
-        'tinggi'    => '240',
-    ],
-    [
-        'judul'     => 'Wisuda Kelas VI TP 2023/2024',
-        'kategori'  => 'prestasi',
-        'tanggal'   => '22 Juni 2024',
-        'deskripsi' => 'Pelepasan dan wisuda siswa kelas VI yang telah menyelesaikan pendidikan di SDN Sukorame 1.',
-        'src'       => asset('images/galeri/foto/wisuda-vi.jpg'),
-        'thumb'     => asset('images/galeri/foto/wisuda-vi.jpg'),
-        'tinggi'    => '230',
-    ],
-]);
-
 $kategoriMap = [
     ''           => 'Semua',
     'kegiatan'   => 'Kegiatan',
@@ -266,7 +182,7 @@ $kategoriMap = [
                 </h1>
                 <p class="text-white/70 leading-relaxed max-w-lg" style="font-size:1rem;">
                     Kumpulan dokumentasi kegiatan, prestasi, dan momen berharga
-                    di SD Negeri Sukorame 1 Kota Kediri.
+                    di {{ $sekolah->nama_sekolah ?? 'Sekolah' }} {{ $sekolah->kota ? 'Kota ' . $sekolah->kota : '' }}.
                 </p>
             </div>
 
@@ -275,12 +191,12 @@ $kategoriMap = [
                 <div class="flex gap-3">
                     <div class="bg-white/15 border border-white/30 rounded-2xl p-4 text-center w-28 backdrop-blur-sm">
                         <i class="fa fa-images text-blue-300 text-base mb-2 block"></i>
-                        <p class="text-white font-black text-xl leading-none">{{ $fotoData->count() }}</p>
+                        <p class="text-white font-black text-xl leading-none">{{ $fotos->count() }}</p>
                         <p class="text-white/55 text-[10px] mt-1">Total Foto</p>
                     </div>
                     <div class="bg-white/10 border border-white/20 rounded-2xl p-4 text-center w-28 backdrop-blur-sm">
                         <i class="fa fa-folder text-blue-300 text-base mb-2 block"></i>
-                        <p class="text-white font-black text-xl leading-none">{{ count(array_filter(array_keys($kategoriMap))) }}</p>
+                        <p class="text-white font-black text-xl leading-none">{{ $fotos->groupBy('kategori')->count() }}</p>
                         <p class="text-white/55 text-[10px] mt-1">Kategori</p>
                     </div>
                 </div>
@@ -314,18 +230,23 @@ $kategoriMap = [
 
         {{-- Masonry Grid --}}
         <div class="foto-grid fade-up" id="foto-grid">
-            @foreach($fotoData as $idx => $foto)
-            <div class="foto-item" data-kat="{{ $foto['kategori'] }}" data-idx="{{ $idx }}"
-                 onclick="openLightbox({{ $idx }})">
-                <img src="{{ $foto['src'] }}"
-                     alt="{{ $foto['judul'] }}"
-                     style="height: {{ $foto['tinggi'] }}px;"
-                     onerror="this.src='https://picsum.photos/seed/{{ $idx }}/600/{{ $foto['tinggi'] }}'">
-                <span class="kat-badge">{{ $kategoriMap[$foto['kategori']] ?? $foto['kategori'] }}</span>
+            @foreach($fotos as $idx => $foto)
+            @php
+                $src = $foto->file_path ? asset('storage/' . $foto->file_path) : 'https://picsum.photos/seed/'.$foto->id.'/600/400';
+                $heights = [200, 240, 260, 300, 220, 190, 280, 210, 230];
+                $h = $heights[$idx % count($heights)];
+            @endphp
+            <div class="foto-item" data-kat="{{ $foto->kategori }}" data-idx="{{ $idx }}"
+                  onclick="openLightbox({{ $idx }})">
+                <img src="{{ $src }}"
+                      alt="{{ $foto->judul }}"
+                      style="height: {{ $h }}px;"
+                      onerror="this.src='https://picsum.photos/seed/{{ $foto->id }}/600/{{ $h }}'">
+                <span class="kat-badge">{{ $kategoriMap[$foto->kategori] ?? $foto->kategori }}</span>
                 <div class="foto-overlay">
                     <div class="foto-overlay-inner">
-                        <p class="foto-title">{{ $foto['judul'] }}</p>
-                        <p class="foto-meta"><i class="fa fa-calendar text-[9px] mr-1"></i>{{ $foto['tanggal'] }}</p>
+                        <p class="foto-title">{{ $foto->judul }}</p>
+                        <p class="foto-meta"><i class="fa fa-calendar text-[9px] mr-1"></i>{{ $foto->tanggal ? $foto->tanggal->format('d M Y') : $foto->created_at->format('d M Y') }}</p>
                     </div>
                 </div>
                 <button class="foto-zoom-btn" onclick="event.stopPropagation(); openLightbox({{ $idx }})">
@@ -334,7 +255,6 @@ $kategoriMap = [
             </div>
             @endforeach
         </div>
-
         {{-- Empty state --}}
         <div id="empty-foto" class="text-center py-20">
             <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -366,9 +286,20 @@ $kategoriMap = [
 @endsection
 
 @push('scripts')
+@php
+    $fotoJson = $fotos->map(function($f) {
+        return [
+            'judul' => $f->judul,
+            'kategori' => $f->kategori,
+            'tanggal' => $f->tanggal ? $f->tanggal->format('d M Y') : $f->created_at->format('d M Y'),
+            'deskripsi' => $f->deskripsi,
+            'src' => $f->file_path ? asset('storage/' . $f->file_path) : 'https://picsum.photos/seed/'.$f->id.'/800/500'
+        ];
+    });
+@endphp
 <script>
 // ── DATA ──
-const fotoData = @json($fotoData->values()->toArray());
+const fotoData = @json($fotoJson);
 let lbIndex = 0;
 let visibleIndices = fotoData.map((_, i) => i);
 

@@ -32,8 +32,9 @@ class GuruController extends Controller
         $guruAktif   = Guru::where('status', 'aktif')->count();
         $kelasList   = Kelas::orderBy('tingkat')->get();
         $mapelList   = ['Matematika', 'Bahasa Indonesia', 'IPA', 'IPS', 'PJOK', 'SBdP', 'PAI', 'PKn', 'Bahasa Inggris', 'Mulok'];
+        $jabatanList = ['Guru Kelas', 'Guru Mapel', 'Kepala Sekolah', 'Wakil Kepala Sekolah', 'Kepala TU', 'Operator Sekolah', 'Bendahara Sekolah', 'Staf Perpustakaan', 'Petugas UKS', 'Penjaga Sekolah'];
 
-        return view('admin.guru.index', compact('guru', 'totalGuru', 'guruAktif', 'kelasList', 'mapelList'));
+        return view('admin.guru.index', compact('guru', 'totalGuru', 'guruAktif', 'kelasList', 'mapelList', 'jabatanList'));
     }
 
     public function store(Request $request)
@@ -43,8 +44,9 @@ class GuruController extends Controller
             'email'          => 'required|email|unique:users,email',
             'password'       => 'nullable|string|min:6',
             'nip'            => 'nullable|string|max:30|unique:guru,nip',
-            'kelas_id'       => 'required|exists:kelas,id', // Validasi kelas wajib ada
+            'kelas_id'       => 'nullable|exists:kelas,id', // Diubah jadi nullable jika bukan wali kelas
             'mata_pelajaran' => 'nullable|string|max:255',
+            'jabatan'        => 'nullable|string|max:255',
             'status'         => 'required|in:aktif,tidak_aktif',
             'no_hp'          => 'nullable|string|max:20',
             'foto'           => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -67,9 +69,10 @@ class GuruController extends Controller
 
             Guru::create([
                 'user_id'        => $user->id,
-                'kelas_id'       => $request->kelas_id, // Simpan kelas_id
+                'kelas_id'       => $request->kelas_id,
                 'nip'            => $request->nip,
                 'mata_pelajaran' => $request->mata_pelajaran,
+                'jabatan'        => $request->jabatan,
                 'status'         => $request->status,
             ]);
         });
@@ -83,8 +86,9 @@ class GuruController extends Controller
             'name'           => 'required|string|max:255',
             'email'          => 'required|email|unique:users,email,' . $guru->user_id,
             'nip'            => 'nullable|string|max:30|unique:guru,nip,' . $guru->id,
-            'kelas_id'       => 'required|exists:kelas,id', // Validasi kelas saat edit
+            'kelas_id'       => 'nullable|exists:kelas,id',
             'mata_pelajaran' => 'nullable|string|max:255',
+            'jabatan'        => 'nullable|string|max:255',
             'status'         => 'required|in:aktif,tidak_aktif',
             'no_hp'          => 'nullable|string|max:20',
             'foto'           => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -110,8 +114,9 @@ class GuruController extends Controller
 
             $guru->update([
                 'nip'            => $request->nip,
-                'kelas_id'       => $request->kelas_id, // Update kelas_id
+                'kelas_id'       => $request->kelas_id,
                 'mata_pelajaran' => $request->mata_pelajaran,
+                'jabatan'        => $request->jabatan,
                 'status'         => $request->status,
             ]);
         });

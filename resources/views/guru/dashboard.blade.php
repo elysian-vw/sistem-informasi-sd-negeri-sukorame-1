@@ -88,12 +88,25 @@
 <div class="content-grid" style="margin-bottom:24px;">
     {{-- Grafik Absensi --}}
     <div class="content-card">
-        <div class="card-header">
-            <h3><i class="fas fa-chart-bar" style="color:var(--primary);margin-right:8px;"></i>Kehadiran 7 Hari Terakhir</h3>
-            <span style="font-size:12px;color:var(--text-muted);">7 hari terakhir</span>
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+            <h3><i class="fas fa-chart-bar" style="color:var(--primary);margin-right:8px;"></i>Grafik Kehadiran</h3>
+            <div class="filter-group" style="display:flex; gap:8px;">
+                <select id="filterStatus" class="filter-select">
+                    <option value="hadir" selected>Hadir</option>
+                    <option value="sakit">Sakit</option>
+                    <option value="izin">Izin</option>
+                    <option value="alpha">Alpha</option>
+                </select>
+                <select id="filterPeriode" class="filter-select">
+                    <option value="minggu" selected>7 Hari</option>
+                    <option value="bulan">30 Hari</option>
+                </select>
+            </div>
         </div>
         <div class="card-body">
-            <canvas id="absensiChart" height="120"></canvas>
+            <div style="height: 250px;">
+                <canvas id="absensiChart"></canvas>
+            </div>
         </div>
     </div>
 
@@ -152,48 +165,75 @@
         </div>
     </div>
 
-    {{-- Diskusi Terbaru --}}
-    <div class="content-card">
-        <div class="card-header">
-            <h3><i class="fas fa-comments" style="color:var(--secondary);margin-right:8px;"></i>Diskusi Terbaru</h3>
-            <a href="{{ route('guru.forum.index') }}" style="font-size:12px;color:var(--primary);font-weight:600;">Lihat semua</a>
-        </div>
-        <div class="card-body" style="padding:0;">
-            @forelse ($diskusiTerbaru as $d)
-            <a href="{{ route('guru.forum.show', $d) }}" class="announcement-item" style="padding:12px 20px;display:flex;gap:12px;text-decoration:none;">
-                <div class="ann-icon" style="background:#e6f4ea;color:var(--secondary);"><i class="fas fa-comments"></i></div>
-                <div>
-                    <div class="ann-title">{{ $d->judul }}</div>
-                    <div class="ann-meta">{{ $d->user->name }} &nbsp;·&nbsp; {{ $d->komentar->count() }} komentar &nbsp;·&nbsp; {{ $d->created_at->diffForHumans() }}</div>
-                </div>
-            </a>
-            @empty
-            <div class="empty-state">Belum ada diskusi.</div>
-            @endforelse
-        </div>
-    </div>
-</div>
+<style>
+.badge-blue { background: #e0f2fe; color: #0369a1; }
 
+.filter-select {
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+    background: #fff;
+}
+.filter-select:focus { border-color: var(--primary); }
+</style>
 @endsection
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    new Chart(document.getElementById('absensiChart'), {
-        type: 'bar',
-        data: {
-            labels: @json($absensiLabels),
-            datasets: [{
-                label: 'Hadir',
-                data: @json($absensiData),
-                backgroundColor: 'rgba(26,115,232,0.75)',
-                borderRadius: 6,
-            }]
-        },
-        options: {
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-        }
-    });
+    let absensiChart;
+
+    async function updateChart() {
+        const status = document.getElementById('filterStatus').value;
+        const periode = document.getElementById('filterPeriode').value;
+
+        const response = await fetch(`{{ route('guru.chart-data') }}?status=${status}&periode=${periode}`);
+        const data = await response.json();
+
+        const ctx = document.getElementById('absensiChart').getContext('2d');
+
+        if (absensiChart) { absensiChart.destroy(); }
+
+        const colors = {
+            hadir: 'rgba(34, 197, 94, 0.75)',
+            sakit: 'rgba(234, 179, 8, 0.75)',
+            izin:  'rgba(59, 130, 246, 0.75)',
+            alpha: 'rgba(239, 68, 68, 0.75)'
+        };
+
+        absensiChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: `Jumlah Siswa ${status.charAt(0).toUpperCase() + status.slice(1)}`,
+                    data: data.values,
+                    backgroundColor: colors[status] || 'rgba(26,115,232,0.75)',
+                    borderRadius: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { 
+                    y: { 
+                        beginAtZero: true, 
+                        ticks: { stepSize: 1 },
+                        title: { display: true, text: 'Jumlah Siswa', font: { size: 10 } }
+                    } 
+                }
+            }
+        });
+    }
+
+    document.getElementById('filterStatus').addEventListener('change', updateChart);
+    document.getElementById('filterPeriode').addEventListener('change', updateChart);
+
+    document.addEventListener('DOMContentLoaded', updateChart);
 </script>
 @endpush
+
