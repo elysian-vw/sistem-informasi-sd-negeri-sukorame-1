@@ -40,7 +40,14 @@
                     <td>{{ $idx + 1 }}</td>
                     <td>
                         @if($g->tipe == 'foto')
-                            <img src="{{ asset('storage/' . $g->file_path) }}" class="media-preview" alt="Foto">
+                            @if($g->file_path)
+                                <img src="{{ asset('storage/' . $g->file_path) }}" class="media-preview" alt="Foto">
+                            @else
+                                <div class="media-placeholder">
+                                    <i class="fas fa-image"></i>
+                                    <span>No Image</span>
+                                </div>
+                            @endif
                         @else
                             <div class="video-preview">
                                 <i class="fas fa-play-circle"></i> Video
@@ -97,6 +104,21 @@
     border-radius: 8px;
     border: 1px solid #e5e7eb;
 }
+.media-placeholder {
+    width: 120px;
+    height: 80px;
+    background: #f3f4f6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #9ca3af;
+    font-size: 10px;
+    gap: 4px;
+    border: 1px dashed #d1d5db;
+}
+.media-placeholder i { font-size: 20px; }
 .video-preview {
     width: 120px;
     height: 80px;
