@@ -239,11 +239,6 @@ tr.cbt-row:hover td { background:#f5f3ff; }
                 <i class="fas fa-circle-question"></i> Kelola Soal
             </a>
         @endif
-        @if($tugas->file)
-            <a href="{{ asset('storage/'.$tugas->file) }}" target="_blank" class="btn-secondary-action">
-                <i class="fas fa-paperclip"></i> Lampiran
-            </a>
-        @endif
         <button class="btn-export" onclick="exportCSV()">
             <i class="fas fa-file-csv"></i> Export CSV
         </button>
@@ -452,9 +447,6 @@ tr.cbt-row:hover td { background:#f5f3ff; }
                     <option value="kumpul">Sudah Mengerjakan</option>
                     <option value="belum">Belum Mengerjakan</option>
                 </select>
-                <button type="submit" class="btn btn-primary btn-sm" id="btnSimpanTop">
-                    <i class="fas fa-save"></i> Simpan Feedback
-                </button>
             </div>
         </div>
 
@@ -469,7 +461,6 @@ tr.cbt-row:hover td { background:#f5f3ff; }
                         <th style="text-align:center;width:90px;">Benar</th>
                         <th style="text-align:center;width:90px;">Nilai</th>
                         <th style="text-align:center;width:70px;">Grade</th>
-                        <th>Feedback Guru</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -552,19 +543,6 @@ tr.cbt-row:hover td { background:#f5f3ff; }
                                 <span style="color:var(--text-muted);">—</span>
                             @endif
                         </td>
-
-                        <td>
-                            @if($sdKumpul)
-                                <input type="text"
-                                       name="feedback[{{ $siswa->id }}]"
-                                       value="{{ old('feedback.'.$siswa->id, $kumpul->feedback) }}"
-                                       class="form-control"
-                                       style="font-size:12px;min-width:150px;"
-                                       placeholder="Catatan untuk siswa...">
-                            @else
-                                <span style="color:var(--text-muted);font-size:12px;">—</span>
-                            @endif
-                        </td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -574,13 +552,12 @@ tr.cbt-row:hover td { background:#f5f3ff; }
         <div class="card-footer" style="justify-content:space-between;flex-wrap:wrap;gap:10px;">
             <span style="font-size:12px;color:var(--text-muted);">
                 <i class="fas fa-info-circle" style="margin-right:4px;"></i>
-                Nilai CBT dihitung otomatis. Guru hanya bisa menambahkan feedback.
+                Nilai CBT dihitung otomatis berdasarkan jawaban siswa.
             </span>
             <div style="display:flex;gap:10px;">
-                <a href="{{ route('guru.tugas.index') }}" class="btn-secondary-action">Kembali</a>
-                <button type="submit" class="btn-primary-action" id="btnSimpan">
-                    <i class="fas fa-save"></i> Simpan Feedback
-                </button>
+                <a href="{{ route('guru.tugas.index') }}" class="btn-primary-action">
+                    Kembali
+                </a>
             </div>
         </div>
     </div>
@@ -641,7 +618,6 @@ tr.cbt-row:hover td { background:#f5f3ff; }
                         <th style="width:130px;">Waktu Kumpul</th>
                         <th style="text-align:center;width:80px;">File</th>
                         <th style="width:150px;">Nilai <span style="color:var(--danger);font-size:10px;">0–100</span></th>
-                        <th>Feedback</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -721,19 +697,6 @@ tr.cbt-row:hover td { background:#f5f3ff; }
                                 <span style="color:var(--text-muted);font-size:12px;display:block;text-align:center;">—</span>
                             @endif
                         </td>
-
-                        <td>
-                            @if($sdKumpul)
-                                <input type="text"
-                                       name="feedback[{{ $siswa->id }}]"
-                                       value="{{ old('feedback.'.$siswa->id, $kumpul->feedback) }}"
-                                       class="form-control"
-                                       style="font-size:12px;min-width:130px;"
-                                       placeholder="Komentar singkat...">
-                            @else
-                                <span style="color:var(--text-muted);font-size:12px;">—</span>
-                            @endif
-                        </td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -746,7 +709,9 @@ tr.cbt-row:hover td { background:#f5f3ff; }
                 Nilai hanya bisa diisi untuk siswa yang sudah mengumpulkan tugas.
             </span>
             <div style="display:flex;gap:10px;">
-                <a href="{{ route('guru.tugas.index') }}" class="btn-secondary-action">Kembali</a>
+                <a href="{{ route('guru.tugas.index') }}" class="btn btn-primary">
+                    Kembali
+                </a>
                 <button type="submit" class="btn-primary-action" id="btnSimpan">
                     <i class="fas fa-save"></i> Simpan Semua Nilai
                 </button>
@@ -829,7 +794,7 @@ function exportCSV() {
     const isCbt = {{ $tugas->isCbt() ? 'true':'false' }};
     const rows  = [isCbt
         ? ['No','Nama Siswa','NIS','Status','Waktu Selesai','Jawaban Benar','Nilai','Grade']
-        : ['No','Nama Siswa','NIS','Status','Waktu Kumpul','Nilai','Grade','Feedback']
+        : ['No','Nama Siswa','NIS','Status','Waktu Kumpul','Nilai','Grade']
     ];
 
     document.querySelectorAll('#tabelPenilaian tbody tr').forEach((row, i) => {
@@ -850,8 +815,7 @@ function exportCSV() {
             const nilaiEl  = cells[5]?.querySelector('input');
             const nilai    = nilaiEl ? nilaiEl.value : (cells[5]?.textContent?.trim() ?? '');
             const grade    = cells[5]?.querySelector('.grade-badge')?.textContent?.trim() ?? '';
-            const feedback = cells[6]?.querySelector('input')?.value ?? '';
-            rows.push([i+1, nama, nis, status, waktu, nilai, grade, feedback]);
+            rows.push([i+1, nama, nis, status, waktu, nilai, grade]);
         }
     });
 
