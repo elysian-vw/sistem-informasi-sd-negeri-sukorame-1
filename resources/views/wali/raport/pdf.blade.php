@@ -26,8 +26,8 @@
 <body>
 
     <div class="header">
-        <h1>SD NEGERI SUKORAME 1 KEDIRI</h1>
-        <p>Jl. Penanggungan No. 1, Kec. Mojoroto, Kota Kediri</p>
+        <h1>{{ strtoupper(data_get($sekolah, 'nama_sekolah', config('app.name'))) }}</h1>
+        <p>{{ data_get($sekolah, 'alamat', 'Jl. Penanggungan No. 1, Kec. Mojoroto, Kota Kediri') }}</p>
         <p><strong>E-RAPORT PESERTA DIDIK - SEMESTER {{ strtoupper($raport->semester) }}</strong></p>
     </div>
 

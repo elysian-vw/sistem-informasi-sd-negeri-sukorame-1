@@ -39,6 +39,9 @@
         <button class="tab-btn" data-tab="akreditasi">
             <i class="fas fa-certificate"></i> Akreditasi
         </button>
+        <button class="tab-btn" data-tab="sosmed">
+            <i class="fab fa-facebook"></i> Media Sosial
+        </button>
     </div>
 
     <form action="{{ route('admin.sekolah.update') }}" method="POST" enctype="multipart/form-data">
@@ -148,6 +151,21 @@
                     <input type="text" name="nip_kepala_sekolah" class="form-control" value="{{ old('nip_kepala_sekolah', $sekolah->nip_kepala_sekolah) }}">
                 </div>
             </div>
+
+            <div class="form-group">
+                <label class="form-label">Foto Kepala Sekolah</label>
+                @if($sekolah->foto_kepsek)
+                    <div class="logo-preview">
+                        <img src="{{ Storage::url($sekolah->foto_kepsek) }}" alt="Foto Kepsek">
+                    </div>
+                @endif
+                <input type="file" name="foto_kepsek" class="form-control" accept="image/*">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Sambutan Kepala Sekolah</label>
+                <textarea name="sambutan_kepsek" class="form-control" rows="4">{{ old('sambutan_kepsek', $sekolah->sambutan_kepsek) }}</textarea>
+            </div>
         </div>
 
         {{-- Tab: Logo & Identitas --}}
@@ -206,6 +224,41 @@
             <div class="form-group">
                 <label class="form-label">Nomor SK Akreditasi</label>
                 <input type="text" name="nomor_sk_akreditasi" class="form-control" value="{{ old('nomor_sk_akreditasi', $sekolah->nomor_sk_akreditasi) }}" placeholder="Nomor surat keputusan akreditasi">
+            </div>
+        </div>
+
+        {{-- Tab: Media Sosial --}}
+        <div class="tab-content" id="tab-sosmed">
+            <div class="form-section-title">Media Sosial Sekolah</div>
+
+            <div class="form-group">
+                <label class="form-label"><i class="fab fa-facebook"></i> Facebook URL</label>
+                <input type="url" name="facebook" class="form-control" value="{{ old('facebook', $sekolah->facebook) }}" placeholder="https://facebook.com/...">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label"><i class="fab fa-instagram"></i> Instagram URL</label>
+                <input type="url" name="instagram" class="form-control" value="{{ old('instagram', $sekolah->instagram) }}" placeholder="https://instagram.com/...">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label"><i class="fab fa-youtube"></i> YouTube URL</label>
+                <input type="url" name="youtube" class="form-control" value="{{ old('youtube', $sekolah->youtube) }}" placeholder="https://youtube.com/...">
+            </div>
+
+            <div class="form-section-title" style="margin-top: 24px;">Tahun Ajaran</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Tahun Ajaran Aktif</label>
+                    <input type="text" name="tahun_ajaran_aktif" class="form-control" value="{{ old('tahun_ajaran_aktif', $sekolah->tahun_ajaran_aktif) }}" placeholder="cth: 2024/2025">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Semester Aktif</label>
+                    <select name="semester_aktif" class="form-control">
+                        <option value="Ganjil" {{ old('semester_aktif', $sekolah->semester_aktif) == 'Ganjil' ? 'selected' : '' }}>Ganjil</option>
+                        <option value="Genap" {{ old('semester_aktif', $sekolah->semester_aktif) == 'Genap' ? 'selected' : '' }}>Genap</option>
+                    </select>
+                </div>
             </div>
         </div>
 

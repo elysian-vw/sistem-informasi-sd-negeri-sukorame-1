@@ -10,6 +10,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['admin', 'guru', 'wali_murid', 'siswa', 'kepala_sekolah']);
             $table->string('foto')->nullable();

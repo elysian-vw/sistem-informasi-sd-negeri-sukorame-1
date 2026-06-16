@@ -27,14 +27,21 @@ class PageContentController extends Controller
         $request->validate([
             'slug'    => 'required|unique:page_contents,slug',
             'title'   => 'required',
-            'content' => 'required'
+            'content' => 'required',
+            'image'   => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
-        PageContent::create([
+        $data = [
             'slug'    => $request->slug,
             'title'   => $request->title,
             'content' => $request->content
-        ]);
+        ];
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('pages', 'public');
+        }
+
+        PageContent::create($data);
 
         return redirect()->route('admin.content.index')->with('success', 'Halaman baru berhasil dibuat!');
     }
@@ -58,12 +65,22 @@ class PageContentController extends Controller
     {
         $request->validate([
             'content' => 'required',
+            'image'   => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
         $page = PageContent::where('slug', $slug)->firstOrFail();
-        $page->update([
+        $data = [
             'content' => $request->input('content')
-        ]);
+        ];
+
+        if ($request->hasFile('image')) {
+            if ($page->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($page->image)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($page->image);
+            }
+            $data['image'] = $request->file('image')->store('pages', 'public');
+        }
+
+        $page->update($data);
 
         return redirect()->route('admin.content.index')->with('success', 'Konten halaman berhasil diperbarui!');
     }

@@ -49,8 +49,12 @@
             <option value="">-- Silakan Pilih Bagian Website --</option>
             
             <optgroup label="HALAMAN BERANDA">
-                <option value="home-hero-title">Beranda - Teks Judul Banner Utama</option>
-                <option value="home-hero-subtitle">Beranda - Teks Sub-Judul Banner</option>
+                <option value="home-hero-title">Beranda - Teks Judul Banner Utama (Slide 1)</option>
+                <option value="home-hero-subtitle">Beranda - Teks Sub-Judul Banner (Slide 1)</option>
+                <option value="home-slide2-judul">Beranda - Judul Banner E-Learning (Slide 2)</option>
+                <option value="home-slide2-konten">Beranda - Teks Deskripsi E-Learning (Slide 2)</option>
+                <option value="home-slide3-label">Beranda - Label Tahun PPDB (Slide 3, contoh: PPDB 2025/2026)</option>
+                <option value="home-slide3-konten">Beranda - Teks Deskripsi PPDB (Slide 3)</option>
                 <option value="home-sambutan-nama">Beranda - Nama Kepala Sekolah</option>
                 <option value="home-sambutan-konten">Beranda - Isi Sambutan Kepala Sekolah</option>
             </optgroup>
@@ -68,9 +72,11 @@
                 <option value="akademik-kurikulum">Akademik - Informasi Kurikulum</option>
                 <option value="akademik-kalender">Akademik - Kalender Akademik</option>
                 <option value="akademik-literasi">Akademik - Pojok Literasi</option>
+                <option value="akademik-karakter">Akademik - Pendidikan Karakter</option>
             </optgroup>
             
             <optgroup label="MENU PPDB">
+                <option value="ppdb-info">PPDB - Informasi Umum PPDB</option>
                 <option value="ppdb-alur">PPDB - Alur Pendaftaran</option>
                 <option value="ppdb-syarat">PPDB - Syarat & Ketentuan</option>
                 <option value="ppdb-jadwal">PPDB - Jadwal Pendaftaran</option>
@@ -79,7 +85,11 @@
             <optgroup label="MENU LAYANAN">
                 <option value="layanan-surat">Layanan - Informasi Surat Menyurat</option>
                 <option value="layanan-mutasi">Layanan - Informasi Mutasi Siswa</option>
+                <option value="layanan-izin">Layanan - Izin Penelitian / PKL</option>
+                <option value="layanan-nisn">Layanan - Cek / Cetak NISN</option>
                 <option value="layanan-pip">Layanan - Program Indonesia Pintar (PIP)</option>
+                <option value="layanan-unduhan">Layanan - Unduhan Dokumen</option>
+                <option value="layanan-alumni">Layanan - Penjaringan Alumni</option>
             </optgroup>
         </select>
         

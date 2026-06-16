@@ -25,11 +25,17 @@
 
 <div class="content-card">
     <div class="card-body" style="padding: 30px;">
-        <form action="{{ route('admin.content.store') }}" method="POST">
+        <form action="{{ route('admin.content.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="form-group">
                 <label class="form-label">Judul Halaman <span style="color:#ef4444;">*</span></label>
                 <input type="text" name="title" class="form-control" placeholder="Contoh: Program Ekstrakurikuler Sekolah" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Gambar Unggulan / Banner Halaman</label>
+                <input type="file" name="image" class="form-control" accept="image/*">
+                <p style="font-size: 12px; color: #6b7280; margin-top: 6px;">Opsional. Gunakan untuk banner atau gambar utama halaman. Maksimal 2MB.</p>
             </div>
             
             <div class="form-group">

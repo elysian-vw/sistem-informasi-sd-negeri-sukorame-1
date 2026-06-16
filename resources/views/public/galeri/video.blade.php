@@ -154,63 +154,6 @@
 @section('content')
 
 @php
-$videoData = collect([
-    [
-        'judul'       => 'Profil SDN Sukorame 1 Kota Kediri',
-        'kategori'    => 'profil',
-        'tanggal'     => '10 Januari 2025',
-        'deskripsi'   => 'Video profil resmi SD Negeri Sukorame 1 yang memperkenalkan visi, misi, fasilitas, dan keunggulan sekolah kepada masyarakat.',
-        'youtube_id'  => 'dQw4w9WgXcQ',
-        'durasi'      => '4:32',
-        'featured'    => true,
-    ],
-    [
-        'judul'       => 'Pentas Seni dan Budaya Akhir Tahun',
-        'kategori'    => 'kegiatan',
-        'tanggal'     => '22 Juni 2024',
-        'deskripsi'   => 'Dokumentasi penampilan seni siswa pada acara pentas seni akhir tahun pelajaran 2023/2024.',
-        'youtube_id'  => 'dQw4w9WgXcQ',
-        'durasi'      => '6:15',
-        'featured'    => false,
-    ],
-    [
-        'judul'       => 'Upacara HUT RI ke-79',
-        'kategori'    => 'nasional',
-        'tanggal'     => '17 Agustus 2024',
-        'deskripsi'   => 'Pelaksanaan upacara bendera peringatan Hari Kemerdekaan RI ke-79 di halaman SDN Sukorame 1.',
-        'youtube_id'  => 'dQw4w9WgXcQ',
-        'durasi'      => '3:20',
-        'featured'    => false,
-    ],
-    [
-        'judul'       => 'Sosialisasi PPDB TP 2025/2026',
-        'kategori'    => 'ppdb',
-        'tanggal'     => '15 April 2025',
-        'deskripsi'   => 'Video panduan PPDB online untuk calon peserta didik baru kelas I tahun pelajaran 2025/2026.',
-        'youtube_id'  => 'dQw4w9WgXcQ',
-        'durasi'      => '5:47',
-        'featured'    => false,
-    ],
-    [
-        'judul'       => 'Kegiatan P5 — Tema Gaya Hidup Berkelanjutan',
-        'kategori'    => 'pembelajaran',
-        'tanggal'     => '5 November 2024',
-        'deskripsi'   => 'Dokumentasi proyek P5 siswa kelas VI dengan tema gaya hidup berkelanjutan.',
-        'youtube_id'  => 'dQw4w9WgXcQ',
-        'durasi'      => '8:10',
-        'featured'    => false,
-    ],
-    [
-        'judul'       => 'Ekstrakurikuler Drumband SDN Sukorame 1',
-        'kategori'    => 'ekstra',
-        'tanggal'     => '2 Maret 2025',
-        'deskripsi'   => 'Penampilan drumband SDN Sukorame 1 pada perayaan Hari Pendidikan Nasional.',
-        'youtube_id'  => 'dQw4w9WgXcQ',
-        'durasi'      => '3:55',
-        'featured'    => false,
-    ],
-]);
-
 $kategoriMap = [
     ''            => 'Semua',
     'profil'      => 'Profil Sekolah',
@@ -221,8 +164,14 @@ $kategoriMap = [
     'ekstra'      => 'Ekstrakurikuler',
 ];
 
-$featured = $videoData->firstWhere('featured', true);
-$others   = $videoData->where('featured', false);
+// Fungsi untuk mendapatkan YouTube ID
+function getYoutubeId($url) {
+    preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match);
+    return $match[1] ?? 'dQw4w9WgXcQ';
+}
+
+$featured = $videos->where('kategori', 'profil')->first() ?? $videos->first();
+$others   = $videos->where('id', '!=', optional($featured)->id);
 @endphp
 
 {{-- HERO --}}
@@ -253,15 +202,16 @@ $others   = $videoData->where('featured', false);
             <div class="flex flex-col gap-3 flex-shrink-0">
                 <div class="flex gap-3">
                     <div class="bg-white/15 border border-white/30 rounded-2xl p-4 text-center w-28 backdrop-blur-sm">
-                        <i class="fa fa-video text-blue-300 text-base mb-2 block"></i>
-                        <p class="text-white font-black text-xl leading-none">{{ $videoData->count() }}</p>
+                        <i class="fa fa-play-circle text-blue-300 text-base mb-2 block"></i>
+                        <p class="text-white font-black text-xl leading-none">{{ $videos->count() }}</p>
                         <p class="text-white/55 text-[10px] mt-1">Total Video</p>
                     </div>
                     <div class="bg-white/10 border border-white/20 rounded-2xl p-4 text-center w-28 backdrop-blur-sm">
                         <i class="fa fa-folder text-blue-300 text-base mb-2 block"></i>
-                        <p class="text-white font-black text-xl leading-none">{{ count(array_filter(array_keys($kategoriMap))) }}</p>
+                        <p class="text-white font-black text-xl leading-none">{{ $videos->groupBy('kategori')->count() }}</p>
                         <p class="text-white/55 text-[10px] mt-1">Kategori</p>
                     </div>
+
                 </div>
                 <a href="{{ route('galeri.foto') }}"
                    class="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-colors justify-center">
@@ -323,29 +273,30 @@ $others   = $videoData->where('featured', false);
 
         {{-- Video Grid --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="video-grid">
-            @foreach($videoData as $vid)
-            <div class="video-card fade-up" data-kat="{{ $vid['kategori'] }}">
+            @foreach($videos as $vid)
+            @php $ytId = getYoutubeId($vid->url_video); @endphp
+            <div class="video-card fade-up" data-kat="{{ $vid->kategori }}">
                 <div class="video-thumb" style="cursor:pointer;"
-                     onclick="openModal('{{ $vid['youtube_id'] }}', '{{ $vid['judul'] }}', '{{ $vid['tanggal'] }}')">
-                    <img src="https://img.youtube.com/vi/{{ $vid['youtube_id'] }}/hqdefault.jpg"
-                         alt="{{ $vid['judul'] }}"
-                         onerror="this.src='https://img.youtube.com/vi/{{ $vid['youtube_id'] }}/0.jpg'">
+                     onclick="openModal('{{ $ytId }}', '{{ $vid->judul }}', '{{ $vid->tanggal ? $vid->tanggal->format('d M Y') : $vid->created_at->format('d M Y') }}')">
+                    <img src="https://img.youtube.com/vi/{{ $ytId }}/hqdefault.jpg"
+                         alt="{{ $vid->judul }}"
+                         onerror="this.src='https://img.youtube.com/vi/{{ $ytId }}/0.jpg'">
                     <div class="video-thumb-overlay">
                         <div class="play-btn"><i class="fa fa-play"></i></div>
                     </div>
-                    <span class="kat-badge">{{ $kategoriMap[$vid['kategori']] ?? $vid['kategori'] }}</span>
-                    <span class="video-duration">{{ $vid['durasi'] }}</span>
+                    <span class="kat-badge">{{ $kategoriMap[$vid->kategori] ?? $vid->kategori }}</span>
+                    {{-- <span class="video-duration">{{ $vid['durasi'] }}</span> --}}
                 </div>
                 <div class="video-body">
-                    <h3 class="video-title">{{ $vid['judul'] }}</h3>
-                    <p class="video-desc">{{ $vid['deskripsi'] }}</p>
+                    <h3 class="video-title">{{ $vid->judul }}</h3>
+                    <p class="video-desc">{{ $vid->deskripsi }}</p>
                 </div>
                 <div class="video-footer">
                     <div class="video-meta">
                         <i class="fa fa-calendar text-[10px]"></i>
-                        <span>{{ $vid['tanggal'] }}</span>
+                        <span>{{ $vid->tanggal ? $vid->tanggal->format('d M Y') : $vid->created_at->format('d M Y') }}</span>
                     </div>
-                    <button onclick="openModal('{{ $vid['youtube_id'] }}', '{{ addslashes($vid['judul']) }}', '{{ $vid['tanggal'] }}')"
+                    <button onclick="openModal('{{ $ytId }}', '{{ addslashes($vid->judul) }}', '{{ $vid->tanggal ? $vid->tanggal->format('d M Y') : $vid->created_at->format('d M Y') }}')"
                        class="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-100 text-[11px] font-bold px-3 py-1.5 rounded-lg transition-colors">
                         <i class="fa fa-play text-[9px]"></i> Tonton
                     </button>
@@ -387,8 +338,19 @@ $others   = $videoData->where('featured', false);
 @endsection
 
 @push('scripts')
+@php
+    $videoJson = $videos->map(function($v) {
+        return [
+            'kategori' => $v->kategori,
+            'judul' => $v->judul,
+            'tanggal' => $v->tanggal ? $v->tanggal->format('d M Y') : $v->created_at->format('d M Y'),
+            'deskripsi' => $v->deskripsi,
+            'youtube_id' => getYoutubeId($v->url_video)
+        ];
+    });
+@endphp
 <script>
-const videoData = @json($videoData->values()->toArray());
+const videoData = @json($videoJson);
 
 // ── FILTER ──
 function filterVideo(kat) {

@@ -57,6 +57,7 @@
                 <tr>
                     <th>NIP</th>
                     <th>Nama</th>
+                    <th>Jabatan</th>
                     <th>Kelas Tugas</th>
                     <th>Mata Pelajaran</th>
                     <th>No HP</th>
@@ -83,6 +84,7 @@
                                 </div>
                             </div>
                         </td>
+                        <td>{{ $g->jabatan ?? '-' }}</td>
                         <td>
                             @if($g->kelas_id)
                                 <span class="badge badge-success" style="background:#e0f2fe; color:#0284c7;">
@@ -110,6 +112,7 @@
                                         'nip'            => $g->nip,
                                         'kelas_id'       => $g->kelas_id,
                                         'mata_pelajaran' => $g->mata_pelajaran,
+                                        'jabatan'        => $g->jabatan,
                                         'status'         => $g->status,
                                     ]) }})">
                                     <i class="fas fa-pencil-alt"></i>
@@ -199,12 +202,25 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Jabatan Struktural</label>
+                        <select name="jabatan" id="f-jabatan" class="form-control">
+                            <option value="">-- Pilih --</option>
+                            @foreach($jabatanList as $j)
+                                <option value="{{ $j }}">{{ $j }}</option>
+                            @endforeach
+                        </select>
+                        <small class="form-hint">Muncul di Bagan Struktur Organisasi.</small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
                         <label class="form-label">Status <span class="required">*</span></label>
                         <select name="status" id="f-status" class="form-control" required>
                             <option value="aktif">Aktif</option>
                             <option value="tidak_aktif">Tidak Aktif</option>
                         </select>
                     </div>
+                    <div class="form-group"></div>
                 </div>
                 
                 {{-- Keterangan Upload Foto --}}
@@ -356,6 +372,7 @@ function openModalEdit(guru) {
     document.getElementById('f-kelas').value   = guru.kelas_id ?? ''; 
     document.getElementById('f-status').value  = guru.status ?? 'aktif';
     document.getElementById('f-mapel').value   = guru.mata_pelajaran ?? '';
+    document.getElementById('f-jabatan').value = guru.jabatan ?? '';
     document.getElementById('f-password').value = '';
 
     document.getElementById('modal-guru').classList.add('show');

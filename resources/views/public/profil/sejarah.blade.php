@@ -181,9 +181,8 @@
 
 {{-- 1. RUMUS SAKTI PENGAMBIL DATA DATABASE --}}
 @php
-    $page = \App\Models\PageContent::where('slug', 'profil-sejarah')->first();
     // Berikan default teks jika Admin belum mengisi
-    $kontenDinams = $page && !empty($page->content) ? $page->content : '<p>Konten sejarah belum diisi dari Admin. Silakan buka menu Kelola Konten dan tambahkan halaman dengan slug <strong>profil-sejarah</strong>.</p>';
+    $kontenDinams = $sejarah && !empty($sejarah->content) ? $sejarah->content : '<p>Konten sejarah belum diisi dari Admin. Silakan buka menu Kelola Konten dan tambahkan halaman dengan slug <strong>profil-sejarah</strong>.</p>';
 @endphp
 
 {{-- ══════════════════════════════════════

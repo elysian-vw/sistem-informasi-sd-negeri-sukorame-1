@@ -102,74 +102,13 @@
 @section('content')
 
 @php
-$dinasInfo = collect([
-    [
-        'judul'     => 'Program Indonesia Pintar (PIP) 2025',
-        'tipe'      => 'beasiswa',
-        'ringkasan' => 'Bantuan tunai pendidikan dari pemerintah pusat bagi peserta didik dari keluarga kurang mampu jenjang SD, SMP, SMA, dan SMK. Pencairan dilakukan melalui rekening bank penerima.',
-        'detail'    => 'Besaran bantuan: SD Rp450.000/tahun. Verifikasi data melalui operator sekolah. Jadwal pencairan: Juni–Juli 2025. Informasi lebih lanjut hubungi wali kelas atau TU sekolah.',
-        'sumber'    => 'Kemendikbudristek',
-        'tanggal'   => '15 Mei 2025',
-        'url'       => 'https://pip.kemdikbud.go.id',
-        'ico'       => 'fa-graduation-cap',
-        'warna'     => '#d97706',
-    ],
-    [
-        'judul'     => 'Kurikulum Merdeka — Implementasi Penuh 2025/2026',
-        'tipe'      => 'kebijakan',
-        'ringkasan' => 'Mulai Tahun Pelajaran 2025/2026, seluruh satuan pendidikan dasar wajib mengimplementasikan Kurikulum Merdeka secara penuh sesuai Permendikbudristek No. 12/2024.',
-        'detail'    => 'Sekolah diwajibkan menyusun KOSP (Kurikulum Operasional Satuan Pendidikan), modul ajar berbasis projek, dan melaksanakan P5 (Projek Penguatan Profil Pelajar Pancasila) minimal 2 tema per tahun.',
-        'sumber'    => 'Dinas Pendidikan Kota Kediri',
-        'tanggal'   => '10 Mei 2025',
-        'url'       => 'https://kurikulum.kemdikbud.go.id',
-        'ico'       => 'fa-book-open',
-        'warna'     => '#1d4ed8',
-    ],
-    [
-        'judul'     => 'Pelatihan Guru: Asesmen Formatif & Sumatif',
-        'tipe'      => 'pelatihan',
-        'ringkasan' => 'Dinas Pendidikan Kota Kediri menyelenggarakan pelatihan bagi guru SD mengenai asesmen formatif dan sumatif berbasis Kurikulum Merdeka.',
-        'detail'    => 'Jadwal: 23–24 Juni 2025. Tempat: SMPN 1 Kota Kediri. Peserta: 2 guru per sekolah. Pendaftaran melalui SIMPKB paling lambat 15 Juni 2025.',
-        'sumber'    => 'Dinas Pendidikan Kota Kediri',
-        'tanggal'   => '28 April 2025',
-        'url'       => 'https://simpkb.id',
-        'ico'       => 'fa-chalkboard-teacher',
-        'warna'     => '#9333ea',
-    ],
-    [
-        'judul'     => 'Bantuan Operasional Sekolah (BOS) — Juknis 2025',
-        'tipe'      => 'administrasi',
-        'ringkasan' => 'Kementerian Pendidikan telah merilis Petunjuk Teknis (Juknis) BOS 2025. Terdapat beberapa perubahan komponen belanja yang wajib diperhatikan oleh pengelola sekolah.',
-        'detail'    => 'Perubahan utama: (1) alokasi ATK maksimal 5% dari total BOS, (2) pembelian buku teks wajib menggunakan e-katalog, (3) pelaporan melalui MARKAS paling lambat 15 setiap akhir triwulan.',
-        'sumber'    => 'Kemendikbudristek',
-        'tanggal'   => '3 Maret 2025',
-        'url'       => 'https://bos.kemdikbud.go.id',
-        'ico'       => 'fa-file-invoice-dollar',
-        'warna'     => '#2563eb',
-    ],
-    [
-        'judul'     => 'Program Makan Bergizi Gratis (MBG) Jenjang SD',
-        'tipe'      => 'program',
-        'ringkasan' => 'Pemerintah memperluas program Makan Bergizi Gratis ke seluruh sekolah dasar negeri di Kota Kediri mulai semester ganjil 2025/2026.',
-        'detail'    => 'Menu MBG disusun oleh ahli gizi daerah. Distribusi melalui dapur sehat terakreditasi. Jadwal pemberian: Senin, Rabu, Jumat. Data penerima manfaat diverifikasi bersama pihak sekolah.',
-        'sumber'    => 'Dinas Pendidikan & Bapanas',
-        'tanggal'   => '20 April 2025',
-        'url'       => '#',
-        'ico'       => 'fa-utensils',
-        'warna'     => '#16a34a',
-    ],
-    [
-        'judul'     => 'Verifikasi & Validasi Data DAPODIK Semester Genap',
-        'tipe'      => 'administrasi',
-        'ringkasan' => 'Operator sekolah wajib melakukan verifikasi dan validasi data DAPODIK paling lambat 30 Juni 2025 untuk keperluan alokasi BOS dan PIP Tahun Pelajaran 2025/2026.',
-        'detail'    => 'Pastikan data siswa (NIK, nama, tanggal lahir, alamat) sudah sesuai. Data yang tidak valid akan berpengaruh pada pencairan bantuan. Gunakan aplikasi DAPODIK versi 2025.b.',
-        'sumber'    => 'Dinas Pendidikan Kota Kediri',
-        'tanggal'   => '1 Juni 2025',
-        'url'       => 'https://dapo.kemdikbud.go.id',
-        'ico'       => 'fa-database',
-        'warna'     => '#2563eb',
-    ],
-]);
+$infoItems = collect($infoItems ?? [])->map(function ($item) {
+    return is_object($item) ? (array) $item : $item;
+});
+
+$infoLinks = collect($infoLinks ?? [])->map(function ($item) {
+    return is_object($item) ? (array) $item : $item;
+});
 
 $tipeMap = [
     'kebijakan'    => ['label'=>'Kebijakan',    'cls'=>'tipe-kebijakan'],
@@ -179,14 +118,16 @@ $tipeMap = [
     'administrasi' => ['label'=>'Administrasi', 'cls'=>'tipe-administrasi'],
 ];
 
-$linkResmi = [
-    ['nama'=>'Kemendikbudristek',        'url'=>'https://kemdikbud.go.id',            'ico'=>'fa-landmark'],
-    ['nama'=>'DAPODIK',                  'url'=>'https://dapo.kemdikbud.go.id',       'ico'=>'fa-database'],
-    ['nama'=>'Program Indonesia Pintar', 'url'=>'https://pip.kemdikbud.go.id',        'ico'=>'fa-graduation-cap'],
-    ['nama'=>'SIMPKB (GTK)',             'url'=>'https://simpkb.id',                  'ico'=>'fa-chalkboard-teacher'],
-    ['nama'=>'BOS Online',               'url'=>'https://bos.kemdikbud.go.id',        'ico'=>'fa-file-invoice-dollar'],
-    ['nama'=>'Kurikulum Merdeka',        'url'=>'https://kurikulum.kemdikbud.go.id',  'ico'=>'fa-book-open'],
-];
+if ($infoLinks->isEmpty()) {
+    $infoLinks = collect([
+        ['nama'=>'Kemendikbudristek',        'url'=>'https://kemdikbud.go.id',            'ico'=>'fa-landmark'],
+        ['nama'=>'DAPODIK',                  'url'=>'https://dapo.kemdikbud.go.id',       'ico'=>'fa-database'],
+        ['nama'=>'Program Indonesia Pintar', 'url'=>'https://pip.kemdikbud.go.id',        'ico'=>'fa-graduation-cap'],
+        ['nama'=>'SIMPKB (GTK)',             'url'=>'https://simpkb.id',                  'ico'=>'fa-chalkboard-teacher'],
+        ['nama'=>'BOS Online',               'url'=>'https://bos.kemdikbud.go.id',        'ico'=>'fa-file-invoice-dollar'],
+        ['nama'=>'Kurikulum Merdeka',        'url'=>'https://kurikulum.kemdikbud.go.id',  'ico'=>'fa-book-open'],
+    ]);
+}
 @endphp
 
 {{-- HERO --}}
@@ -216,8 +157,8 @@ $linkResmi = [
             </div>
             <div class="flex gap-3 flex-shrink-0">
                 @php $stats = [
-                    ['val'=> $dinasInfo->count(),                         'lbl'=>'Total Info', 'ico'=>'fa-university'],
-                    ['val'=> $dinasInfo->where('tipe','beasiswa')->count(),'lbl'=>'Beasiswa',  'ico'=>'fa-graduation-cap'],
+                    ['val'=> $infoItems->count(),                            'lbl'=>'Total Info', 'ico'=>'fa-university'],
+                    ['val'=> $infoItems->where('tipe','beasiswa')->count(), 'lbl'=>'Beasiswa',  'ico'=>'fa-graduation-cap'],
                 ]; @endphp
                 @foreach ($stats as $s)
                 <div class="bg-white/10 border border-white/20 rounded-2xl p-4 text-center w-28 backdrop-blur-sm">
@@ -255,9 +196,21 @@ $linkResmi = [
 
                 {{-- Cards --}}
                 <div class="space-y-5" id="dinas-list">
-                    @foreach($dinasInfo as $info)
-                    @php $tp = $tipeMap[$info['tipe']] ?? $tipeMap['kebijakan']; @endphp
-                    <div class="dinas-card fade-up" data-tipe="{{ $info['tipe'] }}">
+                    @foreach($infoItems as $info)
+                    @php
+                        $tp = $tipeMap[$info['tipe'] ?? 'kebijakan'] ?? $tipeMap['kebijakan'];
+                        $tanggal = isset($info['tanggal']) ? \Carbon\Carbon::parse($info['tanggal'])->locale('id')->isoFormat('D MMMM Y') : '-';
+                        $info = array_merge([
+                            'judul' => '-',
+                            'ringkasan' => '-',
+                            'detail' => '-',
+                            'sumber' => 'Sumber tidak tersedia',
+                            'url' => '#',
+                            'warna' => '#2563eb',
+                            'ico' => 'fa-info-circle',
+                        ], $info);
+                    @endphp
+                    <div class="dinas-card fade-up" data-tipe="{{ $info['tipe'] ?? '' }}">
                         <div class="dinas-card-header">
                             <div class="dinas-icon" style="background: linear-gradient(135deg, {{ $info['warna'] }}22, {{ $info['warna'] }}44);">
                                 <i class="fa {{ $info['ico'] }}" style="color: {{ $info['warna'] }}; font-size: 1.2rem;"></i>
@@ -266,7 +219,7 @@ $linkResmi = [
                                 <div class="flex items-center gap-2 flex-wrap mb-1.5">
                                     <span class="tipe-badge {{ $tp['cls'] }}">{{ $tp['label'] }}</span>
                                     <span class="text-[10px] text-gray-400">
-                                        <i class="fa fa-calendar text-[9px] mr-1"></i>{{ $info['tanggal'] }}
+                                        <i class="fa fa-calendar text-[9px] mr-1"></i>{{ $tanggal }}
                                     </span>
                                 </div>
                                 <h3 class="font-bold text-gray-900 text-[15px] leading-snug">{{ $info['judul'] }}</h3>
@@ -292,7 +245,7 @@ $linkResmi = [
                                 <i class="fa fa-university text-[10px]"></i>
                                 <span>{{ $info['sumber'] }}</span>
                             </div>
-                            @if($info['url'] !== '#')
+                            @if(!empty($info['url']) && $info['url'] !== '#')
                             <a href="{{ $info['url'] }}" target="_blank" rel="noopener"
                                class="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-100 text-[11px] font-bold px-3 py-1.5 rounded-lg transition-colors ml-auto">
                                 Kunjungi <i class="fa fa-external-link-alt text-[9px]"></i>
@@ -355,7 +308,7 @@ $linkResmi = [
                     <div class="bg-white rounded-2xl border p-5 fade-up" style="border-color:#e0e7ff;">
                         <p class="section-label">Tautan Resmi</p>
                         <div class="space-y-2 mt-3">
-                            @foreach($linkResmi as $link)
+                            @foreach($infoLinks as $link)
                             <a href="{{ $link['url'] }}" target="_blank" rel="noopener" class="link-card">
                                 <div class="link-icon">
                                     <i class="fa {{ $link['ico'] }} text-white/80 text-xs"></i>

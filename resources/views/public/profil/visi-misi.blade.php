@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', $pageTitle ?? 'Visi & Misi - SDN Sukorame 1')
+@section('title', $pageTitle ?? ('Visi & Misi - ' . ($sekolah->nama_sekolah ?? 'Sekolah')))
 
 @push('head')
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -104,11 +104,9 @@
 
 {{-- ── Mengambil Data Dinamis dari Database ── --}}
 @php
-    $visiPage = \App\Models\PageContent::where('slug', 'profil-visi-misi')->first();
-    $misiPage = \App\Models\PageContent::where('slug', 'profil-misi')->first();
-
-    $teksVisi = $visiPage ? $visiPage->content : 'Visi belum diisi dari dashboard admin.';
-    $teksMisi = $misiPage ? $misiPage->content : 'Misi belum diisi dari dashboard admin.';
+    $teksVisi = $visi ? $visi->content : 'Visi belum diisi dari dashboard admin.';
+    $teksMisi = $misi ? $misi->content : 'Misi belum diisi dari dashboard admin.';
+    $teksTujuan = $tujuan ? $tujuan->content : 'Tujuan belum diisi dari dashboard admin.';
 @endphp
 
 {{-- ══════════════════════════════════════
@@ -130,11 +128,11 @@
 
         <h1 class="font-display text-white font-black leading-tight mb-5" style="font-size: clamp(2.2rem, 5vw, 3.8rem);">
             Visi &amp; Misi<br>
-            <span style="color:#FDE68A;">SDN Sukorame 1</span>
+            <span style="color:#FDE68A;">{{ $sekolah->nama_sekolah ?? 'Sekolah' }}</span>
         </h1>
         <p class="text-white/70 max-w-2xl mx-auto leading-relaxed" style="font-size: 1rem;">
             Arah, tujuan, dan nilai-nilai yang menjadi landasan pendidikan berkualitas
-            di SD Negeri Sukorame 1 Kota Kediri.
+            di {{ $sekolah->nama_sekolah ?? 'Sekolah' }} {{ $sekolah->kota ? 'Kota ' . $sekolah->kota : '' }}.
         </p>
 
         <div class="flex flex-wrap items-center justify-center gap-3 mt-8">
@@ -217,12 +215,9 @@
                     <div class="w-14 h-14 bg-amber-50 border-2 border-amber-200 rounded-2xl flex items-center justify-center flex-shrink-0">
                         <i class="fa fa-star text-amber-500 text-xl"></i>
                     </div>
-                    <div>
+                    <div class="cms-content">
                         <h3 class="font-bold text-gray-900 text-base mb-1">Tujuan Umum Pendidikan</h3>
-                        <p class="text-gray-600 text-sm leading-relaxed">
-                            Menghasilkan lulusan yang memiliki kompetensi akademik dan non-akademik, beriman dan bertaqwa kepada Tuhan Yang Maha Esa,
-                            berakhlak mulia, sehat jasmani dan rohani, serta memiliki kecakapan hidup.
-                        </p>
+                        {!! $teksTujuan !!}
                     </div>
                 </div>
             </div>

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\Kegiatan;
+use App\Models\PageContent;
+use App\Models\Pengumuman;
 use App\Models\Sekolah;
-use App\Models\Pengumuman; 
-use Illuminate\Http\Request; 
+use Illuminate\Http\Request;
 
 class BeritaController extends Controller
 {
@@ -38,7 +40,7 @@ class BeritaController extends Controller
         $totalAktif = Pengumuman::where('is_aktif', true)->count();
 
         return view('public.berita.index', array_merge($this->baseData(), [
-            'pageTitle'   => 'Berita Sekolah — SDN Sukorame 1',
+            'pageTitle'   => 'Berita Sekolah — ' . ($this->baseData()['sekolah']->nama_sekolah ?? config('app.name')),
             'pengumuman'  => $pengumuman,
             'totalAktif'  => $totalAktif, // Kirim ini juga ya!
         ]));
@@ -49,7 +51,7 @@ class BeritaController extends Controller
         $item = Pengumuman::findOrFail($id);
 
         return view('public.berita.show', array_merge($this->baseData(), [
-            'pageTitle' => $item->judul . ' — SDN Sukorame 1',
+            'pageTitle' => $item->judul . ' — ' . ($this->baseData()['sekolah']->nama_sekolah ?? config('app.name')) ,
             'item'      => $item,
         ]));
     }
@@ -59,22 +61,46 @@ class BeritaController extends Controller
         $pengumuman = Pengumuman::latest()->paginate(10);
 
         return view('public.berita.pengumuman', array_merge($this->baseData(), [
-            'pageTitle'   => 'Pengumuman — SDN Sukorame 1',
+            'pageTitle'   => 'Pengumuman — ' . ($this->baseData()['sekolah']->nama_sekolah ?? config('app.name')) ,
             'pengumuman'  => $pengumuman,
         ]));
     }
 
     public function agenda()
     {
+        $agendaItems = Kegiatan::where('is_published', true)
+            ->orderBy('tanggal_mulai')
+            ->orderBy('waktu_mulai')
+            ->get();
+
         return view('public.berita.agenda', array_merge($this->baseData(), [
-            'pageTitle' => 'Agenda Kegiatan — SDN Sukorame 1',
+            'pageTitle' => 'Agenda Kegiatan — ' . ($this->baseData()['sekolah']->nama_sekolah ?? config('app.name')) ,
+            'agendaItems' => $agendaItems,
         ]));
     }
 
     public function infoDinas()
     {
+        $page       = PageContent::where('slug', 'info-dinas')->first();
+        $infoItems  = collect();
+
+        if ($page && !empty($page->content)) {
+            $decoded = json_decode($page->content, true);
+            $infoItems = is_array($decoded) ? collect($decoded) : collect();
+        }
+
+        $linkContent = PageContent::where('slug', 'info-dinas-links')->first();
+        $infoLinks = [];
+
+        if ($linkContent && !empty($linkContent->content)) {
+            $decoded = json_decode($linkContent->content, true);
+            $infoLinks = is_array($decoded) ? $decoded : [];
+        }
+
         return view('public.berita.info-dinas', array_merge($this->baseData(), [
-            'pageTitle' => 'Info Dinas Pendidikan — SDN Sukorame 1',
+            'pageTitle' => 'Info Dinas Pendidikan — ' . ($this->baseData()['sekolah']->nama_sekolah ?? config('app.name')) ,
+            'infoItems' => $infoItems,
+            'infoLinks' => $infoLinks,
         ]));
     }
 }

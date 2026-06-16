@@ -10,6 +10,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UsersTableSeeder::class,
+            SekolahSeeder::class,
+            PageContentSeeder::class,
             KelasTableSeeder::class,
             GuruTableSeeder::class,
             SiswaTableSeeder::class,
@@ -30,6 +32,7 @@ class DatabaseSeeder extends Seeder
             IzinSiswaTableSeeder::class,
             PrestasiTableSeeder::class,
             EkskulTableSeeder::class,
+            SaranaTableSeeder::class,
             RekapTableSeeder::class,
             PengajuanLayananTableSeeder::class,
             NotifikasiTableSeeder::class,

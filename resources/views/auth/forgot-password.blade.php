@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lupa Password — SDN Sukorame 1 Kediri</title>
+    <title>Lupa Password — {{ config('app.name') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
@@ -108,7 +108,7 @@
                 <i class="fas fa-user"></i>
             </div>
             <h2>Lupa Password</h2>
-            <p>SDN Sukorame 1</p>
+            <p>{{ config('app.name') }}</p>
         </div>
 
         <div class="divider">

@@ -29,6 +29,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'role' => 'siswa',
             'password' => static::$password ??= Hash::make('password'),
+            'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ];
     }
@@ -39,7 +40,7 @@ class UserFactory extends Factory
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [
-            // No-op since email verification is not used in this project
+            'email_verified_at' => null,
         ]);
     }
 }

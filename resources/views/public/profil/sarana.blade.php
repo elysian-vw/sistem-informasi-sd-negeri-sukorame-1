@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', $pageTitle ?? 'Sarana & Prasarana — SDN Sukorame 1')
+@section('title', $pageTitle ?? 'Sarana & Prasarana — ' . ($sekolah->nama_sekolah ?? 'SDN Sukorame 1'))
 
 @push('head')
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -111,7 +111,7 @@
                 </h1>
                 <p class="text-white/70 leading-relaxed max-w-xl" style="font-size:1rem;">
                     Fasilitas pendukung kegiatan belajar mengajar yang terus dikembangkan
-                    demi kenyamanan dan kemajuan peserta didik SDN Sukorame 1 Kota Kediri.
+                    demi kenyamanan dan kemajuan peserta didik {{ $sekolah->nama_sekolah ?? 'SDN Sukorame 1 Kota Kediri' }}.
                 </p>
 
                 {{-- Quick nav --}}
@@ -214,16 +214,18 @@
                     ['nama'=>'Toilet Siswa',         'luas'=>'—',     'kapasitas'=>'6 Bilik',   'kondisi'=>'Baik',   'ico'=>'fa-restroom',       'bg'=>'bg-sky-50',    'ico_c'=>'text-sky-600'],
                 ];
 
-                $ruanganList = (isset($sarana) && $sarana->count() > 0) ? $sarana : collect($ruanganDefault);
+                $isUsingDb = isset($sarana) && $sarana->count() > 0;
+                $ruanganList = $isUsingDb ? $sarana : collect($ruanganDefault);
             @endphp
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 @foreach($ruanganList as $idx => $r)
                 @php
                     $nama      = is_array($r) ? $r['nama']      : ($r->nama      ?? '—');
-                    $luas      = is_array($r) ? $r['luas']      : ($r->luas      ?? '—');
-                    $kapasitas = is_array($r) ? $r['kapasitas'] : ($r->kapasitas ?? '—');
+                    $luas      = is_array($r) ? ($r['luas'] ?? '—')      : '—';
+                    $kapasitas = is_array($r) ? ($r['kapasitas'] ?? '—') : ($r->jumlah . ' Unit' ?? '—');
                     $kondisi   = is_array($r) ? $r['kondisi']   : ($r->kondisi   ?? 'Baik');
+                    $foto      = is_array($r) ? null             : $r->foto;
                     $ico       = is_array($r) ? $r['ico']       : 'fa-door-open';
                     $bg        = is_array($r) ? $r['bg']        : 'bg-blue-50';
                     $ico_c     = is_array($r) ? $r['ico_c']     : 'text-blue-600';
@@ -234,8 +236,12 @@
                     };
                 @endphp
                 <div class="ruangan-item fade-up" style="transition-delay: {{ ($idx % 6) * 55 }}ms">
-                    <div class="w-11 h-11 {{ $bg }} rounded-2xl flex items-center justify-center flex-shrink-0">
-                        <i class="fa {{ $ico }} {{ $ico_c }} text-base"></i>
+                    <div class="w-11 h-11 {{ $bg }} rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        @if(!is_array($r) && $r->foto)
+                            <img src="{{ asset('storage/' . $r->foto) }}" class="w-full h-full object-cover">
+                        @else
+                            <i class="fa {{ $ico }} {{ $ico_c }} text-base"></i>
+                        @endif
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="font-bold text-gray-900 text-sm">{{ $nama }}</p>
@@ -244,7 +250,7 @@
                             <span class="text-xs text-gray-400"><i class="fa fa-ruler-combined mr-1 text-[9px]"></i>{{ $luas }}</span>
                             @endif
                             @if($kapasitas !== '—')
-                            <span class="text-xs text-gray-400"><i class="fa fa-users mr-1 text-[9px]"></i>{{ $kapasitas }}</span>
+                            <span class="text-xs text-gray-400"><i class="fa fa-cubes mr-1 text-[9px]"></i>{{ $kapasitas }}</span>
                             @endif
                         </div>
                     </div>

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="SD Negeri Sukorame 1 Kota Kediri — Sistem Informasi Sekolah SIMAS">
-    <title>@yield('title', 'SD Negeri Sukorame 1 Kediri')</title>
+    <meta name="description" content="{{ data_get($sekolah, 'nama_sekolah', config('app.name')) }} {{ data_get($sekolah, 'kota', '') }} — Sistem Informasi Sekolah SIMAS">
+    <title>@yield('title', data_get($sekolah, 'nama_sekolah', config('app.name')))</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,14 +60,14 @@
 <div class="bg-blue-900 text-white text-xs py-1.5 hidden md:block">
     <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
         <div class="flex items-center gap-5 opacity-90">
-            <span><i class="fa fa-phone mr-1"></i>(0354) 123456</span>
-            <span><i class="fa fa-envelope mr-1"></i>sdn.sukorame1@kediri.go.id</span>
-            <span><i class="fa fa-map-marker-alt mr-1"></i>Jl. Sukorame No.1, Kota Kediri</span>
+            <span><i class="fa fa-phone mr-1"></i>{{ data_get($sekolah, 'telepon', '(0354) 123456') }}</span>
+            <span><i class="fa fa-envelope mr-1"></i>{{ data_get($sekolah, 'email', 'info@sekolah.local') }}</span>
+            <span><i class="fa fa-map-marker-alt mr-1"></i>{{ data_get($sekolah, 'nama_singkat', data_get($sekolah, 'nama_sekolah', config('app.name'))) }}, {{ data_get($sekolah, 'kota', 'Kota') }}</span>
         </div>
         <div class="flex items-center gap-3 opacity-90">
-            <a href="https://www.facebook.com/sdnsatusukorame/" class="hover:opacity-100"><i class="fab fa-facebook"></i></a>
-            <a href="https://www.instagram.com/sukoramekediri/" class="hover:opacity-100"><i class="fab fa-instagram"></i></a>
-            <a href="https://www.youtube.com/@sdnsukorame1kediri865" class="hover:opacity-100"><i class="fab fa-youtube"></i></a>
+            <a href="{{ $sekolah->facebook ?? 'https://www.facebook.com/sdnsatusukorame/' }}" class="hover:opacity-100" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="{{ $sekolah->instagram ?? 'https://www.instagram.com/sukoramekediri/' }}" class="hover:opacity-100" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="{{ $sekolah->youtube ?? 'https://www.youtube.com/@sdnsukorame1kediri865' }}" class="hover:opacity-100" target="_blank"><i class="fab fa-youtube"></i></a>
             <a href="{{ route('login') }}" class="ml-2 bg-white/20 hover:bg-white/30 px-3 py-1 rounded font-semibold transition-colors">
                 <i class="fa fa-graduation-cap mr-1"></i>Login SIMAS
             </a>
@@ -82,8 +82,8 @@
             <a href="{{ route('home') }}" class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-blue-700 flex items-center justify-center text-white font-black text-sm">SD</div>
                 <div class="leading-tight hidden sm:block">
-                    <p class="font-bold text-blue-700 text-sm">SDN Sukorame 1</p>
-                    <p class="text-gray-400 text-xs">Kota Kediri</p>
+                    <p class="font-bold text-blue-700 text-sm">{{ data_get($sekolah, 'nama_singkat', data_get($sekolah, 'nama_sekolah', config('app.name'))) }}</p>
+                    <p class="text-gray-400 text-xs">{{ data_get($sekolah, 'kota', 'Kota') }}</p>
                 </div>
             </a>
 
@@ -274,22 +274,22 @@
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-white font-black">SD</div>
                     <div>
-                        <p class="font-bold text-white">SD Negeri Sukorame 1</p>
+                        <p class="font-bold text-white">{{ $sekolah->nama_sekolah ?? 'SD Negeri Sukorame 1' }}</p>
                         <p class="text-xs">Kota Kediri · NPSN: {{ $sekolah?->npsn ?? '20534318' }}</p>
                     </div>
                 </div>
-                <p class="text-sm leading-relaxed mb-4 max-w-sm">Membentuk generasi cerdas, berkarakter, dan berprestasi berlandaskan iman dan teknologi melalui platform SIMAS.</p>
+                <p class="text-sm leading-relaxed mb-4 max-w-sm">{{ $sekolah->slogan ?? 'Membentuk generasi cerdas, berkarakter, dan berprestasi berlandaskan iman dan teknologi melalui platform SIMAS.' }}</p>
                 <div class="space-y-2 text-sm">
-                    <div class="flex gap-2"><i class="fa fa-map-marker-alt text-blue-400 mt-0.5 w-4"></i><span>Jl. Dr. Saharjo No. 1, Kediri</span></div>
-                    <div class="flex gap-2"><i class="fa fa-phone text-blue-400 w-4"></i><span>(0354) 123456</span></div>
-                    <div class="flex gap-2"><i class="fa fa-envelope text-blue-400 w-4"></i><span>sdn.sukorame1@kediri.go.id</span></div>
+                    <div class="flex gap-2"><i class="fa fa-map-marker-alt text-blue-400 mt-0.5 w-4"></i><span>{{ $sekolah->alamat ?? 'Jl. Saharjo No. 1, Kediri' }}</span></div>
+                    <div class="flex gap-2"><i class="fa fa-phone text-blue-400 w-4"></i><span>{{ $sekolah->telepon ?? '(0354) 123456' }}</span></div>
+                    <div class="flex gap-2"><i class="fa fa-envelope text-blue-400 w-4"></i><span>{{ $sekolah->email ?? 'sdn.sukorame1@kediri.go.id' }}</span></div>
                 </div>
                 <div class="flex gap-3 mt-5">
                     @php
                         $socials = [
-                            'facebook-f' => 'https://www.facebook.com/sdnsatusukorame/',
-                            'instagram'  => 'https://www.instagram.com/sukoramekediri/',
-                            'youtube'    => 'https://www.youtube.com/@sdnsukorame1kediri865'
+                            'facebook-f' => $sekolah->facebook ?? 'https://www.facebook.com/sdnsatusukorame/',
+                            'instagram'  => $sekolah->instagram ?? 'https://www.instagram.com/sukoramekediri/',
+                            'youtube'    => $sekolah->youtube ?? 'https://www.youtube.com/@sdnsukorame1kediri865'
                         ];
                     @endphp
 
@@ -332,7 +332,7 @@
             </div>
         </div>
         <div class="border-t border-gray-800 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between text-xs">
-            <p>&copy; {{ date('Y') }} SD Negeri Sukorame 1 Kota Kediri. Hak Cipta Dilindungi.</p>
+            <p>&copy; {{ date('Y') }} {{ $sekolah->nama_sekolah ?? config('app.name') }}. Hak Cipta Dilindungi.</p>
             <p class="mt-2 md:mt-0">Didukung <span class="text-blue-400 font-semibold">SIMAS</span> — Sistem Informasi &amp; E-Learning</p>
         </div>
     </div>

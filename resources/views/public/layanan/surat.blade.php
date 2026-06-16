@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', $pageTitle ?? 'Layanan Surat — SDN Sukorame 1')
+@section('title', $pageTitle ?? 'Layanan Surat — ' . ($sekolah->nama_sekolah ?? 'SDN Sukorame 1'))
 
 @push('head')
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -43,10 +43,10 @@
                     Layanan<br><span style="color:#FDE68A;">Surat Keterangan</span>
                 </h1>
                 <p class="text-white/70 leading-relaxed max-w-xl">
-                    SDN Sukorame 1 menyediakan berbagai layanan penerbitan surat keterangan resmi untuk keperluan siswa aktif maupun alumni.
+                    {{ $sekolah->nama_sekolah ?? 'SDN Sukorame 1' }} menyediakan berbagai layanan penerbitan surat keterangan resmi untuk keperluan siswa aktif maupun alumni.
                 </p>
-            </div>
-            <div class="grid grid-cols-2 gap-3 flex-shrink-0">
+                </div>
+                <div class="grid grid-cols-2 gap-3 flex-shrink-0">
                 @foreach([['6','fa-file-alt','text-blue-300','Jenis Surat'],['3','fa-calendar-day','text-green-300','Hari Proses'],['GRATIS','fa-circle-check','text-amber-300','Tanpa Biaya'],['Resmi','fa-stamp','text-white','Berlegalisir']] as $s)
                 <div class="bg-white/10 border border-white/20 rounded-2xl px-5 py-4 text-center">
                     <i class="fa {{ $s[1] }} {{ $s[2] }} text-xl mb-2 block"></i>
@@ -54,13 +54,23 @@
                     <p class="text-white/60 text-[11px] mt-1">{{ $s[3] }}</p>
                 </div>
                 @endforeach
-            </div>
-        </div>
-    </div>
-</div>
+                </div>
+                </div>
+                </div>
+                </div>
 
-<main class="bg-gray-50">
-    {{-- JENIS SURAT --}}
+                <main class="bg-gray-50">
+                @if($content && $content->content)
+                <section class="py-16 bg-white border-b border-gray-100">
+                <div class="max-w-5xl mx-auto px-6">
+                <div class="prose max-w-none text-gray-600">
+                {!! $content->content !!}
+                </div>
+                </div>
+                </section>
+                @endif
+
+                {{-- JENIS SURAT --}}
     <section class="py-20 bg-white">
         <div class="max-w-5xl mx-auto px-6">
             <div class="text-center mb-14 fade-up">

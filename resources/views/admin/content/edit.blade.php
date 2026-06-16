@@ -25,11 +25,23 @@
 
 <div class="content-card">
     <div class="card-body" style="padding: 30px;">
-        <form action="{{ route('admin.content.update', $page->slug) }}" method="POST">
+        <form action="{{ route('admin.content.update', $page->slug) }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="form-group">
                 <label class="form-label">Nama Menu / Judul Utama</label>
                 <input type="text" class="form-control" value="{{ $page->title }}" disabled>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Gambar Unggulan / Banner Halaman</label>
+                @if($page->image)
+                    <div style="margin-bottom: 12px;">
+                        <img src="{{ asset('storage/' . $page->image) }}" alt="Preview" style="max-width: 300px; border-radius: 12px; border: 1px solid #e5e7eb;">
+                        <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Gambar saat ini</p>
+                    </div>
+                @endif
+                <input type="file" name="image" class="form-control" accept="image/*">
+                <p style="font-size: 12px; color: #6b7280; margin-top: 6px;">Opsional. Gunakan untuk banner atau gambar utama halaman. Maksimal 2MB.</p>
             </div>
             
             <div class="form-group">

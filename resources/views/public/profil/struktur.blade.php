@@ -268,11 +268,15 @@
                     <div class="flex flex-col items-center w-full md:w-64">
                         <div class="org-card level-0 w-full">
                             <div class="org-avatar">
-                                <i class="fa fa-user-tie text-white text-2xl"></i>
+                                @if($kepsek?->user?->foto)
+                                    <img src="{{ Storage::url($kepsek->user->foto) }}" class="w-full h-full rounded-full object-cover">
+                                @else
+                                    <i class="fa fa-user-tie text-white text-2xl"></i>
+                                @endif
                             </div>
-                            <p class="org-name">{{ $kepsek?->nama ?? ($sekolah?->kepala_sekolah ?? 'Nama Kepala Sekolah') }}</p>
+                            <p class="org-name">{{ $kepsek?->user?->name ?? ($sekolah?->nama_kepala_sekolah ?? 'Nama Kepala Sekolah') }}</p>
                             <span class="org-jabatan">Kepala Sekolah</span>
-                            <p class="org-nip mt-1">NIP. {{ $kepsek?->nip ?? ($sekolah?->nip_kepsek ?? '—') }}</p>
+                            <p class="org-nip mt-1">NIP. {{ $kepsek?->nip ?? ($sekolah?->nip_kepala_sekolah ?? '—') }}</p>
                         </div>
                         {{-- garis turun --}}
                         <div class="w-0.5 bg-blue-300" style="height:32px;"></div>
@@ -289,9 +293,13 @@
                     <div class="w-full md:w-64 flex flex-col items-center">
                         <div class="org-card level-1 w-full">
                             <div class="org-avatar">
-                                <i class="fa fa-user-shield text-blue-600"></i>
+                                @if($wakasek?->user?->foto)
+                                    <img src="{{ Storage::url($wakasek->user->foto) }}" class="w-full h-full rounded-full object-cover">
+                                @else
+                                    <i class="fa fa-user-shield text-blue-600"></i>
+                                @endif
                             </div>
-                            <p class="org-name">{{ $wakasek?->nama ?? 'Wakil Kepala Sekolah' }}</p>
+                            <p class="org-name">{{ $wakasek?->user?->name ?? 'Wakil Kepala Sekolah' }}</p>
                             <span class="org-jabatan">Waka Sekolah</span>
                             <p class="org-nip mt-1">NIP. {{ $wakasek?->nip ?? '—' }}</p>
                         </div>
@@ -311,9 +319,9 @@
                 <div class="flex flex-col md:flex-row justify-center gap-4 md:gap-6">
                     @php
                         $level2 = [
-                            ['icon'=>'fa-file-alt',    'nama'=> $tu?->nama       ?? 'Kepala TU',         'jabatan'=>'Tata Usaha',   'nip'=> $tu?->nip       ?? '—'],
-                            ['icon'=>'fa-laptop',      'nama'=> $operator?->nama  ?? 'Operator Sekolah',  'jabatan'=>'Operator Dapodik','nip'=> $operator?->nip ?? '—'],
-                            ['icon'=>'fa-coins',       'nama'=> $bendahara?->nama ?? 'Bendahara Sekolah', 'jabatan'=>'Bendahara BOS','nip'=> $bendahara?->nip ?? '—'],
+                            ['icon'=>'fa-file-alt',    'nama'=> $tu?->user?->name       ?? 'Kepala TU',         'jabatan'=>'Tata Usaha',   'nip'=> $tu?->nip       ?? '—', 'foto' => $tu?->user?->foto],
+                            ['icon'=>'fa-laptop',      'nama'=> $operator?->user?->name  ?? 'Operator Sekolah',  'jabatan'=>'Operator Dapodik','nip'=> $operator?->nip ?? '—', 'foto' => $operator?->user?->foto],
+                            ['icon'=>'fa-coins',       'nama'=> $bendahara?->user?->name ?? 'Bendahara Sekolah', 'jabatan'=>'Bendahara BOS','nip'=> $bendahara?->nip ?? '—', 'foto' => $bendahara?->user?->foto],
                         ];
                     @endphp
                     @foreach ($level2 as $l2)
@@ -321,7 +329,11 @@
                         <div class="w-0.5 bg-blue-200" style="height:24px;"></div>
                         <div class="org-card level-2 w-full">
                             <div class="org-avatar bg-indigo-50">
-                                <i class="fa {{ $l2['icon'] }} text-indigo-500"></i>
+                                @if($l2['foto'])
+                                    <img src="{{ Storage::url($l2['foto']) }}" class="w-full h-full rounded-full object-cover">
+                                @else
+                                    <i class="fa {{ $l2['icon'] }} text-indigo-500"></i>
+                                @endif
                             </div>
                             <p class="org-name">{{ $l2['nama'] }}</p>
                             <span class="org-jabatan">{{ $l2['jabatan'] }}</span>
@@ -353,34 +365,32 @@
                      * Ganti dengan data dari DB:
                      * $waliKelas = \App\Models\Guru::whereNotNull('kelas_id')->with('kelas')->get();
                      */
-                    $wali_kelas_default = [
-                        ['kelas'=>'I',   'nama'=> $waliKelas[0]->nama  ?? 'Wali Kelas I',   'nip'=> $waliKelas[0]->nip  ?? '—'],
-                        ['kelas'=>'II',  'nama'=> $waliKelas[2]->nama  ?? 'Wali Kelas II',  'nip'=> $waliKelas[2]->nip  ?? '—'],
-                        ['kelas'=>'III', 'nama'=> $waliKelas[4]->nama  ?? 'Wali Kelas III', 'nip'=> $waliKelas[4]->nip  ?? '—'],
-                        ['kelas'=>'IV',  'nama'=> $waliKelas[6]->nama  ?? 'Wali Kelas IV',  'nip'=> $waliKelas[6]->nip  ?? '—'],
-                        ['kelas'=>'V',   'nama'=> $waliKelas[8]->nama  ?? 'Wali Kelas V',   'nip'=> $waliKelas[8]->nip  ?? '—'],
-                        ['kelas'=>'VI',  'nama'=> $waliKelas[10]->nama ?? 'Wali Kelas VI',  'nip'=> $waliKelas[10]->nip ?? '—'],
-                    ];
                     $wali_colors = ['bg-blue-50 text-blue-700','bg-indigo-50 text-indigo-700','bg-violet-50 text-violet-700','bg-purple-50 text-purple-700'];
                 @endphp
 
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-0">
-                    @foreach ($wali_kelas_default as $idx => $wk)
-                    @php $wc = $wali_colors[intdiv($idx, 2) % count($wali_colors)]; @endphp
+                    @forelse ($waliKelas as $idx => $wk)
+                    @php $wc = $wali_colors[$idx % count($wali_colors)]; @endphp
                     <div class="flex flex-col items-center">
                         <div class="w-0.5 bg-blue-200" style="height:20px;"></div>
                         <div class="org-card level-2 w-full">
                             <div class="org-avatar bg-blue-50">
-                                <i class="fa fa-chalkboard text-blue-500"></i>
+                                @if($wk->user?->foto)
+                                    <img src="{{ Storage::url($wk->user->foto) }}" class="w-full h-full rounded-full object-cover">
+                                @else
+                                    <i class="fa fa-chalkboard text-blue-500"></i>
+                                @endif
                             </div>
                             <span class="inline-block text-[10px] font-black px-2.5 py-1 rounded-lg mb-2 {{ $wc }}">
-                                Kelas {{ $wk['kelas'] }}
+                                Kelas {{ $wk->kelas->nama_kelas ?? '-' }}
                             </span>
-                            <p class="org-name">{{ $wk['nama'] }}</p>
-                            <p class="org-nip mt-1">NIP. {{ $wk['nip'] }}</p>
+                            <p class="org-name">{{ $wk->user?->name ?? '-' }}</p>
+                            <p class="org-nip mt-1">NIP. {{ $wk->nip ?? '-' }}</p>
                         </div>
                     </div>
-                    @endforeach
+                    @empty
+                    <div class="col-span-full text-center py-10 text-gray-400">Belum ada data wali kelas.</div>
+                    @endforelse
                 </div>
             </div>
 
@@ -452,28 +462,25 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    @php
-                        $tendik_default = [
-                            ['jabatan'=>'Kepala Tata Usaha',       'icon'=>'fa-file-alt',        'color'=>'bg-indigo-50 text-indigo-600'],
-                            ['jabatan'=>'Staf Perpustakaan',       'icon'=>'fa-book',             'color'=>'bg-teal-50 text-teal-600'],
-                            ['jabatan'=>'Petugas UKS',             'icon'=>'fa-first-aid',        'color'=>'bg-red-50 text-red-600'],
-                            ['jabatan'=>'Penjaga Sekolah',         'icon'=>'fa-shield-alt',       'color'=>'bg-gray-100 text-gray-600'],
-                            ['jabatan'=>'Petugas Kebersihan',      'icon'=>'fa-broom',            'color'=>'bg-green-50 text-green-600'],
-                            ['jabatan'=>'Satuan Pengamanan (Satpam)','icon'=>'fa-user-shield',   'color'=>'bg-blue-50 text-blue-600'],
-                        ];
-                        $tendikList = isset($tendik) ? $tendik : collect($tendik_default);
-                    @endphp
-                    @foreach ($tendikList as $td)
+                    @forelse ($tendik as $td)
                     <div class="staff-row">
-                        <div class="staff-avatar-sm {{ is_array($td) ? $td['color'] : 'bg-blue-50 text-blue-600' }} rounded-2xl">
-                            <i class="fa {{ is_array($td) ? $td['icon'] : 'fa-user' }}"></i>
+                        <div class="staff-avatar-sm bg-blue-50 text-blue-600 rounded-2xl overflow-hidden">
+                            @if($td->user?->foto)
+                                <img src="{{ Storage::url($td->user->foto) }}" class="w-full h-full object-cover">
+                            @else
+                                <i class="fa fa-user"></i>
+                            @endif
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="font-bold text-gray-900 text-sm">{{ is_array($td) ? '—' : $td->nama }}</p>
-                            <p class="text-gray-400 text-xs mt-0.5">{{ is_array($td) ? $td['jabatan'] : $td->jabatan }}</p>
+                            <p class="font-bold text-gray-900 text-sm">{{ $td->user?->name ?? '-' }}</p>
+                            <p class="text-gray-400 text-xs mt-0.5">{{ $td->jabatan ?? '-' }}</p>
                         </div>
                     </div>
-                    @endforeach
+                    @empty
+                    <div class="col-span-full text-center py-6 text-gray-400 bg-white rounded-2xl border border-dashed">
+                        Belum ada data tenaga kependidikan.
+                    </div>
+                    @endforelse
                 </div>
             </div>
 

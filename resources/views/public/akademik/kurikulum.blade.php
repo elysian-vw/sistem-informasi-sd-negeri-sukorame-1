@@ -173,6 +173,14 @@
     ══════════════════════════════════════ --}}
     <section class="py-20 bg-white">
         <div class="max-w-5xl mx-auto px-6">
+            @if($content)
+            <div class="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm mb-14 fade-up">
+                <div class="cms-content">
+                    {!! $content->content !!}
+                </div>
+            </div>
+            @endif
+
             <div class="text-center mb-14 fade-up">
                 <div class="sec-label">Gambaran Umum</div>
                 <h2 class="font-display text-3xl md:text-4xl font-black text-gray-900 mb-3">Kurikulum Merdeka</h2>

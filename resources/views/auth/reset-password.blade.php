@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password — SDN Sukorame 1 Kediri</title>
+    <title>Reset Password — {{ config('app.name') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
@@ -19,7 +19,7 @@
                     <i class="fas fa-shield-alt"></i>
                 </div>
                 <h2>Password Baru</h2>
-                <p>SDN Sukorame 1 Kediri</p>
+                <p>{{ config('app.name') }}</p>
             </div>
         </div>
         <div class="login-right">
