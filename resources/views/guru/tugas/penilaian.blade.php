@@ -746,7 +746,7 @@ tr.cbt-row:hover td { background:#f5f3ff; }
                 Nilai hanya bisa diisi untuk siswa yang sudah mengumpulkan tugas.
             </span>
             <div style="display:flex;gap:10px;">
-                <a href="{{ route('guru.penilaian-tugas.index') }}" class="btn-secondary-action">Kembali</a>
+                <a href="{{ route('guru.tugas.index') }}" class="btn-secondary-action">Kembali</a>
                 <button type="submit" class="btn-primary-action" id="btnSimpan">
                     <i class="fas fa-save"></i> Simpan Semua Nilai
                 </button>

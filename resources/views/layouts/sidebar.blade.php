@@ -100,7 +100,7 @@
                     </a>
                 </div>
             </details>
-            
+
         {{-- ══════════════════ GURU ══════════════════ --}}
         @elseif($role === 'guru')
             <div class="nav-section-title">Menu Guru</div>
@@ -127,12 +127,6 @@
             </a>
             <a href="{{ route('guru.jadwal.index') }}" class="nav-item {{ request()->routeIs('guru.jadwal*') ? 'active' : '' }}">
                 <i class="fas fa-calendar-alt"></i> <span>Jadwal Pelajaran</span>
-            </a>
-            <a href="{{ route('guru.mbg') }}" class="nav-item {{ request()->routeIs('guru.mbg') ? 'active' : '' }}">
-                <i class="fas fa-utensils"></i> <span>Program MBG</span>
-            </a>
-            <a href="{{ route('guru.forum.index') }}" class="nav-item {{ request()->routeIs('guru.forum*') ? 'active' : '' }}">
-                <i class="fas fa-comments"></i> <span>Forum Diskusi</span>
             </a>
 
         {{-- ══════════════════ WALI MURID ══════════════════ --}}
