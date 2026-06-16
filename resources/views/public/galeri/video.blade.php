@@ -226,36 +226,6 @@ $others   = $videos->where('id', '!=', optional($featured)->id);
 <section class="py-14">
     <div class="max-w-6xl mx-auto px-6">
 
-        {{-- Featured Video --}}
-        @if($featured)
-        <div class="mb-12 fade-up">
-            <p class="section-label">Video Unggulan</p>
-            <div class="featured-card">
-                <div class="video-thumb" style="padding-bottom:48%; cursor:pointer;"
-                     onclick="openModal('{{ $featured['youtube_id'] }}', '{{ $featured['judul'] }}', '{{ $featured['tanggal'] }}')">
-                    <img src="https://img.youtube.com/vi/{{ $featured['youtube_id'] }}/maxresdefault.jpg"
-                         alt="{{ $featured['judul'] }}"
-                         onerror="this.src='https://img.youtube.com/vi/{{ $featured['youtube_id'] }}/0.jpg'">
-                    <div class="video-thumb-overlay">
-                        <div class="play-btn" style="width:68px;height:68px;font-size:26px;padding-left:5px;">
-                            <i class="fa fa-play"></i>
-                        </div>
-                    </div>
-                    <span class="kat-badge">{{ $kategoriMap[$featured['kategori']] ?? $featured['kategori'] }}</span>
-                    <span class="video-duration">{{ $featured['durasi'] }}</span>
-                </div>
-                <div class="p-6">
-                    <h2 class="font-bold text-gray-900 text-lg mb-2">{{ $featured['judul'] }}</h2>
-                    <p class="text-gray-500 text-sm leading-relaxed mb-4">{{ $featured['deskripsi'] }}</p>
-                    <div class="flex items-center gap-2 text-xs text-gray-400">
-                        <i class="fa fa-calendar text-[10px]"></i>
-                        <span>{{ $featured['tanggal'] }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endif
-
         {{-- Filter --}}
         <div class="flex flex-wrap gap-2 mb-8 fade-up">
             @foreach($kategoriMap as $key => $label)
