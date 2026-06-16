@@ -7,18 +7,6 @@
     <p class="page-subtitle">Kelola kehadiran siswa Kelas {{ $kelas->nama_kelas }}</p>
 </div>
 
-@if(session('success'))
-    <div class="alert alert-success" style="background:#dcfce7; color:#166534; padding:12px; border-radius:8px; margin-bottom:20px;">
-        <i class="fas fa-check-circle"></i> {{ session('success') }}
-    </div>
-@endif
-
-@if(session('error'))
-    <div class="alert alert-danger" style="background:#fee2e2; color:#b91c1c; padding:12px; border-radius:8px; margin-bottom:20px;">
-        <i class="fas fa-exclamation-triangle"></i> {{ session('error') }}
-    </div>
-@endif
-
 {{-- Filter Tanggal --}}
 <div class="content-card" style="margin-bottom:20px; padding:20px;">
     <form action="{{ route('guru.absensi.index') }}" method="GET" style="display:flex; gap:16px; align-items:flex-end;">
