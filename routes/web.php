@@ -232,6 +232,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 
 Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(function () {
     Route::get('/dashboard', [GuruDashboard::class, 'index'])->name('dashboard');
+    Route::get('/chart-data', [GuruDashboard::class, 'getChartData'])->name('chart-data');
 
     Route::resource('absensi', AbsensiController::class);
 

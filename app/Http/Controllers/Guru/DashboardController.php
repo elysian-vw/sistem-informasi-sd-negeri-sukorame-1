@@ -97,4 +97,48 @@ class DashboardController extends Controller
             'jadwalHariIni', 'hariIni' // ← tambah ini
         ));
     }
+
+    public function getChartData(\Illuminate\Http\Request $request)
+    {
+        $guru = auth()->user()->guru;
+        
+        $statusFilter = $request->get('status', 'hadir');
+        $periode = $request->get('periode', 'minggu');
+        
+        $kelasIds = [];
+        if ($guru && $guru->kelas_id) {
+            $kelasIds[] = $guru->kelas_id;
+        }
+        $waliKelasIds = \App\Models\Kelas::where('wali_kelas_id', auth()->id())->pluck('id')->toArray();
+        $kelasIds = array_unique(array_merge($kelasIds, $waliKelasIds));
+
+        $days = 7;
+        if ($periode == 'bulan') $days = 30;
+        if ($periode == 'semester') $days = 180;
+        if ($periode == 'hari') $days = 1;
+
+        $rawData = \App\Models\Absensi::whereIn('kelas_id', $kelasIds)
+            ->where('status', $statusFilter)
+            ->where('tanggal', '>=', now()->subDays($days)->format('Y-m-d'))
+            ->selectRaw('tanggal as tgl, count(*) as total')
+            ->groupBy('tanggal')
+            ->get()
+            ->keyBy(function($item) {
+                return is_string($item->tgl) ? substr($item->tgl, 0, 10) : $item->tgl->format('Y-m-d');
+            });
+
+        $labels = [];
+        $values = [];
+
+        for ($i = $days - 1; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $labels[] = now()->subDays($i)->format('d/m');
+            $values[] = isset($rawData[$date]) ? $rawData[$date]->total : 0;
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'values' => $values,
+        ]);
+    }
 }
