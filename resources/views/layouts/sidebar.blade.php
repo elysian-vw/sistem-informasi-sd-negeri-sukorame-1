@@ -13,62 +13,94 @@
         @php $role = auth()->user()->role; @endphp
 
         {{-- ══════════════════ ADMIN ══════════════════ --}}
+        {{-- ══════════════════ ADMIN ══════════════════ --}}
         @if($role === 'admin')
             <div class="nav-section-title">Menu Admin</div>
             <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
             </a>
-            <div class="nav-section-title">Informasi & Berita</div>
-            <a href="{{ route('admin.berita.index') }}" class="nav-item {{ request()->routeIs('admin.berita*') ? 'active' : '' }}">
-                <i class="fas fa-newspaper"></i> <span>Berita & Artikel</span>
-            </a>
-            <a href="{{ route('admin.pengumuman.index') }}" class="nav-item {{ request()->routeIs('admin.pengumuman*') ? 'active' : '' }}">
-                <i class="fas fa-bullhorn"></i> <span>Pengumuman</span>
-            </a>
-            <a href="{{ route('admin.kegiatan.index') }}" class="nav-item {{ request()->routeIs('admin.kegiatan*') ? 'active' : '' }}">
-                <i class="fas fa-calendar-check"></i> <span>Agenda Kegiatan</span>
-            </a>
-            <a href="{{ route('admin.galeri.index') }}" class="nav-item {{ request()->routeIs('admin.galeri*') ? 'active' : '' }}">
-                <i class="fas fa-images"></i> <span>Galeri</span>
-            </a>
 
-            <div class="nav-section-title">Kesiswaan & Akademik</div>
-            <a href="{{ route('admin.siswa.index') }}" class="nav-item {{ request()->routeIs('admin.siswa*') ? 'active' : '' }}">
-                <i class="fas fa-user-graduate"></i> <span>Kelola Siswa</span>
-            </a>
-            <a href="{{ route('admin.prestasi.index') }}" class="nav-item {{ request()->routeIs('admin.prestasi*') ? 'active' : '' }}">
-                <i class="fas fa-medal"></i> <span>Prestasi Siswa</span>
-            </a>
-            <a href="{{ route('admin.ekskul.index') }}" class="nav-item {{ request()->routeIs('admin.ekskul*') ? 'active' : '' }}">
-                <i class="fas fa-basketball-ball"></i> <span>Ekstrakurikuler</span>
-            </a>
+            {{-- Dropdown 1: Informasi & Berita --}}
+            <details class="nav-dropdown" {{ request()->routeIs('admin.berita*', 'admin.pengumuman*', 'admin.kegiatan*', 'admin.galeri*') ? 'open' : '' }}>
+                <summary class="nav-item">
+                    <div class="nav-item-content">
+                        <i class="fas fa-newspaper"></i> <span>Informasi & Berita</span>
+                    </div>
+                    <i class="fas fa-chevron-right arrow-icon"></i>
+                </summary>
+                <div class="dropdown-content">
+                    <a href="{{ route('admin.berita.index') }}" class="nav-item {{ request()->routeIs('admin.berita*') ? 'active' : '' }}">
+                        <i class="fas fa-circle-notch"></i> <span>Berita & Artikel</span>
+                    </a>
+                    <a href="{{ route('admin.pengumuman.index') }}" class="nav-item {{ request()->routeIs('admin.pengumuman*') ? 'active' : '' }}">
+                        <i class="fas fa-bullhorn"></i> <span>Pengumuman</span>
+                    </a>
+                    <a href="{{ route('admin.kegiatan.index') }}" class="nav-item {{ request()->routeIs('admin.kegiatan*') ? 'active' : '' }}">
+                        <i class="fas fa-calendar-check"></i> <span>Agenda Kegiatan</span>
+                    </a>
+                    <a href="{{ route('admin.galeri.index') }}" class="nav-item {{ request()->routeIs('admin.galeri*') ? 'active' : '' }}">
+                        <i class="fas fa-images"></i> <span>Galeri</span>
+                    </a>
+                </div>
+            </details>
 
-            <div class="nav-section-title">Data Sekolah</div>
-            <a href="{{ route('admin.sekolah') }}" class="nav-item {{ request()->routeIs('admin.sekolah*') ? 'active' : '' }}">
-                <i class="fas fa-building-columns"></i> <span>Profil Sekolah</span>
-            </a>
-            <a href="{{ route('admin.guru.index') }}" class="nav-item {{ request()->routeIs('admin.guru*') ? 'active' : '' }}">
-                <i class="fas fa-chalkboard-teacher"></i> <span>Guru & Pegawai</span>
-            </a>
-            <a href="{{ route('admin.kelas.index') }}" class="nav-item {{ request()->routeIs('admin.kelas*') ? 'active' : '' }}">
-                <i class="fas fa-door-open"></i> <span>Kelas</span>
-            </a>
-            <a href="{{ route('admin.mata-pelajaran.index') }}" class="nav-item {{ request()->routeIs('admin.mata-pelajaran*') ? 'active' : '' }}">
-                <i class="fas fa-book-open"></i> <span>Mata Pelajaran</span>
-            </a>
-            <a href="{{ route('admin.jadwal.index') }}" class="nav-item {{ request()->routeIs('admin.jadwal*') ? 'active' : '' }}">
-                <i class="fas fa-calendar-alt"></i> <span>Jadwal Pelajaran</span>
-            </a>
-            <a href="{{ route('admin.sarana.index') }}" class="nav-item {{ request()->routeIs('admin.sarana*') ? 'active' : '' }}">
-                <i class="fas fa-cubes"></i> <span>Sarana Prasarana</span>
-            </a>
-            <a href="{{ route('admin.komite.index') }}" class="nav-item {{ request()->routeIs('admin.komite*') ? 'active' : '' }}">
-                <i class="fas fa-users"></i> <span>Komite</span>
-            </a>
-            <a href="{{ route('admin.content.index') }}" class="nav-item {{ request()->routeIs('admin.content*') ? 'active' : '' }}">
-                <i class="fas fa-file-alt"></i> <span>Konten Web</span>
-            </a>
+            {{-- Dropdown 2: Kesiswaan & Akademik --}}
+            <details class="nav-dropdown" {{ request()->routeIs('admin.siswa*', 'admin.prestasi*', 'admin.ekskul*') ? 'open' : '' }}>
+                <summary class="nav-item">
+                    <div class="nav-item-content">
+                        <i class="fas fa-user-graduate"></i> <span>Kesiswaan & Akademik</span>
+                    </div>
+                    <i class="fas fa-chevron-right arrow-icon"></i>
+                </summary>
+                <div class="dropdown-content">
+                    <a href="{{ route('admin.siswa.index') }}" class="nav-item {{ request()->routeIs('admin.siswa*') ? 'active' : '' }}">
+                        <i class="fas fa-circle-notch"></i> <span>Kelola Siswa</span>
+                    </a>
+                    <a href="{{ route('admin.prestasi.index') }}" class="nav-item {{ request()->routeIs('admin.prestasi*') ? 'active' : '' }}">
+                        <i class="fas fa-medal"></i> <span>Prestasi Siswa</span>
+                    </a>
+                    <a href="{{ route('admin.ekskul.index') }}" class="nav-item {{ request()->routeIs('admin.ekskul*') ? 'active' : '' }}">
+                        <i class="fas fa-basketball-ball"></i> <span>Ekstrakurikuler</span>
+                    </a>
+                </div>
+            </details>
 
+            {{-- Dropdown 3: Data Sekolah --}}
+            <details class="nav-dropdown" {{ request()->routeIs('admin.sekolah*', 'admin.guru*', 'admin.kelas*', 'admin.mata-pelajaran*', 'admin.jadwal*', 'admin.sarana*', 'admin.komite*', 'admin.content*') ? 'open' : '' }}>
+                <summary class="nav-item">
+                    <div class="nav-item-content">
+                        <i class="fas fa-building-columns"></i> <span>Data Sekolah</span>
+                    </div>
+                    <i class="fas fa-chevron-right arrow-icon"></i>
+                </summary>
+                <div class="dropdown-content">
+                    <a href="{{ route('admin.sekolah') }}" class="nav-item {{ request()->routeIs('admin.sekolah*') ? 'active' : '' }}">
+                        <i class="fas fa-circle-notch"></i> <span>Profil Sekolah</span>
+                    </a>
+                    <a href="{{ route('admin.guru.index') }}" class="nav-item {{ request()->routeIs('admin.guru*' ) ? 'active' : '' }}">
+                        <i class="fas fa-chalkboard-teacher"></i> <span>Guru & Pegawai</span>
+                    </a>
+                    <a href="{{ route('admin.kelas.index') }}" class="nav-item {{ request()->routeIs('admin.kelas*') ? 'active' : '' }}">
+                        <i class="fas fa-door-open"></i> <span>Kelas</span>
+                    </a>
+                    <a href="{{ route('admin.mata-pelajaran.index') }}" class="nav-item {{ request()->routeIs('admin.mata-pelajaran*') ? 'active' : '' }}">
+                        <i class="fas fa-book-open"></i> <span>Mata Pelajaran</span>
+                    </a>
+                    <a href="{{ route('admin.jadwal.index') }}" class="nav-item {{ request()->routeIs('admin.jadwal*') ? 'active' : '' }}">
+                        <i class="fas fa-calendar-alt"></i> <span>Jadwal Pelajaran</span>
+                    </a>
+                    <a href="{{ route('admin.sarana.index') }}" class="nav-item {{ request()->routeIs('admin.sarana*') ? 'active' : '' }}">
+                        <i class="fas fa-cubes"></i> <span>Sarana Prasarana</span>
+                    </a>
+                    <a href="{{ route('admin.komite.index') }}" class="nav-item {{ request()->routeIs('admin.komite*') ? 'active' : '' }}">
+                        <i class="fas fa-users"></i> <span>Komite</span>
+                    </a>
+                    <a href="{{ route('admin.content.index') }}" class="nav-item {{ request()->routeIs('admin.content*') ? 'active' : '' }}">
+                        <i class="fas fa-file-alt"></i> <span>Konten Web</span>
+                    </a>
+                </div>
+            </details>
+            
         {{-- ══════════════════ GURU ══════════════════ --}}
         @elseif($role === 'guru')
             <div class="nav-section-title">Menu Guru</div>

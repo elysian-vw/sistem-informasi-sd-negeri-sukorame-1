@@ -40,7 +40,7 @@
                         </div>
                         <div class="form-group mb-3">
                             <label class="form-label">Status</label>
-                            <select name="status" class="form-control @error('status', $berita->status) == 'status' ? 'selected' : ''" required>
+                            <select name="status" class="form-control @error('status') is-invalid @enderror" required>
                                 <option value="draft" {{ old('status', $berita->status) == 'draft' ? 'selected' : '' }}>Draft</option>
                                 <option value="published" {{ old('status', $berita->status) == 'published' ? 'selected' : '' }}>Published</option>
                                 <option value="archived" {{ old('status', $berita->status) == 'archived' ? 'selected' : '' }}>Archived</option>
