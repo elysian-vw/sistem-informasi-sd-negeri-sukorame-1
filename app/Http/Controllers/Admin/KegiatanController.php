@@ -25,6 +25,10 @@ class KegiatanController extends Controller
             'judul'          => 'required|string|max:255',
             'tanggal_mulai'  => 'required|date',
             'tanggal_selesai'=> 'nullable|date|after_or_equal:tanggal_mulai',
+            'waktu_mulai'    => 'nullable',
+            'waktu_selesai'  => 'nullable',
+            'tempat'         => 'nullable|string|max:255',
+            'deskripsi'      => 'nullable|string',
             'kategori'       => 'required|in:upacara,penilaian,perpisahan,libur,ppdb,ekskul,rapat,lainnya',
             'sasaran'        => 'required|in:semua,guru,siswa,wali_murid',
         ]);
@@ -48,6 +52,10 @@ class KegiatanController extends Controller
             'judul'          => 'required|string|max:255',
             'tanggal_mulai'  => 'required|date',
             'tanggal_selesai'=> 'nullable|date|after_or_equal:tanggal_mulai',
+            'waktu_mulai'    => 'nullable',
+            'waktu_selesai'  => 'nullable',
+            'tempat'         => 'nullable|string|max:255',
+            'deskripsi'      => 'nullable|string',
             'kategori'       => 'required|in:upacara,penilaian,perpisahan,libur,ppdb,ekskul,rapat,lainnya',
             'sasaran'        => 'required|in:semua,guru,siswa,wali_murid',
         ]);

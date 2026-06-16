@@ -37,6 +37,27 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
+                            <label class="form-label">Waktu Mulai</label>
+                            <input type="time" name="waktu_mulai" class="form-control @error('waktu_mulai') is-invalid @enderror" value="{{ old('waktu_mulai') }}">
+                            @error('waktu_mulai') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Waktu Selesai</label>
+                            <input type="time" name="waktu_selesai" class="form-control @error('waktu_selesai') is-invalid @enderror" value="{{ old('waktu_selesai') }}">
+                            @error('waktu_selesai') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <label class="form-label">Tempat</label>
+                    <input type="text" name="tempat" class="form-control @error('tempat') is-invalid @enderror" value="{{ old('tempat') }}">
+                    @error('tempat') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
                             <label class="form-label">Kategori</label>
                             <select name="kategori" class="form-control @error('kategori') is-invalid @enderror" required>
                                 <option value="upacara">Upacara</option>
@@ -65,9 +86,9 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <label class="form-label">Keterangan</label>
-                    <textarea name="keterangan" class="form-control @error('keterangan') is-invalid @enderror" rows="3">{{ old('keterangan') }}</textarea>
-                    @error('keterangan') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    <label class="form-label">Deskripsi</label>
+                    <textarea name="deskripsi" class="form-control @error('deskripsi') is-invalid @enderror" rows="3">{{ old('deskripsi') }}</textarea>
+                    @error('deskripsi') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
                 <hr>
                 <button type="submit" class="btn btn-primary">Simpan Kegiatan</button>
