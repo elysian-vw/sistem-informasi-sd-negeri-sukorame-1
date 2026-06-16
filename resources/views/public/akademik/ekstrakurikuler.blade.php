@@ -127,9 +127,9 @@
             </div>
             <div class="flex gap-3 flex-shrink-0">
                 @php $hs = [
-                    ['val'=> $stats['ekskul']   ?? '9',  'lbl'=>'Ekskul',      'ico'=>'fa-star'],
-                    ['val'=> $stats['pelatih']  ?? '12', 'lbl'=>'Pelatih',     'ico'=>'fa-chalkboard-teacher'],
-                    ['val'=> $stats['prestasi'] ?? '30+','lbl'=>'Prestasi',    'ico'=>'fa-trophy'],
+                    ['val'=> $ekskul->count(),  'lbl'=>'Ekskul',      'ico'=>'fa-star'],
+                    ['val'=> '12', 'lbl'=>'Pelatih',     'ico'=>'fa-chalkboard-teacher'],
+                    ['val'=> '30+','lbl'=>'Prestasi',    'ico'=>'fa-trophy'],
                 ]; @endphp
                 @foreach ($hs as $h)
                 <div class="bg-white/10 border border-white/20 rounded-2xl p-4 text-center w-24 backdrop-blur-sm">
@@ -159,7 +159,7 @@
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16 fade-up">
                 @php $ov = [
-                    ['icon'=>'fa-star',          'val'=>'9',    'lbl'=>'Jenis Ekskul',  'color'=>'bg-amber-50 text-amber-600'],
+                    ['icon'=>'fa-star',          'val'=>$ekskul->count(),    'lbl'=>'Jenis Ekskul',  'color'=>'bg-amber-50 text-amber-600'],
                     ['icon'=>'fa-users',          'val'=>'280+', 'lbl'=>'Peserta',       'color'=>'bg-blue-50 text-blue-600'],
                     ['icon'=>'fa-trophy',         'val'=>'30+',  'lbl'=>'Prestasi',      'color'=>'bg-indigo-50 text-indigo-600'],
                     ['icon'=>'fa-medal',          'val'=>'Tk. Kota','lbl'=>'Level Tertinggi','color'=>'bg-green-50 text-green-600'],
@@ -178,59 +178,54 @@
             {{-- Ekskul Cards --}}
             @php
                 $ekskulList = $ekskul ?? collect([]);
-                $colorMap = [
-                    'Pramuka' => ['bg' => 'bg-amber-50', 'color' => 'bg-amber-500'],
-                    'Seni Tari' => ['bg' => 'bg-pink-50', 'color' => 'bg-pink-500'],
-                    'Futsal' => ['bg' => 'bg-green-50', 'color' => 'bg-green-500'],
-                    'Paduan Suara' => ['bg' => 'bg-blue-50', 'color' => 'bg-blue-500'],
-                    'Seni Lukis' => ['bg' => 'bg-purple-50', 'color' => 'bg-purple-500'],
-                    'Olimpiade Sains' => ['bg' => 'bg-indigo-50', 'color' => 'bg-indigo-500'],
-                    'Kaligrafi' => ['bg' => 'bg-teal-50', 'color' => 'bg-teal-500'],
-                    'Bulu Tangkis' => ['bg' => 'bg-cyan-50', 'color' => 'bg-cyan-500'],
-                    'Robotika' => ['bg' => 'bg-orange-50', 'color' => 'bg-orange-500'],
+                $iconMap = [
+                    'Pramuka' => '🏕️',
+                    'Seni Tari' => '💃',
+                    'Futsal' => '⚽',
+                    'Paduan Suara' => '🎶',
+                    'Seni Lukis' => '🎨',
+                    'Olimpiade Sains' => '🔬',
+                    'Kaligrafi' => '✒️',
+                    'Bulu Tangkis' => '🏸',
+                    'Robotika' => '🤖',
+                    'PMR' => '🚑',
+                    'Menggambar' => '🖍️',
                 ];
             @endphp
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 fade-up">
                 @foreach ($ekskulList as $ek)
                 <div class="ekskul-card">
-                    <div class="ekskul-card-img {{ $ek['bg'] }}">
-                        <span>{{ $ek['icon'] }}</span>
+                    <div class="ekskul-card-img bg-blue-50">
+                        @if($ek->foto)
+                            <img src="{{ asset('storage/' . $ek->foto) }}" alt="{{ $ek->nama }}" class="w-full h-full object-cover">
+                        @else
+                            <span>{{ $iconMap[$ek->nama] ?? '⭐' }}</span>
+                        @endif
                     </div>
                     <div class="ekskul-card-body">
                         <div class="flex items-start justify-between gap-2 mb-2">
-                            <p class="font-black text-gray-900 text-base">{{ $ek['nama'] }}</p>
+                            <p class="font-black text-gray-900 text-base">{{ $ek->nama }}</p>
                             @php
-                                $badgeCls = match($ek['type']) {
-                                    'wajib'    => 'badge-wajib',
-                                    'unggulan' => 'badge-unggulan',
-                                    default    => 'badge-pilihan',
-                                };
-                                $badgeLbl = match($ek['type']) {
-                                    'wajib'    => 'Wajib',
-                                    'unggulan' => '⭐ Unggulan',
-                                    default    => 'Pilihan',
-                                };
+                                $isWajib = strtolower($ek->nama) == 'pramuka';
+                                $badgeCls = $isWajib ? 'badge-wajib' : 'badge-pilihan';
+                                $badgeLbl = $isWajib ? 'Wajib' : 'Pilihan';
                             @endphp
                             <span class="text-[9px] font-bold px-2 py-0.5 rounded-full {{ $badgeCls }} flex-shrink-0">{{ $badgeLbl }}</span>
                         </div>
-                        <p class="text-gray-500 text-xs leading-relaxed mb-3">{{ $ek['desc'] }}</p>
+                        <p class="text-gray-500 text-xs leading-relaxed mb-3">{{ $ek->deskripsi ?: 'Kegiatan pengembangan bakat dan minat siswa.' }}</p>
                         <div class="space-y-1.5 text-xs text-gray-500 border-t border-gray-100 pt-3">
                             <div class="flex items-center gap-2">
-                                <i class="fa fa-users text-blue-400 w-3 text-center"></i>
-                                <span>Kelas {{ $ek['kelas'] }}</span>
+                                <i class="fa fa-map-marker-alt text-blue-400 w-3 text-center"></i>
+                                <span>{{ $ek->tempat ?: '-' }}</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <i class="fa fa-calendar-day text-blue-400 w-3 text-center"></i>
-                                <span>{{ $ek['hari'] }}, {{ $ek['jam'] }}</span>
+                                <span>{{ $ek->hari }}, {{ \Carbon\Carbon::parse($ek->waktu_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($ek->waktu_selesai)->format('H:i') }}</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <i class="fa fa-chalkboard-teacher text-blue-400 w-3 text-center"></i>
-                                <span>{{ $ek['pelatih'] }}</span>
-                            </div>
-                            <div class="flex items-start gap-2 mt-2 pt-2 border-t border-gray-100">
-                                <i class="fa fa-trophy text-amber-400 w-3 text-center mt-0.5"></i>
-                                <span class="text-amber-700 font-semibold">{{ $ek['prestasi'] }}</span>
+                                <span>{{ $ek->pembina->user->name ?? '-' }}</span>
                             </div>
                         </div>
                     </div>
@@ -257,7 +252,7 @@
                             <th>Ekstrakurikuler</th>
                             <th>Hari</th>
                             <th>Waktu</th>
-                            <th>Kelas</th>
+                            <th>Tempat</th>
                             <th>Pelatih</th>
                             <th>Status</th>
                         </tr>
@@ -265,14 +260,17 @@
                     <tbody>
                         @foreach ($ekskulList as $ek)
                         <tr>
-                            <td><span class="font-bold text-gray-900">{{ $ek['nama'] }}</span></td>
-                            <td>{{ $ek['hari'] }}</td>
-                            <td><span class="text-blue-600 font-semibold text-[11px]">{{ $ek['jam'] }}</span></td>
-                            <td>{{ $ek['kelas'] }}</td>
-                            <td>{{ $ek['pelatih'] }}</td>
+                            <td><span class="font-bold text-gray-900">{{ $ek->nama }}</span></td>
+                            <td>{{ $ek->hari }}</td>
+                            <td><span class="text-blue-600 font-semibold text-[11px]">{{ \Carbon\Carbon::parse($ek->waktu_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($ek->waktu_selesai)->format('H:i') }}</span></td>
+                            <td>{{ $ek->tempat ?: '-' }}</td>
+                            <td>{{ $ek->pembina->user->name ?? '-' }}</td>
                             <td>
-                                @php $bc = match($ek['type']) { 'wajib'=>'badge-wajib', 'unggulan'=>'badge-unggulan', default=>'badge-pilihan' };
-                                    $bl = match($ek['type']) { 'wajib'=>'Wajib', 'unggulan'=>'Unggulan', default=>'Pilihan' }; @endphp
+                                @php
+                                    $isWajib = strtolower($ek->nama) == 'pramuka';
+                                    $bc = $isWajib ? 'badge-wajib' : 'badge-pilihan';
+                                    $bl = $isWajib ? 'Wajib' : 'Pilihan';
+                                @endphp
                                 <span class="text-[9px] font-bold px-2 py-0.5 rounded-full {{ $bc }}">{{ $bl }}</span>
                             </td>
                         </tr>
