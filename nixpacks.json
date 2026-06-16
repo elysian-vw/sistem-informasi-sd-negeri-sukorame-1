@@ -1,4 +1,4 @@
 {
   "phpExtensions": ["gd"],
-  "nginxConfig": "./nginx.conf"
+  "nginxConfig": "nginx.conf"
 }
