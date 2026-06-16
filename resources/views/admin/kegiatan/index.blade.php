@@ -25,7 +25,7 @@
                             <th>Mulai</th>
                             <th>Selesai</th>
                             <th>Sasaran</th>
-                            <th>Aksi</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,17 +37,19 @@
                             <td>{{ \Carbon\Carbon::parse($k->tanggal_mulai)->format('d/m/Y') }}</td>
                             <td>{{ $k->tanggal_selesai ? \Carbon\Carbon::parse($k->tanggal_selesai)->format('d/m/Y') : '-' }}</td>
                             <td><span class="badge badge-secondary">{{ ucfirst($k->sasaran) }}</span></td>
-                            <td>
-                                <a href="{{ route('admin.kegiatan.edit', $k->id) }}" class="btn btn-sm btn-info">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="{{ route('admin.kegiatan.destroy', $k->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Hapus kegiatan ini?')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <a href="{{ route('admin.kegiatan.edit', $k->id) }}" class="btn btn-sm btn-outline-primary border-0" title="Edit Data">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('admin.kegiatan.destroy', $k->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Hapus Data">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @empty

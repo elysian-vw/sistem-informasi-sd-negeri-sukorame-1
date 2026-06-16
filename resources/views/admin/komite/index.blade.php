@@ -32,7 +32,7 @@
                     <th>Telepon</th>
                     <th>Status</th>
                     <th>Urutan</th>
-                    <th style="width: 150px; text-align: center;">Aksi</th>
+                    <th class="text-center" style="width: 150px;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -50,14 +50,14 @@
                     </td>
                     <td>{{ $k->urutan }}</td>
                     <td class="text-center">
-                        <div class="table-actions">
-                            <a href="{{ route('admin.komite.edit', $k->id) }}" class="btn-icon btn-edit" title="Edit">
+                        <div class="btn-group" role="group">
+                            <a href="{{ route('admin.komite.edit', $k->id) }}" class="btn btn-sm btn-outline-primary border-0" title="Edit Data">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <form action="{{ route('admin.komite.destroy', $k->id) }}" method="POST" onsubmit="return confirm('Hapus data komite ini?')" style="display:inline;">
+                            <form action="{{ route('admin.komite.destroy', $k->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn-icon btn-delete" title="Hapus">
+                                <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Hapus Data">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>

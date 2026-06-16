@@ -62,7 +62,7 @@
                     <th>Mata Pelajaran</th>
                     <th>No HP</th>
                     <th>Status</th>
-                    <th>Aksi</th>
+                    <th class="text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -101,9 +101,9 @@
                                 {{ $g->status === 'aktif' ? 'Aktif' : 'Tidak Aktif' }}
                             </span>
                         </td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="btn-icon btn-edit" title="Edit"
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-primary border-0" title="Edit Data"
                                     onclick="openModalEdit({{ json_encode([
                                         'id'             => $g->id,
                                         'name'           => $g->user?->name,
@@ -115,12 +115,12 @@
                                         'jabatan'        => $g->jabatan,
                                         'status'         => $g->status,
                                     ]) }})">
-                                    <i class="fas fa-pencil-alt"></i>
+                                    <i class="fas fa-edit"></i>
                                 </button>
-                                <form action="{{ route('admin.guru.destroy', $g->id) }}" method="POST"
+                                <form action="{{ route('admin.guru.destroy', $g->id) }}" method="POST" class="d-inline"
                                     onsubmit="return confirm('Hapus data {{ $g->user?->name }}?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn-icon btn-delete" title="Hapus">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Hapus Data">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>

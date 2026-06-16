@@ -30,7 +30,7 @@
                 <th style="padding:12px 16px;">Deskripsi</th>
                 <th style="padding:12px 16px;text-align:center;">Warna</th>
                 <th style="padding:12px 16px;text-align:center;">Status</th>
-                <th style="padding:12px 16px;text-align:center;width:140px;">Aksi</th>
+                <th class="text-center py-3" style="width: 150px;">Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -71,18 +71,16 @@
                         <span style="background:#f3f4f6;color:#6b7280;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;">Nonaktif</span>
                     @endif
                 </td>
-                <td style="padding:12px 16px;text-align:center;">
-                    <div style="display:flex;gap:6px;justify-content:center;">
-                        <a href="{{ route('admin.keunggulan.edit', $k->id) }}"
-                           style="padding:5px 10px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;text-decoration:none;display:inline-flex;align-items:center;gap:4px;">
-                            <i class="fas fa-pen"></i> Edit
+                <td class="text-center">
+                    <div class="btn-group" role="group">
+                        <a href="{{ route('admin.keunggulan.edit', $k->id) }}" class="btn btn-sm btn-outline-primary border-0" title="Edit Data">
+                            <i class="fas fa-edit"></i>
                         </a>
-                        <form action="{{ route('admin.keunggulan.destroy', $k->id) }}" method="POST"
-                              onsubmit="return confirm('Hapus keunggulan ini?')">
-                            @csrf @method('DELETE')
-                            <button type="submit"
-                                style="padding:5px 10px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;font-size:12px;color:#dc2626;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">
-                                <i class="fas fa-trash"></i> Hapus
+                        <form action="{{ route('admin.keunggulan.destroy', $k->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Hapus Data">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </form>
                     </div>

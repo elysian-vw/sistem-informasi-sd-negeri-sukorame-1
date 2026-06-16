@@ -111,7 +111,7 @@
                     <th style="width: 60px; text-align: center;">No</th>
                     <th>Nama / Judul Internal Sistem</th>
                     <th>URL Kunci (Slug)</th>
-                    <th style="text-align: center; width: 140px;">Aksi Cepat</th>
+                    <th class="text-center" style="width: 150px;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -122,10 +122,12 @@
                         <td>
                             <span class="badge-slug"><i class="fas fa-link" style="color: #9ca3af; margin-right: 4px; font-size: 10px;"></i>{{ $p->slug }}</span>
                         </td>
-                        <td style="text-align: center;">
-                            <a href="{{ route('admin.content.edit', $p->slug) }}" class="btn btn-edit" style="padding: 6px 12px; font-size: 12px;">
-                                <i class="fas fa-pen"></i> Edit Ulang
-                            </a>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <a href="{{ route('admin.content.edit', $p->slug) }}" class="btn btn-sm btn-outline-primary border-0" title="Edit Data">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                 @empty

@@ -25,7 +25,7 @@
                             <th>Pembina</th>
                             <th>Hari & Waktu</th>
                             <th>Status</th>
-                            <th>Aksi</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,17 +49,19 @@
                                     {{ $e->is_aktif ? 'Aktif' : 'Non-Aktif' }}
                                 </span>
                             </td>
-                            <td>
-                                <a href="{{ route('admin.ekskul.edit', $e->id) }}" class="btn btn-sm btn-info">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="{{ route('admin.ekskul.destroy', $e->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Hapus ekskul ini?')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <a href="{{ route('admin.ekskul.edit', $e->id) }}" class="btn btn-sm btn-outline-primary border-0" title="Edit Data">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('admin.ekskul.destroy', $e->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Hapus Data">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @empty

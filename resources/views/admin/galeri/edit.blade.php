@@ -159,13 +159,32 @@
 
 <script>
 function toggleTipe(tipe) {
+    const fotoSection = document.getElementById('section-foto');
+    const videoSection = document.getElementById('section-video');
+    const fotoInput = fotoSection.querySelector('input[name="file_path"]');
+    const videoInput = videoSection.querySelector('input[name="url_video"]');
+
     if (tipe === 'foto') {
-        document.getElementById('section-foto').classList.remove('d-none');
-        document.getElementById('section-video').classList.add('d-none');
+        fotoSection.classList.remove('d-none');
+        fotoInput.disabled = false;
+
+        videoSection.classList.add('d-none');
+        videoInput.disabled = true;
+        videoInput.value = '';
     } else {
-        document.getElementById('section-foto').classList.add('d-none');
-        document.getElementById('section-video').classList.remove('d-none');
+        videoSection.classList.remove('d-none');
+        videoInput.disabled = false;
+
+        fotoSection.classList.add('d-none');
+        fotoInput.disabled = true;
+        fotoInput.value = '';
     }
 }
+
+// Jalankan saat halaman pertama kali load
+document.addEventListener('DOMContentLoaded', function () {
+    const checked = document.querySelector('input[name="tipe"]:checked');
+    if (checked) toggleTipe(checked.value);
+});
 </script>
 @endsection

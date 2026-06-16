@@ -142,13 +142,36 @@
 
 <script>
 function toggleTipe(tipe) {
+    const fotoSection = document.getElementById('section-foto');
+    const videoSection = document.getElementById('section-video');
+    const fotoInput = fotoSection.querySelector('input[name="file_path"]');
+    const videoInput = videoSection.querySelector('input[name="url_video"]');
+
     if (tipe === 'foto') {
-        document.getElementById('section-foto').classList.remove('d-none');
-        document.getElementById('section-video').classList.add('d-none');
+        fotoSection.style.display = 'block';   // pakai style langsung, bukan class
+        fotoInput.disabled = false;
+
+        videoSection.style.display = 'none';
+        videoInput.disabled = true;
+        videoInput.value = '';
     } else {
-        document.getElementById('section-foto').classList.add('d-none');
-        document.getElementById('section-video').classList.remove('d-none');
+        videoSection.style.display = 'block';
+        videoInput.disabled = false;
+
+        fotoSection.style.display = 'none';
+        fotoInput.disabled = true;
+        fotoInput.value = '';
     }
 }
+
+// Pakai window.onload bukan DOMContentLoaded
+window.onload = function () {
+    // Set semua hidden dulu via style
+    document.getElementById('section-foto').style.display = 'none';
+    document.getElementById('section-video').style.display = 'none';
+
+    const checked = document.querySelector('input[name="tipe"]:checked');
+    if (checked) toggleTipe(checked.value);
+};
 </script>
 @endsection
