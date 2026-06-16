@@ -517,56 +517,6 @@
             </div>
         </div>
 
-        {{-- Sidebar --}}
-        <div class="sidebar">
-
-            {{-- Info Guru --}}
-            <div class="side-card">
-                <div class="side-card-header" style="color:#6c5ce7;">
-                    <i class="fas fa-chalkboard-teacher"></i> Guru Pengajar
-                </div>
-                <div class="side-card-body" style="text-align:center;">
-                    <div class="guru-avatar">
-                        {{ strtoupper(substr($materi->guru->user->name ?? 'G', 0, 1)) }}
-                    </div>
-                    <div class="guru-name">{{ $materi->guru->user->name ?? 'Guru' }}</div>
-                    <div class="guru-mapel">{{ $materi->mataPelajaran->nama ?? '-' }}</div>
-                </div>
-            </div>
-
-            {{-- Fun Fact / Motivasi hari ini --}}
-            <div class="side-card">
-                <div class="side-card-header" style="color:#e17055;">
-                    <i class="fas fa-lightbulb"></i> Tahukah Kamu?
-                </div>
-                <div class="side-card-body">
-                    <div class="fun-fact">
-                        <span class="emoji">🧠</span>
-                        <div class="label">Fakta Seru!</div>
-                        <div class="text">
-                            Otak kita bisa menyimpan informasi sebanyak 1 juta buku! Jadi, semakin banyak belajar, semakin pintar kamu! 📚
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Tips Belajar --}}
-            <div class="side-card">
-                <div class="side-card-header" style="color:#00b894;">
-                    <i class="fas fa-star"></i> Tips Belajar
-                </div>
-                <div class="side-card-body">
-                    <ul class="tips-list">
-                        <li><div class="tip-num">1</div> Baca materinya pelan-pelan</li>
-                        <li><div class="tip-num">2</div> Catat hal penting di buku</li>
-                        <li><div class="tip-num">3</div> Kalau bingung, tanya gurumu</li>
-                        <li><div class="tip-num">4</div> Ulangi pelajaran di rumah</li>
-                        <li><div class="tip-num">5</div> Istirahat kalau sudah lelah</li>
-                    </ul>
-                </div>
-            </div>
-
-        </div>
     </div>
 
     {{-- ── AKSI FOOTER ── --}}
