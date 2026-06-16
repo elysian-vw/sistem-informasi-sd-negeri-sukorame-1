@@ -12,7 +12,16 @@ class DashboardController extends Controller
     public function index()
     {
         $guru      = auth()->user()->guru;
-        $kelasIds  = Kelas::where('wali_kelas_id', auth()->id())->pluck('id');
+        
+        // Ambil ID kelas: Prioritaskan guru->kelas_id (sesuai AbsensiController)
+        // Ditambah kelas dimana guru ini menjadi wali kelas (jika ada di masa depan)
+        $kelasIds = [];
+        if ($guru && $guru->kelas_id) {
+            $kelasIds[] = $guru->kelas_id;
+        }
+        
+        $waliKelasIds = Kelas::where('wali_kelas_id', auth()->id())->pluck('id')->toArray();
+        $kelasIds = array_unique(array_merge($kelasIds, $waliKelasIds));
 
         // Statistik absensi hari ini
         $absensiHariIni = Absensi::whereIn('kelas_id', $kelasIds)
@@ -44,20 +53,23 @@ class DashboardController extends Controller
             ->get();
 
         // Grafik absensi 7 hari terakhir
+        // Gunakan filter pada kolom 'tanggal' agar konsisten dengan display chart
         $absensiRaw = Absensi::whereIn('kelas_id', $kelasIds)
-            ->where('created_at', '>=', now()->subDays(6))
+            ->where('tanggal', '>=', now()->subDays(6)->format('Y-m-d'))
             ->where('status', 'hadir')
-            ->selectRaw('DATE(tanggal) as tgl, COUNT(*) as total')
-            ->groupBy(DB::raw('DATE(tanggal)'))
+            ->selectRaw('tanggal as tgl, COUNT(*) as total')
+            ->groupBy('tanggal')
             ->get()
-            ->keyBy('tgl');
+            ->keyBy(function($item) {
+                return is_string($item->tgl) ? substr($item->tgl, 0, 10) : $item->tgl->format('Y-m-d');
+            });
 
         $absensiLabels = [];
         $absensiData   = [];
         for ($i = 6; $i >= 0; $i--) {
             $tgl = now()->subDays($i)->format('Y-m-d');
             $absensiLabels[] = now()->subDays($i)->format('d/m');
-            $absensiData[]   = $absensiRaw[$tgl]->total ?? 0;
+            $absensiData[]   = isset($absensiRaw[$tgl]) ? $absensiRaw[$tgl]->total : 0;
         }
 
         // Diskusi terbaru
