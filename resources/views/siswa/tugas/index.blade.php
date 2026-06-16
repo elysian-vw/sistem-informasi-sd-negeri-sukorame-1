@@ -10,6 +10,12 @@ $subjectStyles = [
     'ipa'               => ['bg' => '#ECFDF5', 'accent' => '#059669', 'badge' => '#10B981', 'icon' => '🌱'],
     'bahasa indonesia'  => ['bg' => '#FFFBEB', 'accent' => '#D97706', 'badge' => '#F59E0B', 'icon' => '📖'],
     'seni budaya'       => ['bg' => '#FFF1F2', 'accent' => '#E11D48', 'badge' => '#F43F5E', 'icon' => '🎨'],
+    'bahasa inggris' => [
+        'bg' => '#EFF6FF',
+        'accent' => '#2563EB',
+        'badge' => '#3B82F6',
+        'icon' => '📚'
+    ],
 ];
 
 $defaultStyle = ['bg' => '#F9FAFB', 'accent' => '#6B7280', 'badge' => '#9CA3AF', 'icon' => '📝'];
@@ -25,15 +31,50 @@ function getStyle(array $map, $nama, array $default): array {
 
 <style>
     .tugas-page { padding: 10px 0 50px; font-family: 'Nunito', sans-serif; }
-    .page-hero { text-align: center; margin-bottom: 30px; }
-    .page-hero h1 { font-size: 32px; font-weight: 900; color: #111; margin-bottom: 5px; }
-    
+    .page-hero {
+        text-align: center;
+        margin-bottom: 35px;
+
+        background: linear-gradient(
+            135deg,
+            #6c5ce7,
+            #6c5ce7,
+            #bfbbf7
+        );
+
+        padding: 35px;
+        border-radius: 25px;
+    }
+    .page-hero h1 {
+        font-size: 32px;
+        font-weight: 900;
+        margin-bottom: 5px;
+
+        background: #ffff;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .page-hero p {
+        color: #FFFFFF;
+        font-size: 15px;
+        font-weight: 500;
+    }
     .tugas-count-badge {
-        display: inline-flex; align-items: center; gap: 8px;
-        background: #FFFBEB; color: #92400E;
-        padding: 12px 24px; border-radius: 25px;
-        font-weight: 800; border: 2px solid #FDE68A;
-        margin-bottom: 30px; box-shadow: 0 4px 0 #FDE68A;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        background: linear-gradient(135deg,#DBEAFE,#BFDBFE);
+        color: #1D4ED8;
+
+        padding: 12px 24px;
+        border-radius: 25px;
+        font-weight: 800;
+
+        border: 2px solid #93C5FD;
+        margin-bottom: 30px;
+
+        box-shadow: 0 4px 0 #93C5FD;
     }
 
     .tugas-grid {
@@ -49,7 +90,14 @@ function getStyle(array $map, $nama, array $default): array {
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .tugas-card:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-color: #D1D5DB; }
+    .tugas-card:hover {
+        transform: translateY(-8px);
+
+        border-color: #60A5FA;
+
+        box-shadow:
+            0 12px 30px rgba(37,99,235,.15);
+    }
 
     .card-top { 
         padding: 20px; height: 140px; 
@@ -92,7 +140,11 @@ function getStyle(array $map, $nama, array $default): array {
         display: flex; align-items: center; justify-content: center; gap: 8px;
         transition: all 0.2s; border: 2px solid #E5E7EB; background: #fff; color: #111;
     }
-    .btn-main:hover { background: #F9FAFB; transform: scale(1.02); }
+    .btn-main:hover {
+        background: #EFF6FF;
+        border-color: #60A5FA;
+        transform: scale(1.02);
+    }
 </style>
 
 <div class="tugas-page">

@@ -3,6 +3,37 @@
 
 @push('styles')
 <style>
+
+    .youtube-card{
+        position:relative;
+        border-radius:20px;
+        overflow:hidden;
+        margin-top:20px;
+    }
+
+    .youtube-card img{
+        width:100%;
+        display:block;
+    }
+
+    .youtube-overlay{
+        position:absolute;
+        inset:0;
+        background:rgba(0,0,0,.3);
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+
+    .play-btn{
+        background:#ff0000;
+        color:white;
+        padding:12px 24px;
+        border-radius:50px;
+        text-decoration:none;
+        font-weight:bold;
+    }
+
     @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
 
     .show-wrap {
@@ -335,29 +366,35 @@
     /* ── Tombol aksi bawah ── */
     .action-footer {
         max-width: 780px;
-        margin: 24px auto 0;
-        padding: 0 16px;
+        margin: 30px auto 0;
+        padding: 0 16px 30px;
         display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
     }
     .btn-action {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 8px;
-        padding: 13px 24px;
+        padding: 12px 22px;
+        min-width: 140px;
+        height: 48px;
         border-radius: 50px;
         font-family: 'Nunito', sans-serif;
         font-weight: 800;
         font-size: 14px;
-        cursor: pointer;
-        text-decoration: none;
-        transition: .2s;
-        border: none;
+        white-space: nowrap;
     }
     .btn-back-home { background: #f0f3ff; color: #6c5ce7; }
     .btn-back-home:hover { background: #e4dfff; color: #6c5ce7; }
-    .btn-selesai { background: linear-gradient(135deg,#00b894,#00cec9); color: #fff; box-shadow: 0 4px 18px rgba(0,184,148,.3); }
+    .btn-selesai {
+        background: linear-gradient(135deg,#00b894,#00cec9);
+        color: #fff;
+        box-shadow: 0 4px 18px rgba(0,184,148,.3);
+        min-width: 180px;
+        justify-content: center;
+    }
     .btn-selesai:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(0,184,148,.4); color: #fff; }
 
     /* Scroll progress */
@@ -444,20 +481,22 @@
                     Isi Materi
                 </div>
                 <div class="content-card-body">
-                    @if($materi->video_url ?? false)
-                    <div class="video-wrap">
+                    @if($materi->link_video)
                         @php
-                            // Convert YouTube URL ke embed
-                            $vid = $materi->video_url;
-                            preg_match('/(?:v=|youtu\.be\/)([^&\?]+)/', $vid, $m);
-                            $ytId = $m[1] ?? '';
+                            preg_match('/(?:v=|youtu\.be\/)([^&\?]+)/', $materi->link_video, $matches);
+                            $youtubeId = $matches[1] ?? '';
                         @endphp
-                        @if($ytId)
-                        <iframe src="https://www.youtube.com/embed/{{ $ytId }}"
-                                allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
-                                allowfullscreen></iframe>
-                        @endif
-                    </div>
+
+                        <div class="youtube-card">
+                            <img src="https://img.youtube.com/vi/{{ $youtubeId }}/maxresdefault.jpg"
+                                alt="Thumbnail Video">
+
+                            <div class="youtube-overlay">
+                                <a href="{{ $materi->link_video }}" target="_blank" class="play-btn">
+                                    ▶ Tonton Video
+                                </a>
+                            </div>
+                        </div>
                     @endif
 
                     <div class="materi-text" id="materiContent">

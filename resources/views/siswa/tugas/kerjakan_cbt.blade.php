@@ -3,6 +3,25 @@
 
 @push('styles')
 <style>
+
+    .btn-kembali-tugas{
+        background:linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        color:#fff;
+        border-radius:12px;
+        padding:12px 24px;
+        font-weight:600;
+        text-decoration:none;
+        display:inline-block;
+        border:none;
+        cursor:pointer;
+        transition:.2s;
+    }
+
+    .btn-kembali-tugas:hover{
+        background:linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        color:#fff;
+    }
+
     @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
 
     /* ── Base ── */
@@ -347,6 +366,23 @@
     {{-- ── BODY ── --}}
     <div class="cbt-body">
 
+        <div style="margin-bottom:15px;">
+            <button type="button"
+                    class="btn-kembali-tugas"
+                    onclick="konfirmasiKembali()">
+                    <i class="fas fa-arrow-left"></i>
+                Kembali
+            </button>
+        </div>
+
+        <script>
+        function konfirmasiKembali() {
+            if (confirm('Yakin ingin kembali? Jawaban yang belum dikumpulkan bisa hilang.')) {
+                history.back();
+            }
+        }
+        </script>
+
         @foreach($pertanyaan as $i => $p)
         <div class="soal-wrapper {{ $i === 0 ? 'active' : '' }}" id="soal-{{ $i }}">
             <div class="soal-card">
@@ -507,7 +543,15 @@ function showSoal(idx) {
     document.getElementById('curNum').textContent = idx + 1;
     document.getElementById('progressFill').style.width = ((idx + 1) / TOTAL * 100) + '%';
 
-    document.getElementById('btnPrev').disabled = idx === 0;
+    const btnPrev = document.getElementById('btnPrev');
+
+    if (idx === 0) {
+        btnPrev.style.display = 'none';
+        btnPrev.disabled = true;
+    } else {
+        btnPrev.style.display = 'inline-flex';
+        btnPrev.disabled = false;
+    }
 
     const isLast = idx === TOTAL - 1;
     document.getElementById('btnNext').style.display    = isLast ? 'none' : '';
