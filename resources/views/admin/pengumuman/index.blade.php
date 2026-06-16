@@ -107,18 +107,20 @@
                             {{ $p->created_at->diffForHumans() }}
                         </span>
                     </div>
-                    <div class="pengumuman-actions">
-                        <button class="btn-icon btn-edit" title="Edit"
-                            onclick="openEdit({{ json_encode($p) }})">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                        <form action="{{ route('admin.pengumuman.destroy', $p->id) }}" method="POST"
-                            onsubmit="return confirm('Hapus pengumuman ini?')">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="btn-icon btn-delete">
-                                <i class="fas fa-trash"></i>
+                    <div class="text-center">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-outline-primary border-0" title="Edit Data"
+                                onclick="openEdit({{ json_encode($p) }})">
+                                <i class="fas fa-edit"></i>
                             </button>
-                        </form>
+                            <form action="{{ route('admin.pengumuman.destroy', $p->id) }}" method="POST" class="d-inline"
+                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Hapus Data">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             @empty
@@ -233,12 +235,6 @@
 .badge-gray    { background:#f3f4f6; color:#6b7280; }
 .badge-blue    { background:#dbeafe; color:#1d4ed8; }
 .badge-light   { background:#f3f4f6; color:#374151; }
-
-.btn-icon { width:30px; height:30px; border:none; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px; transition:all .15s; }
-.btn-edit { background:#eff6ff; color:#2563eb; }
-.btn-edit:hover { background:#dbeafe; }
-.btn-delete { background:#fef2f2; color:#dc2626; }
-.btn-delete:hover { background:#fee2e2; }
 
 .empty-state { text-align:center; color:#9ca3af; padding:40px; font-size:13.5px; }
 .pagination-wrap { padding:16px 20px; border-top:1px solid #f3f4f6; }

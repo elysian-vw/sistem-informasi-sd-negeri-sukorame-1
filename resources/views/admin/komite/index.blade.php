@@ -83,22 +83,5 @@
 }
 .badge-success { background: #f0fdf4; color: #15803d; }
 .badge-secondary { background: #f9fafb; color: #6b7280; }
-
-.table-actions { display: flex; justify-content: center; gap: 8px; }
-.btn-icon {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.btn-edit { background: #eff6ff; color: #2563eb; }
-.btn-edit:hover { background: #dbeafe; }
-.btn-delete { background: #fef2f2; color: #dc2626; }
-.btn-delete:hover { background: #fee2e2; }
 </style>
 @endsection

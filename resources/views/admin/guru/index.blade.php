@@ -309,13 +309,6 @@
 .badge-success { background:#dcfce7; color:#15803d; }
 .badge-danger  { background:#fee2e2; color:#b91c1c; }
 
-.action-btns { display:flex; gap:6px; }
-.btn-icon { width:30px; height:30px; border:none; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px; transition:all .15s; }
-.btn-edit { background:#eff6ff; color:#2563eb; }
-.btn-edit:hover { background:#dbeafe; }
-.btn-delete { background:#fef2f2; color:#dc2626; }
-.btn-delete:hover { background:#fee2e2; }
-
 .empty-state { text-align:center; color:#9ca3af; padding:40px; }
 .pagination-wrap { padding:16px 20px; border-top:1px solid #f3f4f6; }
 

@@ -119,16 +119,16 @@
                                 {{ \Carbon\Carbon::parse($j->waktu_selesai)->format('H:i') }}
                             </span>
                         </td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="btn-icon btn-edit" title="Edit"
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-primary border-0" title="Edit Data"
                                     onclick="openModalEdit({{ json_encode($j) }})">
-                                    <i class="fas fa-pencil-alt"></i>
+                                    <i class="fas fa-edit"></i>
                                 </button>
-                                <form action="{{ route('admin.jadwal.destroy', $j->id) }}" method="POST"
-                                    onsubmit="return confirm('Hapus jadwal ini?')">
+                                <form action="{{ route('admin.jadwal.destroy', $j->id) }}" method="POST" class="d-inline"
+                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn-icon btn-delete" title="Hapus">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Hapus Data">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
@@ -395,18 +395,6 @@
 .badge-blue   { background: #dbeafe; color: #1d4ed8; }
 .badge-success{ background: #dcfce7; color: #15803d; }
 .badge-danger { background: #fee2e2; color: #b91c1c; }
-
-/* ── ACTION BTNS ── */
-.action-btns { display: flex; gap: 6px; align-items: center; }
-.btn-icon {
-    width: 30px; height: 30px; border: none; border-radius: 6px;
-    cursor: pointer; display: flex; align-items: center;
-    justify-content: center; font-size: 12px; transition: all .15s;
-}
-.btn-edit   { background: #eff6ff; color: #2563eb; }
-.btn-edit:hover { background: #2563eb; color: white; }
-.btn-delete { background: #fef2f2; color: #dc2626; }
-.btn-delete:hover { background: #dc2626; color: white; }
 
 /* ── BUTTONS ── */
 .btn {

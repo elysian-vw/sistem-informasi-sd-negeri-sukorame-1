@@ -69,14 +69,14 @@
                             <span class="badge badge-pink">Perempuan</span>
                         @endif
                     </td>
-                    <td>
-                        <div class="action-btns">
-                            <a href="{{ route('admin.siswa.edit', $s) }}" class="btn-icon btn-edit" title="Edit">
-                                <i class="fas fa-pen"></i>
+                    <td class="text-center">
+                        <div class="btn-group" role="group">
+                            <a href="{{ route('admin.siswa.edit', $s) }}" class="btn btn-sm btn-outline-primary border-0" title="Edit Data">
+                                <i class="fas fa-edit"></i>
                             </a>
-                            <form action="{{ route('admin.siswa.destroy', $s) }}" method="POST" onsubmit="return confirm('Hapus data siswa ini?')" style="margin: 0;">
+                            <form action="{{ route('admin.siswa.destroy', $s) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="btn-icon btn-delete" title="Hapus">
+                                <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Hapus Data">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>

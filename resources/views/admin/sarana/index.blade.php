@@ -59,14 +59,14 @@
                     </td>
                     <td>{{ $s->urutan }}</td>
                     <td class="text-center">
-                        <div class="table-actions">
-                            <a href="{{ route('admin.sarana.edit', $s->id) }}" class="btn-icon btn-edit" title="Edit">
+                        <div class="btn-group" role="group">
+                            <a href="{{ route('admin.sarana.edit', $s->id) }}" class="btn btn-sm btn-outline-primary border-0" title="Edit Data">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <form action="{{ route('admin.sarana.destroy', $s->id) }}" method="POST" onsubmit="return confirm('Hapus data sarana ini?')" style="display:inline;">
+                            <form action="{{ route('admin.sarana.destroy', $s->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn-icon btn-delete" title="Hapus">
+                                <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Hapus Data">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
@@ -111,22 +111,5 @@
 .badge-success { background: #f0fdf4; color: #15803d; }
 .badge-warning { background: #fffbeb; color: #d97706; }
 .badge-danger { background: #fef2f2; color: #dc2626; }
-
-.table-actions { display: flex; justify-content: center; gap: 8px; }
-.btn-icon {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.btn-edit { background: #eff6ff; color: #2563eb; }
-.btn-edit:hover { background: #dbeafe; }
-.btn-delete { background: #fef2f2; color: #dc2626; }
-.btn-delete:hover { background: #fee2e2; }
 </style>
 @endsection
